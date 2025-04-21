@@ -1,0 +1,86 @@
+
+import { Achievement, AchievementType, TrophyRarity } from "@/types/social";
+
+// Roadmap-specific achievements
+export const ROADMAP_ACHIEVEMENTS: Achievement[] = [
+  {
+    id: "roadmap-creator",
+    name: "Project Architect",
+    description: "Create your first roadmap",
+    type: AchievementType.BRONZE,
+    rarity: TrophyRarity.COMMON,
+    icon: "map",
+  },
+  {
+    id: "milestone-master",
+    name: "Milestone Master",
+    description: "Complete 10 roadmap milestones",
+    type: AchievementType.SILVER,
+    rarity: TrophyRarity.RARE,
+    icon: "flag",
+  },
+  {
+    id: "ahead-of-schedule",
+    name: "Time Bender",
+    description: "Complete 5 roadmap items ahead of schedule",
+    type: AchievementType.GOLD,
+    rarity: TrophyRarity.VERY_RARE,
+    icon: "clock",
+  },
+  {
+    id: "roadmap-strategist",
+    name: "Strategic Planner",
+    description: "Create 5 different roadmaps",
+    type: AchievementType.SILVER,
+    rarity: TrophyRarity.UNCOMMON,
+    icon: "git-branch",
+  },
+  {
+    id: "long-term-vision",
+    name: "Visionary",
+    description: "Create a roadmap spanning more than 1 year",
+    type: AchievementType.SILVER,
+    rarity: TrophyRarity.RARE,
+    icon: "telescope",
+  },
+  {
+    id: "team-coordinator",
+    name: "Team Coordinator",
+    description: "Assign 10 different team members to roadmap items",
+    type: AchievementType.BRONZE,
+    rarity: TrophyRarity.UNCOMMON,
+    icon: "users",
+  },
+  {
+    id: "perfect-execution",
+    name: "Perfect Execution",
+    description: "Complete all items in a roadmap exactly on schedule",
+    type: AchievementType.GOLD,
+    rarity: TrophyRarity.ULTRA_RARE,
+    icon: "target",
+  },
+  {
+    id: "roadmap-connector",
+    name: "Project Linker",
+    description: "Connect 3 roadmaps to specific projects",
+    type: AchievementType.SILVER,
+    rarity: TrophyRarity.RARE,
+    icon: "git-merge",
+  },
+  {
+    id: "milestone-streak",
+    name: "Momentum Builder",
+    description: "Complete roadmap milestones 5 weeks in a row",
+    type: AchievementType.SILVER,
+    rarity: TrophyRarity.VERY_RARE,
+    icon: "trending-up",
+  },
+  {
+    id: "roadmap-master",
+    name: "Roadmap Master",
+    description: "Achieve 100% completion on 3 different roadmaps",
+    type: AchievementType.GOLD,
+    rarity: TrophyRarity.ULTRA_RARE,
+    icon: "award",
+  },
+];

@@ -1,0 +1,86 @@
+
+import { Achievement, AchievementType, TrophyRarity } from "@/types/social";
+
+// Team collaboration achievements
+export const TEAM_ACHIEVEMENTS: Achievement[] = [
+  {
+    id: "team-builder",
+    name: "Team Builder",
+    description: "Add 5 members to your team",
+    type: AchievementType.BRONZE,
+    rarity: TrophyRarity.COMMON,
+    icon: "users",
+  },
+  {
+    id: "collaboration-pro",
+    name: "Collaboration Pro",
+    description: "Complete 10 group tasks",
+    type: AchievementType.SILVER,
+    rarity: TrophyRarity.UNCOMMON,
+    icon: "users-plus",
+  },
+  {
+    id: "feedback-champion",
+    name: "Feedback Champion",
+    description: "Give constructive feedback on 20 completed tasks",
+    type: AchievementType.SILVER,
+    rarity: TrophyRarity.RARE,
+    icon: "message-square",
+  },
+  {
+    id: "meeting-master",
+    name: "Meeting Master",
+    description: "Schedule and complete 50 team meetings",
+    type: AchievementType.GOLD,
+    rarity: TrophyRarity.VERY_RARE,
+    icon: "calendar",
+  },
+  {
+    id: "mentor",
+    name: "Mentor",
+    description: "Help 3 team members complete their first quest",
+    type: AchievementType.SILVER,
+    rarity: TrophyRarity.RARE,
+    icon: "heart-handshake",
+  },
+  {
+    id: "perfect-sync",
+    name: "Perfect Sync",
+    description: "Complete a project with 100% team participation",
+    type: AchievementType.GOLD,
+    rarity: TrophyRarity.ULTRA_RARE,
+    icon: "check-circle",
+  },
+  {
+    id: "communication-star",
+    name: "Communication Star",
+    description: "Send 100 team messages",
+    type: AchievementType.BRONZE,
+    rarity: TrophyRarity.UNCOMMON,
+    icon: "message-circle",
+  },
+  {
+    id: "team-spirit",
+    name: "Team Spirit",
+    description: "Participate in 5 team events",
+    type: AchievementType.SILVER,
+    rarity: TrophyRarity.UNCOMMON,
+    icon: "party-popper",
+  },
+  {
+    id: "deadline-hero",
+    name: "Deadline Hero",
+    description: "Complete 10 tasks before deadline with team",
+    type: AchievementType.GOLD,
+    rarity: TrophyRarity.VERY_RARE,
+    icon: "timer",
+  },
+  {
+    id: "team-leader",
+    name: "Team Leader",
+    description: "Successfully lead 3 team projects to completion",
+    type: AchievementType.GOLD,
+    rarity: TrophyRarity.ULTRA_RARE,
+    icon: "shield",
+  },
+];

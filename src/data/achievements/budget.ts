@@ -1,0 +1,86 @@
+
+import { Achievement, AchievementType, TrophyRarity } from "@/types/social";
+
+// Budget-specific achievements
+export const BUDGET_ACHIEVEMENTS: Achievement[] = [
+  {
+    id: "budget-planner",
+    name: "Budget Planner",
+    description: "Create your first budget plan",
+    type: AchievementType.BRONZE,
+    rarity: TrophyRarity.COMMON,
+    icon: "piggy-bank",
+  },
+  {
+    id: "under-budget",
+    name: "Cost Optimizer",
+    description: "Complete 5 projects under budget",
+    type: AchievementType.SILVER,
+    rarity: TrophyRarity.RARE,
+    icon: "dollar-sign",
+  },
+  {
+    id: "savings-master",
+    name: "Savings Master",
+    description: "Save 20% or more on 3 different project budgets",
+    type: AchievementType.GOLD,
+    rarity: TrophyRarity.VERY_RARE,
+    icon: "wallet",
+  },
+  {
+    id: "budget-tracker",
+    name: "Budget Tracker",
+    description: "Log expenses for 30 consecutive days",
+    type: AchievementType.SILVER,
+    rarity: TrophyRarity.UNCOMMON,
+    icon: "line-chart",
+  },
+  {
+    id: "resource-allocator",
+    name: "Resource Allocator",
+    description: "Successfully allocate budgets across 5 departments",
+    type: AchievementType.SILVER,
+    rarity: TrophyRarity.RARE,
+    icon: "share",
+  },
+  {
+    id: "forecast-accuracy",
+    name: "Crystal Ball",
+    description: "Achieve 90% accuracy in budget forecasts",
+    type: AchievementType.GOLD,
+    rarity: TrophyRarity.ULTRA_RARE,
+    icon: "bar-chart",
+  },
+  {
+    id: "budget-optimization",
+    name: "Efficiency Expert",
+    description: "Optimize budget allocation in 3 consecutive quarters",
+    type: AchievementType.SILVER,
+    rarity: TrophyRarity.VERY_RARE,
+    icon: "trending-up",
+  },
+  {
+    id: "perfect-balance",
+    name: "Perfect Balance",
+    description: "Maintain exact budget targets for an entire quarter",
+    type: AchievementType.GOLD,
+    rarity: TrophyRarity.ULTRA_RARE,
+    icon: "scale",
+  },
+  {
+    id: "budget-master",
+    name: "Budget Master",
+    description: "Complete 10 projects within 5% of planned budget",
+    type: AchievementType.GOLD,
+    rarity: TrophyRarity.ULTRA_RARE,
+    icon: "trophy",
+  },
+  {
+    id: "first-report",
+    name: "First Report",
+    description: "Generate your first budget report",
+    type: AchievementType.BRONZE,
+    rarity: TrophyRarity.COMMON,
+    icon: "file-text",
+  },
+];
