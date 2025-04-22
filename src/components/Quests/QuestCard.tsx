@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Quest, QuestStatus } from "@/types/quest";
-import { Award, Calendar, Clock, MapPin, Users, User, GripVertical, MessageSquare } from "lucide-react";
+import { Award, Calendar, Clock, MapPin, Users, User, GripVertical, MessageSquare, Flame, Crown, Trash, Check } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import confetti from "canvas-confetti";
 import { motion, Variants } from "framer-motion";
@@ -255,33 +255,35 @@ const QuestCard = forwardRef<HTMLDivElement, QuestCardProps>(({ quest, isDraggin
     switch (quest.status) {
       case QuestStatus.AVAILABLE:
         return (
-          <Button 
-            className="w-full" 
-            onClick={handleAcceptQuest}
-            disabled={isAccepting}
-          >
+          <Button className="w-full bg-[#6b4f30] hover:bg-[#5a3f26] text-white border-2 border-[#c0a36e] shadow-md transition-all" 
+          onClick={handleAcceptQuest}
+          disabled={isAccepting}>
             {isAccepting ? "Accepting..." : "Accept Quest"}
           </Button>
+
         );
-      case QuestStatus.IN_PROGRESS:
-        return (
-          <div className="flex gap-2">
-            <Button 
-              className={`flex-1 ${isCompleting ? "bg-green-400" : "bg-green-600 hover:bg-green-700"}`}
-              onClick={handleCompleteQuest}
-              disabled={isCompleting}
-            >
-              {isCompleting ? "Completing..." : "Complete"}
-            </Button>
-            <Button 
-              variant="destructive" 
-              className="flex-1" 
-              onClick={handleFailQuest}
-            >
-              Abandon
-            </Button>
-          </div>
-        );
+        case QuestStatus.IN_PROGRESS:
+          return (
+            <div className="flex justify-end gap-3 mt-2 pr-2">
+              <button
+                onClick={handleCompleteQuest}
+                disabled={isCompleting}
+                className={`p-2 rounded-full border-2 ${
+                  isCompleting ? "border-green-300 bg-green-200" : "hover:bg-green-100 border-green-600"
+                } transition`}
+                title="Complete Quest"
+              >
+                <Check className="w-5 h-5 text-green-700" />
+              </button>
+              <button
+                onClick={handleFailQuest}
+                className="p-2 rounded-full border-2 hover:bg-red-100 border-red-600 transition"
+                title="Abandon Quest"
+              >
+                <Trash className="w-5 h-5 text-red-700" />
+              </button>
+            </div>
+          );        
       default:
         return null;
     }
@@ -321,38 +323,42 @@ const QuestCard = forwardRef<HTMLDivElement, QuestCardProps>(({ quest, isDraggin
       animate={isDragging ? "dragging" : quest.status === QuestStatus.AVAILABLE ? "ready" : "idle"}
       className={`group ${isDragging ? "z-50" : "z-0"}`}
     >
-      <Card className={`overflow-hidden transition-all duration-300 hover:shadow-lg ${glowing ? "ring-2 ring-purple-500 ring-opacity-60" : ""}`}>
-        <CardHeader className="p-4 pb-2 border-b">
+      <Card className={`overflow-hidden transition-all h-[360px] flex flex-col justify-between duration-300 shadow-lg border-2 border-[#c0a36e] rounded-lg bg-[url('/parchment.jpg')] bg-cover bg-center text-[#4b3621] font-serif ${
+          glowing ? "ring-2 ring-purple-500 ring-opacity-60" : ""
+        }`}
+      >
+        <CardHeader className="p-4 pb-2 ">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <div {...dragHandleProps} className="cursor-move opacity-0 group-hover:opacity-100 transition-opacity">
-                  <GripVertical className="h-4 w-4 text-gray-400" />
+              <div className="flex items-center gap-3">
+                <div {...dragHandleProps} className="cursor-move text-[#8B7A5B] opacity-100 group-hover:opacity-100 transition-opacity pt-1">
+                  <GripVertical className="h-4 w-4" />
                 </div>
-                <h3 className="text-lg font-semibold leading-tight">{quest.title}</h3>
+                <h3 className="text-xl font-bold text-[#3e2e1e] leading-snug line-clamp-2">{quest.title}</h3>
               </div>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-[#5c4733] mt-2 flex items-center gap-2">
                 {quest.isGroupQuest ? (
-                  <span className="flex items-center">
-                    <Users className="h-3 w-3 mr-1" />
-                    Group Quest • {Array.isArray(quest.groupMembers) ? quest.groupMembers.length : 0} members
-                  </span>
+                  <>
+                    <Users className="h-4 w-4" />
+                    Group Quest • {quest.groupMembers?.length ?? 0} members
+                  </>
                 ) : (
-                  <span className="flex items-center">
-                    <User className="h-3 w-3 mr-1" />
-                    {typeof quest.assignedTo === 'string' ? quest.assignedTo : 'Multiple users'}
-                  </span>
+                  <>
+                    <User className="h-4 w-4" />
+                    Assigned to: {typeof quest.assignedTo === 'string' ? quest.assignedTo : 'Multiple'}
+                  </>
                 )}
               </p>
+
             </div>
-            <div className="flex items-start gap-2">
+            <div className="flex flex-col items-start space-y-2 sm:flex-row sm:space-y-0 sm:space-x-3">
               <QuestProgressRing
                 xpReward={quest.xpReward}
                 dueDate={quest.dueDate}
                 difficulty={quest.difficulty}
                 description={quest.description}
               />
-              <Badge className={`${getBadgeColor()} font-normal`}>
+              <Badge className={`${getBadgeColor()} font-semibold px-3 py-1 text-sm shadow-md`}>
                 {quest.difficulty}
               </Badge>
             </div>
@@ -360,25 +366,26 @@ const QuestCard = forwardRef<HTMLDivElement, QuestCardProps>(({ quest, isDraggin
         </CardHeader>
         
         <CardContent className="p-4 pt-3 pb-3">
-          <p className="mb-3 text-gray-800">{quest.description}</p>
-          
-          <div className="flex flex-wrap items-center text-xs text-gray-500 mb-2">
+        <p className="text-[15px] leading-relaxed text-[#3e2e1e] italic px-2 border-l-4 border-[#c0a36e] line-clamp-3">
+          “{quest.description}”
+        </p>          
+          <div className="grid sm:flex gap-3 text-xs text-[#5c4733] mb-2 mt-4">
             {quest.projectName && (
-              <div className="flex items-center mr-4 mb-1">
-                <MapPin className="h-3 w-3 mr-1" />
+              <div className="flex items-center gap-1">
+                <MapPin className="h-3 w-3" />
                 {quest.projectName}
               </div>
             )}
-            <div className="flex items-center mr-4 mb-1">
-              <Calendar className="h-3 w-3 mr-1" />
+            <div className="flex items-center gap-1">
+              <Calendar className="h-3 w-3" />
               Due: {quest.dueDate}
             </div>
-            <div className="flex items-center mr-4 mb-1">
-              <Clock className="h-3 w-3 mr-1" />
+            <div className="flex items-center gap-1">
+              <Clock className="h-3 w-3" />
               Posted {timeAgo}
             </div>
           </div>
-          
+ 
           {quest.isGroupQuest && Array.isArray(quest.groupMembers) && quest.groupMembers.length > 0 && (
             <div className="mt-3 pt-2 border-t border-gray-100">
               <p className="text-xs text-gray-500 mb-1 flex items-center justify-between">
@@ -406,13 +413,19 @@ const QuestCard = forwardRef<HTMLDivElement, QuestCardProps>(({ quest, isDraggin
           )}
         </CardContent>
         
-        <CardFooter className="p-4 pt-0 flex items-center justify-between">
-          <div className="flex items-center">
-            <Award className="h-4 w-4 text-yellow-500 mr-1" />
-            <span className="font-medium">{quest.xpReward} XP</span>
+        <CardFooter className="p-4 pt-0 flex items-center justify-between border-t border-[#e5d3a2] mt-4">
+          <div className="flex items-center text-[#6b4f30] bg-[#f9f3e4] px-3 py-1 rounded-full shadow-inner border border-[#d6c6a0]">
+            <Award className="h-4 w-4 text-yellow-600 mr-2" />
+            <span className="font-semibold tracking-wide text-sm">{quest.xpReward} XP</span>
           </div>
-          
-          {getStatusActions()}
+
+          <div className="mx-7 w-10 h-10 rounded-full bg-[#8b0000] shadow-inner shadow-[#5c0000] border-2 border-[#a52a2a] flex items-center justify-center hover:scale-105 transition-transform">
+            <Crown className="text-yellow-100 w-5 h-5" />
+          </div>
+
+          <div className="ml-auto">
+            {getStatusActions()}
+          </div>
         </CardFooter>
       </Card>
 

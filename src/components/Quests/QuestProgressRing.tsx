@@ -32,8 +32,8 @@ const QuestProgressRing = ({ xpReward, dueDate, difficulty, description }: Quest
               strokeLinecap: 'round',
               textSize: '24px',
               pathTransitionDuration: 0.5,
-              pathColor: `rgba(155, 135, 245, ${progress / 100})`,
-              textColor: '#6366f1',
+              pathColor: `rgba(255,223,0,100)`,
+              textColor: '#3e2e1e',
               trailColor: '#d6d6d6',
               backgroundColor: '#3e98c7',
             })}
