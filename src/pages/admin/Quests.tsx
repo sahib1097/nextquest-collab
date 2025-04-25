@@ -17,6 +17,7 @@ import { LeaderboardScope } from "@/types/social";
 import { Users, Trophy, Medal, Settings, Castle, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { PhaserMap } from "../phaserMap";
 
 const Quests = () => {
   const [activeTab, setActiveTab] = useState("available");
@@ -153,7 +154,8 @@ const Quests = () => {
                       Quest Map
                     </span>
                   </h2>
-                  <QuestMap quests={JSON.parse(localStorage.getItem("fluxQuests") || "[]")} />
+                  <PhaserMap height="80vh" />
+                  {/* <QuestMap quests={JSON.parse(localStorage.getItem("fluxQuests") || "[]")} /> */}
                 </motion.div>
 
                 <XPBoostItem onCollect={handleCollectBoost} />
