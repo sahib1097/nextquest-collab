@@ -413,16 +413,26 @@ const QuestCard = forwardRef<HTMLDivElement, QuestCardProps>(({ quest, isDraggin
           )}
         </CardContent>
         
-        <CardFooter className="p-4 pt-0 flex items-center justify-between border-t border-[#e5d3a2] mt-4">
+        <CardFooter className="p-4 pt-0 relative flex items-center border-t border-[#e5d3a2] mt-4">
+          {/* XP Badge stays at left */}
           <div className="flex items-center text-[#6b4f30] bg-[#f9f3e4] px-3 py-1 rounded-full shadow-inner border border-[#d6c6a0]">
             <Award className="h-4 w-4 text-yellow-600 mr-2" />
-            <span className="font-semibold tracking-wide text-sm">{quest.xpReward} XP</span>
+            <span className="font-semibold tracking-wide text-sm">
+              {quest.xpReward} XP
+            </span>
           </div>
 
-          <div className="mx-7 w-10 h-10 rounded-full bg-[#8b0000] shadow-inner shadow-[#5c0000] border-2 border-[#a52a2a] flex items-center justify-center hover:scale-105 transition-transform">
+          {/* Crown: absolute-centered */}
+          <div
+            className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                      w-10 h-10 rounded-full bg-[#8b0000] shadow-inner shadow-[#5c0000] 
+                      border-2 border-[#a52a2a] flex items-center justify-center 
+                      hover:scale-105 transition-transform"
+          >
             <Crown className="text-yellow-100 w-5 h-5" />
           </div>
 
+          {/* Status actions pushed to the right */}
           <div className="ml-auto">
             {getStatusActions()}
           </div>

@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AchievementShowcase from "@/components/Social/AchievementShowcase";
 import React, { useEffect, useState } from "react";
+import SpriteIcon from "../ui/SpriteIcon";
 
 // Dummy type for quest activity data (fetch from your quest system in real use)
 type ActivityQuest = {
@@ -27,6 +28,17 @@ interface UserProfileProps {
 }
 
 const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => {
+  const getPersistedIndex = (key: string, max: number): number => {
+    const stored = localStorage.getItem(key);
+    if (stored !== null) return parseInt(stored, 10);
+    const randomIndex = Math.floor(Math.random() * max);
+    localStorage.setItem(key, String(randomIndex));
+    return randomIndex;
+  };
+  
+  const objectIconIndex = getPersistedIndex("objectIconIndex", 64); // Assuming 8x8 grid
+  const gemIconIndex = getPersistedIndex("gemIconIndex", 40); // Assuming 8x5 grid
+  
   const progress = calculateLevelProgress(userLevel.xp, userLevel.level);
 
   // Calculate how many XP needed for next level
@@ -82,7 +94,13 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
           <CardHeader className="pb-2 border-b border-blue-100">
             <div className="flex justify-between items-center">
               <CardTitle className="text-lg flex items-center">
-                <Award className="h-6 w-6 mr-2 text-yellow-500" /> 
+              <SpriteIcon 
+                src="/assets/F_U_ObjectIconTileMap1.png"
+                index={objectIconIndex}
+                size={22}
+                columns={18}
+                className="h-6 w-6 mr-2"
+              />
                 {userLevel.username}
               </CardTitle>
               <Badge className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 px-3 py-1">
@@ -127,26 +145,7 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
                 </div>
                 
                 {/* Enhanced XP Progress Bar */}
-                <div className="relative pt-1">
-                  <Progress
-                    value={progress}
-                    className="h-3 bg-blue-100"
-                  />
-                  <div 
-                    className="absolute top-1 left-0 h-3 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-1000"
-                    style={{ width: `${progress}%` }}
-                  />
-                  <div className="absolute top-1 left-0 h-3 w-full">
-                    {[25, 50, 75].map(milestone => (
-                      <div 
-                        key={milestone}
-                        className={`absolute top-0 w-0.5 h-full bg-white opacity-70 ${milestone <= progress ? "animate-pulse" : ""}`}
-                        style={{ left: `${milestone}%` }}
-                      />
-                    ))}
-                  </div>
-                  <div className="text-right text-xs mt-1 text-gray-500 font-medium">{progress}%</div>
-                </div>
+                
               </div>
             </div>
           </CardContent>

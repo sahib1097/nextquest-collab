@@ -13,7 +13,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogCloseButton, DialogOverlay } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
 interface LeaderboardProps {
@@ -43,6 +43,7 @@ interface LeaderboardEntry {
     completedDate: string;
     completedEarly?: boolean;
     daysEarly?: number;
+    spriteIndex?: number;
   }[];
 }
 
@@ -387,89 +388,152 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
       
       {/* User Details Dialog */}
       <Dialog open={userDetailsOpen} onOpenChange={setUserDetailsOpen}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Avatar className={`h-6 w-6 ${getAvatarBorderClass(selectedUser)}`}>
-                {selectedUser?.avatar ? (
-                  <AvatarImage src={selectedUser.avatar} alt={selectedUser.name} />
-                ) : (
-                  <AvatarFallback className={getAvatarFallbackClass(selectedUser)}>
-                    {selectedUser?.name.charAt(0)}
-                  </AvatarFallback>
-                )}
-              </Avatar>
-              {selectedUser?.name}'s Profile
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold">{selectedUser?.name}</h3>
-                <p className="text-sm text-gray-500">
-                  Level {selectedUser?.level} {selectedUser?.role}
-                </p>
-              </div>
-              <div className="text-right">
-                <div className="text-2xl font-bold">{selectedUser?.xp.toLocaleString()} XP</div>
-                <p className="text-xs text-gray-500">Rank #{selectedUser?.rank}</p>
-              </div>
-            </div>
-            
-            {/* Guild information */}
-            {selectedUser?.guildName && (
-              <div className="bg-gray-50 p-3 rounded-md">
-                <div className="flex items-center gap-2">
-                  {selectedUser.guildLogo ? (
-                    <div className="w-5 h-5 rounded-full overflow-hidden">
-                      <img src={selectedUser.guildLogo} alt={selectedUser.guildName} className="w-full h-full object-cover" />
+      <DialogOverlay className="fixed inset-0 bg-black/50 z-40" />
+        <DialogContent className="fixed left-[50%] top-[50%] z-50 grid translate-x-[-85%] translate-y-[-50%] p-0 bg-transparent border-none shadow-none">
+          <div className="flex justify-center items-center p-6 ">
+            <div
+              className="relative flex justify-center items-center"
+              style={{
+                backgroundImage: "url('/assets/F_UI_Panel_N.png')",
+                width: "900px", // 👈 larger parchment width
+                height: "900px", // 👈 larger parchment height
+                backgroundSize: "contain",
+                backgroundRepeat: "no-repeat",
+                imageRendering: "pixelated",
+                padding: "40px",
+                boxSizing: "border-box",
+              }}
+            >
+              <DialogCloseButton/>
+              <div className="w-full max-w-[600px] h-[600px] overflow-y-auto pr-2 custom-scroll text-brown-800"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}>
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Avatar className={`h-6 w-6 ${getAvatarBorderClass(selectedUser)}`}>
+                      {selectedUser?.avatar ? (
+                        <AvatarImage src={selectedUser.avatar} alt={selectedUser.name} />
+                      ) : (
+                        <AvatarFallback className={getAvatarFallbackClass(selectedUser)}>
+                          {selectedUser?.name.charAt(0)}
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
+                    {selectedUser?.name}'s Profile
+                  </DialogTitle>
+                </DialogHeader>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold">{selectedUser?.name}</h3>
+                      <p className="text-sm text-gray-500">
+                        Level {selectedUser?.level} {selectedUser?.role}
+                      </p>
                     </div>
-                  ) : (
-                    <Castle className="h-4 w-4 text-purple-600" />
-                  )}
-                  <span className="font-medium">{selectedUser.guildName}</span>
-                </div>
-              </div>
-            )}
-            
-            {/* Achievements */}
-            {selectedUser?.achievements && selectedUser.achievements.length > 0 && (
-              <div>
-                <h4 className="font-medium mb-2">Achievements</h4>
-                <div className="flex flex-wrap gap-2">
-                  {selectedUser.achievements.map((achievement, i) => (
-                    <Badge key={i} variant="outline" className="px-2 py-1">
-                      {achievement}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {/* Quest History */}
-            <div>
-              <h4 className="font-medium mb-2">Recent Quests</h4>
-              {selectedUser?.questHistory ? (
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {selectedUser.questHistory.map((quest, i) => (
-                    <div key={i} className="bg-gray-50 p-2 rounded-md text-sm">
-                      <div className="flex items-center justify-between">
-                        <span>{quest.name}</span>
-                        <span className="font-mono font-semibold text-green-600">+{quest.xp} XP</span>
-                      </div>
-                      <div className="text-xs text-gray-500 flex items-center justify-between mt-1">
-                        <span>Completed {new Date(quest.completedDate).toLocaleDateString()}</span>
-                        {quest.completedEarly && (
-                          <span className="text-amber-600">{quest.daysEarly} days early!</span>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold">{selectedUser?.xp.toLocaleString()} XP</div>
+                      <p className="text-xs text-gray-500">Rank #{selectedUser?.rank}</p>
+                    </div>
+                  </div>
+
+                  {selectedUser?.guildName && (
+                    <div className="bg-gray-50 p-3 rounded-md">
+                      <div className="flex items-center gap-2">
+                        {selectedUser.guildLogo ? (
+                          <div className="w-5 h-5 rounded-full overflow-hidden">
+                            <img src={selectedUser.guildLogo} alt={selectedUser.guildName} className="w-full h-full object-cover" />
+                          </div>
+                        ) : (
+                          <Castle className="h-4 w-4 text-purple-600" />
                         )}
+                        <span className="font-medium">{selectedUser.guildName}</span>
                       </div>
                     </div>
-                  ))}
+                  )}
+
+                  {selectedUser?.achievements?.length > 0 && (
+                    <div>
+                      <h4 className="font-medium mb-2">Achievements</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedUser.achievements.map((achievement, i) => {
+                          const formattedAchievement =
+                            achievement.length > 16 && achievement.includes(" ")
+                              ? (() => {
+                                  const words = achievement.split(" ");
+                                  const midpoint = Math.ceil(words.length / 2);
+                                  return words.slice(0, midpoint).join(" ") + "\n" + words.slice(midpoint).join(" ");
+                                })()
+                              : achievement;
+
+                          return (
+                            <div
+                              key={i}
+                              className="relative px-4 py-2 flex items-center justify-center text-center text-white font-bold text-sm min-w-[140px] min-h-[140px]"
+                              style={{
+                                backgroundImage: "url('/assets/F_UI_Banner_A1.png')",
+                                backgroundRepeat: "repeat-x",
+                                backgroundSize: "auto 100%",
+                                backgroundPosition: "center",
+                                imageRendering: "pixelated",
+                              }}
+                            >
+                              <span className="text-xs leading-snug break-words whitespace-pre-wrap">
+                                {formattedAchievement}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  <div>
+                    <h4 className="font-medium mb-2">Recent Quests</h4>
+                    {selectedUser?.questHistory ? (
+                      <div className="space-y-2 max-h-48 overflow-y-auto pr-1 custom-scroll">
+                        {selectedUser.questHistory.map((quest, i) => {
+                          const spriteIndex = quest.spriteIndex || 0;
+                          const spriteSize = 22;
+                          const columns = 18;
+                          const x = -(spriteIndex % columns) * spriteSize;
+                          const y = -Math.floor(spriteIndex / columns) * spriteSize;
+
+                          return (
+                            <div key={i} className="bg-gray-50 p-2 rounded-md text-sm">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <div
+                                    className="w-[22px] h-[22px] bg-no-repeat"
+                                    style={{
+                                      backgroundImage: "url('/assets/F_U_ObjectIconTileMap1.png')",
+                                      backgroundSize: "396px 242px",
+                                      backgroundPosition: `${x}px ${y}px`,
+                                      imageRendering: "pixelated",
+                                    }}
+                                  />
+                                  <span>{quest.name}</span>
+                                </div>
+                                <span className="font-mono font-semibold text-green-600">+{quest.xp} XP</span>
+                              </div>
+                              <div className="text-xs text-gray-500 flex items-center justify-between mt-1">
+                                <span>Completed {new Date(quest.completedDate).toLocaleDateString()}</span>
+                                {quest.completedEarly && (
+                                  <span className="text-amber-600">{quest.daysEarly} days early!</span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500">No recent quests</p>
+                    )}
+                  </div>
                 </div>
-              ) : (
-                <p className="text-sm text-gray-500">No recent quests</p>
-              )}
+              </div>
             </div>
           </div>
         </DialogContent>

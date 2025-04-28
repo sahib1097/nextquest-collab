@@ -20,6 +20,28 @@ interface AchievementShowcaseProps {
 }
 
 const AchievementShowcase = ({ userId, expanded = false }: AchievementShowcaseProps) => {
+  const GemIcon = ({ index, className = "" }: { index: number; className?: string }) => {
+    const size = 22;
+    const columns = 6;
+    const x = -(index % columns) * size;
+    const y = -Math.floor(index / columns) * size;
+  
+    return (
+      <div
+        className={`inline-block ${className}`}
+        style={{
+          width: size,
+          height: size,
+          backgroundImage: "url('/assets/F_UI_Gems.PNG')", // adjust path as needed
+          backgroundPosition: `${x}px ${y}px`,
+          backgroundSize: "132px 132px",
+          backgroundRepeat: "no-repeat",
+          imageRendering: "pixelated",
+        }}
+      />
+    );
+  };
+
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [showNewAchievement, setShowNewAchievement] = useState<Achievement | null>(null);
   const [isExpanded, setIsExpanded] = useState(expanded);
@@ -189,8 +211,8 @@ const AchievementShowcase = ({ userId, expanded = false }: AchievementShowcasePr
         onClick={toggleExpanded}
       >
         <div className="flex items-center gap-2">
-          <Trophy className="h-5 w-5 text-purple-600" />
-          <h3 className="text-base font-medium">Trophies</h3>
+        <GemIcon index={5} className="mr-2" />
+        <h3 className="text-base font-medium">Trophies</h3>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex gap-1 items-center text-xs bg-gray-100 px-2 py-1 rounded-full">
