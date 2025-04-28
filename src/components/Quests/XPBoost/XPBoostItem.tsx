@@ -139,11 +139,10 @@ const XPBoostItem = ({ onCollect }: XPBoostItemProps) => {
                 className="fixed bottom-20 right-10 cursor-pointer z-50"
                 onClick={handleCollect}
               >
-                <div className="relative rounded-md shadow-xl bg-gray-700 p-1">
                 <motion.img
                   src={`/assets/${animationFrames[currentFrame]}`}
                   alt="XP Boost"
-                  className="w-20 h-20 object-contain"
+                  className="w-30 h-30 object-contain"
                   animate={
                     !isAnimating
                       ? {
@@ -162,7 +161,6 @@ const XPBoostItem = ({ onCollect }: XPBoostItemProps) => {
                       : {}
                   }
                 />
-                </div>
               </motion.div>
             </TooltipTrigger>
             <TooltipContent>

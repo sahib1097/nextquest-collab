@@ -94,7 +94,7 @@ const QuestBoard = ({ status, questType }: QuestBoardProps) => {
         return (
           <div className="flex items-center gap-2 mb-6 text-xl font-bold text-emerald-600">
             <Sparkles className="h-6 w-6" />
-            <span className="bg-emerald-600 text-white px-2 py-0.5 rounded-md">Completed Quests</span>
+            <span className="px-4 py-2 bg-[#20966b] text-[#ffe8a3] font-extrabold text-3xl tracking-wide border-4 border-[#155e44] rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] uppercase">Completed Quests</span>
             </div>
         );
       default:

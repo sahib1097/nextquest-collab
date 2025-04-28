@@ -88,7 +88,9 @@ const Quests = () => {
       <div className="flex flex-col gap-6">
         <div className="flex-1">
           <div className="flex items-center justify-between mb-6">
-            <h1 className=" bg-red-600 rounded-md px-2 text-2xl font-bold text-white">Quest Board</h1>
+          <h1 className="px-4 py-2 bg-[#8B0000] text-[#ffe8a3] font-extrabold text-3xl tracking-wide border-4 border-[#5c0000] rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] uppercase">
+            Quest Board
+          </h1>            
             <div className="flex items-center gap-2">
               {isAdmin && (
                 <Button 
@@ -135,17 +137,30 @@ const Quests = () => {
                 alt="Left Banner"
                 className="h-32 w-auto object-contain"
               />
-              <TabsList className="grid grid-cols-3 w-full max-w-md">
-                <TabsTrigger value="quests" className="flex items-center gap-1">
-                  <Trophy className="h-4 w-4" /> Quests
+
+              {/* Pixel-RPG Tabs (FF Tactics / Chrono Trigger style) */}
+              <TabsList className="flex w-full max-w-md bg-[#d6c8a2] border-4 border-[#5c4a2b] rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] overflow-hidden">
+                <TabsTrigger
+                  value="quests"
+                  className="flex-1 text-s font-bold py-4 border-r-2 border-[#5c4a2b] bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+                >
+                  <Trophy className="h-3 w-3 mx-1" /> Quests
                 </TabsTrigger>
-                <TabsTrigger value="guilds" className="flex items-center gap-1">
-                  <Castle className="h-4 w-4" /> Guilds
+                <TabsTrigger
+                  value="guilds"
+                  className="flex-1 text-s font-bold py-4 border-r-2 border-[#5c4a2b] bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+                >
+                  <Castle className="h-3 w-3 mx-1" /> Guilds
                 </TabsTrigger>
-                <TabsTrigger value="leaderboards" className="flex items-center gap-1">
-                  <Star className="h-4 w-4" /> Rankings
+                <TabsTrigger
+                  value="leaderboards"
+                  className="flex-1 text-s font-bold py-4 bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+                >
+                  <Star className="h-3 w-3 mx-1" /> Rankings
                 </TabsTrigger>
               </TabsList>
+
+              {/* Right Banner */}
               <img
                 src="/assets/F_UI_BlueBannerB.png"
                 alt="Right Banner"
@@ -178,14 +193,32 @@ const Quests = () => {
                       alt="Left Banner"
                       className="h-32 w-auto object-contain"
                     />
-                    <TabsList className="grid grid-cols-5 w-full max-w-md mb-8">
-                      <TabsTrigger value="available">Available</TabsTrigger>
-                      <TabsTrigger value="groupQuests" className="flex items-center">
+                    <TabsList className="flex w-full max-w-md bg-[#d6c8a2] border-4 border-[#5c4a2b] rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] overflow-hidden">
+                      <TabsTrigger value="available"
+                        className="flex-1 text-s font-bold py-4 bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+                      >
+                        Available
+                      </TabsTrigger>
+                      <TabsTrigger value="groupQuests" 
+                        className="flex-1 text-s font-bold py-4 bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+                      >
                         <Users className="h-4 w-4 mr-1" /> Group
                       </TabsTrigger>
-                      <TabsTrigger value="inProgress">In Progress</TabsTrigger>
-                      <TabsTrigger value="completed">Completed</TabsTrigger>
-                      <TabsTrigger value="failed">Failed</TabsTrigger>
+                      <TabsTrigger value="inProgress"
+                        className="flex-1 text-s font-bold py-4 bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+                      >
+                        In Progress
+                      </TabsTrigger>
+                      <TabsTrigger value="completed"
+                        className="flex-1 text-s font-bold py-4 bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+                      >
+                        Completed
+                      </TabsTrigger>
+                      <TabsTrigger value="failed"
+                        className="flex-1 text-s font-bold py-4 bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+                      >
+                        Failed
+                      </TabsTrigger>
                     </TabsList>
                     <img
                       src="/assets/F_UI_GreenBannerB.png"

@@ -93,10 +93,23 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
         />
 
         {/* Tabs */}
-        <TabsList className="grid grid-cols-3 w-full max-w-sm bg-white rounded-md border">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="achievements">Achievements</TabsTrigger>
-          <TabsTrigger value="activity">Activity</TabsTrigger>
+        <TabsList className="flex w-full max-w-md bg-[#d6c8a2] border-4 border-[#5c4a2b] rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] overflow-hidden">
+          <TabsTrigger value="overview"
+            className="flex-1 text-s font-bold py-4 bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+          >
+            Overview
+          </TabsTrigger>
+
+          <TabsTrigger value="achievements"
+            className="flex-1 text-s font-bold py-4 bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+          >
+            Achievements
+          </TabsTrigger>
+          <TabsTrigger value="activity"
+            className="flex-1 text-s font-bold py-4 bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+          >
+            Activity
+          </TabsTrigger>
         </TabsList>
 
         {/* Right Banner */}
@@ -108,25 +121,30 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
       </div>
 
       <TabsContent value="overview">
-        <Card className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 border-2 border-blue-100 shadow-md overflow-hidden">
-          <CardHeader className="pb-2 border-b border-blue-100">
+        
+      <Card className="bg-[#fefefe] border-4 border-[#8b7b5b] rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,0.6)] overflow-hidden relative">
+        {/* Inner pixel bevel frame */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="border-2 border-[#d6c8a2] m-1 h-full w-full" />
+        </div>
+          <CardHeader className="bg-[#d6c8a2] border-b-4 border-[#8b7b5b] px-4 py-2 relative z-10">
             <div className="flex justify-between items-center">
-              <CardTitle className="text-lg flex items-center">
-              <SpriteIcon 
-                src="/assets/F_U_ObjectIconTileMap1.png"
-                index={objectIconIndex}
-                size={22}
-                columns={18}
-                className="h-6 w-6 mr-2"
-              />
+              <CardTitle className="text-md font-bold flex items-center text-[#4b3f2b]">
+                <SpriteIcon 
+                  src="/assets/F_U_ObjectIconTileMap1.png"
+                  index={objectIconIndex}
+                  size={22}
+                  columns={18}
+                  className="h-6 w-6 mr-2"
+                />
                 {userLevel.username}
               </CardTitle>
-              <Badge className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 px-3 py-1">
+              <Badge className="bg-[#8b7b5b] text-white text-xs px-3 py-1 border-2 border-[#4b3f2b]">
                 <Star className="h-3 w-3 mr-1 inline" /> Level {userLevel.level}
               </Badge>
             </div>
           </CardHeader>
-          <CardContent className="pt-4">
+          <CardContent className="px-4 py-6 bg-[#fcf9f0] text-[#4b3f2b] relative z-10">
             <div className="flex items-start">
               {/* Profile Picture */}
               <ProfilePictureUploader onUpload={handleProfilePictureUpload}>
