@@ -61,7 +61,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
   
   return (
-    <div className="flex h-screen bg-white">
+    <div className="flex h-screen bg-[url('/assets/grey_brick.jpeg')]">
       {sidebarPosition === "left" && (
         <MovableSidebar 
           position={sidebarPosition}

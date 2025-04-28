@@ -54,13 +54,35 @@ const LeaderboardSystem = ({
             </Select>
           )}
           {showFullLeaderboardLink && (
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => navigate("/leaderboards")}
-            >
-              View Full Rankings
-            </Button>
+            <button
+            onClick={() => navigate("/leaderboards")}
+            className="relative flex items-center justify-center h-12 px-10 text-sm font-bold text-white group"
+          >
+            {/* Background frame */}
+            <img
+              src="/assets/F_UI_MenuButton_C2.png"
+              alt="Button Frame"
+              className="absolute inset-0 w-full h-full object-fill pointer-events-none"
+            />
+          
+            {/* Left handle */}
+            <img
+              src="/assets/F_U_Detail4-Left.png"
+              alt="Left Detail"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 h-8 pointer-events-none"
+            />
+          
+            {/* Button Text */}
+            <span className="relative z-10">View Full Rankings</span>
+          
+            {/* Right handle */}
+            <img
+              src="/assets/F_U_Detail4.png"
+              alt="Right Detail"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 h-8 pointer-events-none"
+            />
+          </button>
+          
           )}
         </CardTitle>
       </CardHeader>

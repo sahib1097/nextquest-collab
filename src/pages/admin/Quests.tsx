@@ -88,7 +88,7 @@ const Quests = () => {
       <div className="flex flex-col gap-6">
         <div className="flex-1">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold text-gray-800">Quest Board</h1>
+            <h1 className=" bg-red-600 rounded-md px-2 text-2xl font-bold text-white">Quest Board</h1>
             <div className="flex items-center gap-2">
               {isAdmin && (
                 <Button 
@@ -128,79 +128,104 @@ const Quests = () => {
           
           {/* Section tabs - Quests, Guilds and Leaderboards */}
           <Tabs value={activeSection} onValueChange={handleSectionChange} className="w-full mb-6">
-            <TabsList className="grid grid-cols-3 w-full max-w-md">
-              <TabsTrigger value="quests" className="flex items-center gap-1">
-                <Trophy className="h-4 w-4" /> Quests
-              </TabsTrigger>
-              <TabsTrigger value="guilds" className="flex items-center gap-1">
-                <Castle className="h-4 w-4" /> Guilds
-              </TabsTrigger>
-              <TabsTrigger value="leaderboards" className="flex items-center gap-1">
-                <Star className="h-4 w-4" /> Rankings
-              </TabsTrigger>
-            </TabsList>
-          
-            <TabsContent value="quests">
-              <>
-                <motion.div 
-                  className="mb-8"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                    <span className="bg-gradient-to-r from-cyan-500 to-purple-500 bg-clip-text text-transparent">
-                      Quest Map
-                    </span>
-                  </h2>
-                  <QuestMap quests={JSON.parse(localStorage.getItem("fluxQuests") || "[]")} />
-                </motion.div>
+            <div className="flex items-stretch justify-center mb-8 w-full max-w-3xl mx-auto">
+              {/* Left Banner */}
+              <img
+                src="/assets/F_UI_BlueBannerB.png"
+                alt="Left Banner"
+                className="h-32 w-auto object-contain"
+              />
+              <TabsList className="grid grid-cols-3 w-full max-w-md">
+                <TabsTrigger value="quests" className="flex items-center gap-1">
+                  <Trophy className="h-4 w-4" /> Quests
+                </TabsTrigger>
+                <TabsTrigger value="guilds" className="flex items-center gap-1">
+                  <Castle className="h-4 w-4" /> Guilds
+                </TabsTrigger>
+                <TabsTrigger value="leaderboards" className="flex items-center gap-1">
+                  <Star className="h-4 w-4" /> Rankings
+                </TabsTrigger>
+              </TabsList>
+              <img
+                src="/assets/F_UI_BlueBannerB.png"
+                alt="Right Banner"
+                className="h-32 w-auto object-contain"
+              />
+            </div>
+              <TabsContent value="quests">
+                <>
+                  <motion.div 
+                    className="mb-8"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                      <span className="bg-gradient-to-r from-cyan-500 to-purple-500 bg-clip-text text-transparent">
+                        Quest Map
+                      </span>
+                    </h2>
+                    <QuestMap quests={JSON.parse(localStorage.getItem("fluxQuests") || "[]")} />
+                  </motion.div>
 
-                <XPBoostItem onCollect={handleCollectBoost} />
+                  <XPBoostItem onCollect={handleCollectBoost} />
 
-                <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-                  <TabsList className="grid grid-cols-5 w-full max-w-md mb-8">
-                    <TabsTrigger value="available">Available</TabsTrigger>
-                    <TabsTrigger value="groupQuests" className="flex items-center">
-                      <Users className="h-4 w-4 mr-1" /> Group
-                    </TabsTrigger>
-                    <TabsTrigger value="inProgress">In Progress</TabsTrigger>
-                    <TabsTrigger value="completed">Completed</TabsTrigger>
-                    <TabsTrigger value="failed">Failed</TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="available">
-                    <QuestBoard status="Available" questType="individual" />
-                  </TabsContent>
+                  <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+                  <div className="flex items-stretch justify-center mb-8 w-full max-w-3xl mx-auto">
+                    {/* Left Banner */}
+                    <img
+                      src="/assets/F_UI_GreenBannerB.png"
+                      alt="Left Banner"
+                      className="h-32 w-auto object-contain"
+                    />
+                    <TabsList className="grid grid-cols-5 w-full max-w-md mb-8">
+                      <TabsTrigger value="available">Available</TabsTrigger>
+                      <TabsTrigger value="groupQuests" className="flex items-center">
+                        <Users className="h-4 w-4 mr-1" /> Group
+                      </TabsTrigger>
+                      <TabsTrigger value="inProgress">In Progress</TabsTrigger>
+                      <TabsTrigger value="completed">Completed</TabsTrigger>
+                      <TabsTrigger value="failed">Failed</TabsTrigger>
+                    </TabsList>
+                    <img
+                      src="/assets/F_UI_GreenBannerB.png"
+                      alt="Right Banner"
+                      className="h-32 w-auto object-contain"
+                    />
+                    </div>
 
-                  <TabsContent value="groupQuests">
-                    <QuestBoard status="Available" questType="group" />
-                  </TabsContent>
-                  
-                  <TabsContent value="inProgress">
-                    <QuestBoard status="In Progress" />
-                  </TabsContent>
-                  
-                  <TabsContent value="completed">
-                    <QuestBoard status="Completed" />
-                  </TabsContent>
-                  
-                  <TabsContent value="failed">
-                    <QuestBoard status="Failed" />
-                  </TabsContent>
-                </Tabs>
-              </>
-            </TabsContent>
+                    <TabsContent value="available">
+                      <QuestBoard status="Available" questType="individual" />
+                    </TabsContent>
+
+                    <TabsContent value="groupQuests">
+                      <QuestBoard status="Available" questType="group" />
+                    </TabsContent>
+                    
+                    <TabsContent value="inProgress">
+                      <QuestBoard status="In Progress" />
+                    </TabsContent>
+                    
+                    <TabsContent value="completed">
+                      <QuestBoard status="Completed" />
+                    </TabsContent>
+                    
+                    <TabsContent value="failed">
+                      <QuestBoard status="Failed" />
+                    </TabsContent>
+                  </Tabs>
+                </>
+              </TabsContent>
             
-            <TabsContent value="guilds">
-              <GuildBoard />
-            </TabsContent>
+              <TabsContent value="guilds">
+                <GuildBoard />
+              </TabsContent>
             
-            <TabsContent value="leaderboards">
-              <LeaderboardSystem />
-            </TabsContent>
-          </Tabs>
-        </div>
+              <TabsContent value="leaderboards">
+                <LeaderboardSystem />
+              </TabsContent>
+            </Tabs>
+          </div>
 
         {/* Horizontal Mini-Leaderboard (only show on quests and guilds tabs) */}
         {activeSection !== "leaderboards" && (
