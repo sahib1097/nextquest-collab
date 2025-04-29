@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { updateLastActivity, logoutUser } from "@/utils/authUtils";
 
 interface DashboardLayoutProps {
@@ -21,6 +21,9 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+  const location = useLocation();
+  const isQuestPage = location.pathname === "/admin/quests";
+
   const [sidebarPosition, setSidebarPosition] = useState<SidebarPosition>(() => {
     return (localStorage.getItem("fluxSidebarPosition") as SidebarPosition) || "left";
   });
@@ -61,7 +64,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
   
   return (
-    <div className="flex h-screen bg-[url('/assets/grey_brick.jpeg')]">
+    <div className={`flex h-screen ${isQuestPage ? "bg-[url('/assets/grey_brick.jpeg')]" : "bg-white"}`}>
       {sidebarPosition === "left" && (
         <MovableSidebar 
           position={sidebarPosition}

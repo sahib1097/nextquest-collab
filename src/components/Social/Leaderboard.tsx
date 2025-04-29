@@ -245,13 +245,13 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
-                className={`grid grid-cols-12 gap-2 p-3 items-center border-t ${
+                className={`grid grid-cols-12 gap-2 justify-between items-center px-4 py-2 rounded-lg text-white${
                   entry.isCurrentUser ? "bg-primary/5 border-primary/20" : ""
-                } ${index % 2 === 0 && !entry.isCurrentUser ? "bg-muted/20" : ""} cursor-pointer hover:bg-gray-50`}
+                } ${index % 2 === 0 && !entry.isCurrentUser ? "bg-muted/20" : ""} cursor-pointer hover:bg-gray-700`}
                 onClick={() => handleUserClick(entry)}
               >
                 <div className="col-span-1 text-center font-semibold">
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center text-white">
                     {entry.rank <= 3 ? (
                       <div className={`inline-flex items-center justify-center w-6 h-6 rounded-full 
                         ${entry.rank === 1 ? "bg-yellow-100 text-yellow-600" : 
@@ -313,10 +313,10 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                   </TooltipProvider>
                   
                   <div>
-                    <div className="font-medium text-sm flex items-center">
+                    <div className="font-medium text-sm flex justify-between items-center px-4 py-2 rounded-lg text-white">
                       {entry.name}
                       {entry.isCurrentUser && (
-                        <Badge variant="outline" className="ml-2 text-[10px] py-0">You</Badge>
+                        <Badge variant="outline" className="ml-2 text-[10px] py-0 text-white">You</Badge>
                       )}
                     </div>
                     <div className="text-xs text-muted-foreground flex items-center">
@@ -329,7 +329,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                   </div>
                 </div>
                 
-                <div className="col-span-3 md:col-span-2 text-right font-mono font-medium">
+                <div className="col-span-3 md:col-span-2 text-right font-mono font-medium flex justify-between items-center px-4 py-2 rounded-lg text-white">
                   {entry.xp.toLocaleString()} XP
                 </div>
                 
@@ -341,7 +341,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                           <img src={entry.guildLogo} alt={entry.guildName} className="w-full h-full object-cover" />
                         </div>
                       ) : (
-                        <Castle className="h-3 w-3 mr-1 text-primary" />
+                        <Castle className="h-3 w-3 mr-1 text-white" />
                       )}
                       {entry.guildName}
                     </div>
