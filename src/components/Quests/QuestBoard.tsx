@@ -78,24 +78,30 @@ const QuestBoard = ({ status, questType }: QuestBoardProps) => {
     switch(status) {
       case "Available":
         return (
-          <div className="flex items-center gap-2 mb-6 text-xl font-bold text-amber-600">
-            <Scroll className="h-6 w-6" />
-            <span>Available Quests</span>
+          <div className="flex mb-6 text-xl font-bold text-amber-600">
+            <span className="flex items-center gap-2 px-4 py-2 bg-[#ff7e00] text-[#ffe8a3] font-extrabold text-3xl tracking-wide border-4 border-[#c76200] rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] uppercase">
+              <Scroll className="h-6 w-6" />
+              Available Quests
+            </span>
           </div>
         );
       case "In Progress":
         return (
           <div className="flex items-center gap-2 mb-6 text-xl font-bold text-blue-600">
-            <Swords className="h-6 w-6" />
-            <span>Active Quests</span>
+            <span className="flex items-center gap-2 px-4 py-2 bg-[#3961f9] text-[#ffe8a3] font-extrabold text-3xl tracking-wide border-4 border-[#2546c4] rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] uppercase">
+              <Swords className="h-6 w-6" />
+              Active Quests
+            </span>
           </div>
         );
       case "Completed":
         return (
           <div className="flex items-center gap-2 mb-6 text-xl font-bold text-emerald-600">
-            <Sparkles className="h-6 w-6" />
-            <span className="px-4 py-2 bg-[#20966b] text-[#ffe8a3] font-extrabold text-3xl tracking-wide border-4 border-[#155e44] rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] uppercase">Completed Quests</span>
-            </div>
+            <span className="flex items-center gap-2 px-4 py-2 bg-[#20966b] text-[#ffe8a3] font-extrabold text-3xl tracking-wide border-4 border-[#155e44] rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] uppercase">
+              <Sparkles className="h-6 w-6" />
+              Completed Quests
+            </span>
+          </div>
         );
       default:
         return null;

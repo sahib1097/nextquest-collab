@@ -184,6 +184,7 @@ const AchievementShowcase = ({ userId, expanded = false }: AchievementShowcasePr
 
   // Calculate trophy statistics
   const earnedAchievements = achievements.filter(a => a.earnedAt);
+  if (earnedAchievements.length === 0 && activeTab === "earned") return null;
   const bronzeTrophies = earnedAchievements.filter(a => a.type === AchievementType.BRONZE).length;
   const silverTrophies = earnedAchievements.filter(a => a.type === AchievementType.SILVER).length;
   const goldTrophies = earnedAchievements.filter(a => a.type === AchievementType.GOLD).length;

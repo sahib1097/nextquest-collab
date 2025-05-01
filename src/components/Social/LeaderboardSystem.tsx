@@ -56,7 +56,7 @@ const LeaderboardSystem = ({
           {showFullLeaderboardLink && (
           <button
           onClick={() => navigate("/leaderboards")}
-          className="relative flex items-center justify-center h-12 px-10 text-sm font-bold text-white group mr-4" // <-- Added `mr-4` to shift it left
+          className="relative flex items-center justify-center h-12 px-10 text-sm font-bold text-[#ffe8a3] group mr-4" // <-- Added `mr-4` to shift it left
         >
           {/* Background frame */}
           <img

@@ -108,7 +108,7 @@ const GuildBoard = () => {
           <p className="text-white font-semibold">Join or create a guild to collaborate and earn rewards together</p>
         </div>
         <button onClick={() => setIsDialogOpen(true)}
-          className="relative flex items-center justify-center h-12 px-10 text-sm font-bold text-white group"
+          className="relative flex items-center justify-center h-12 px-10 text-sm font-bold text-[#ffe8a3] group"
         >
           
           {/* Background frame */}
