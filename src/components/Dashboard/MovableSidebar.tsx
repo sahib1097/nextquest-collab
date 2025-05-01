@@ -49,6 +49,7 @@ const MovableSidebar = ({ position, onPositionChange }: MovableSidebarProps) => 
   const navItems = [
     { name: "Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
     { name: "Projects", icon: ClipboardList, path: "/admin/projects" },
+    { name: "Quests", icon: LineChart, path: "/admin/quests" },
     { name: "Roadmaps", icon: LineChart, path: "/admin/roadmaps" },
     { name: "Budgets", icon: DollarSign, path: "/admin/budgets" },
     { name: "Team", icon: Users, path: "/admin/team" },

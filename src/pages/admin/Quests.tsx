@@ -18,6 +18,8 @@ import { Users, Trophy, Medal, Settings, Castle, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { PhaserMap } from "../phaserMap";
+import { HellMap } from "../hellMap"
+import  TownMap  from "../townMap";
 
 const Quests = () => {
   const [activeTab, setActiveTab] = useState("available");
@@ -154,7 +156,7 @@ const Quests = () => {
                       Quest Map
                     </span>
                   </h2>
-                  <PhaserMap height="80vh" />
+                  <TownMap/>
                   {/* <QuestMap quests={JSON.parse(localStorage.getItem("fluxQuests") || "[]")} /> */}
                 </motion.div>
 
