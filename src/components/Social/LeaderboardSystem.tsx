@@ -4,7 +4,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Leaderboard from "./Leaderboard";
 import { LeaderboardScope, LeaderboardTimeframe } from "@/types/social";
-import { Trophy, Users, Building, UserRound, Clock } from "lucide-react";
+import { Trophy, Users, Building, UserRound, Clock, Globe2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -33,16 +33,17 @@ const LeaderboardSystem = ({
   const navigate = useNavigate();
   
   return (
-    <Card className={`bg-gradient-to-br from-[#1a1a1a] to-[#0e0e0e] border-[3px] border-[#ffd700] rounded-xl shadow-[0_0_25px_rgba(255,215,0,0.5)] ${compact ? "shadow-none" : ""}`}>
+    /*background color of table here*/
+    <Card className={`bg-[#ebdeb8] border-[4px] border-[#bfa171] rounded-xl shadow-[0_0_20px_rgba(255,215,0,0.3)] font-serif text-[#fcefb4] ${compact ? "shadow-none" : ""}`}>
       <CardHeader className={compact ? "px-0 pt-0 pb-2" : ""}>
         <CardTitle className="flex items-center justify-between">
-          <span className="px-5 py-3 bg-gradient-to-br from-[#f9e06d] to-[#d9d200] text-[#ac903d] font-extrabold text-3xl tracking-wide border-[3px] border-[#a89200] rounded-md shadow-[inset_0_0_6px_rgba(0,0,0,0.6),4px_4px_0px_rgba(0,0,0,0.7)] uppercase">Leaderboards</span>
+          <span className="px-6 py-3 bg-[#d6b96e] text-[#4b3508] font-black text-3xl tracking-wide border-[4px] border-[#a87e17] rounded-md shadow-[inset_0_0_6px_rgba(0,0,0,0.6)] uppercase font-serif">Leaderboards</span>
           {!compact && (
             <Select
               value={timeframe}
               onValueChange={(value) => setTimeframe(value as LeaderboardTimeframe)}
             >
-              <SelectTrigger className="w-32 bg-[#2c2f36] text-yellow-100 border-yellow-500 hover:border-yellow-400">
+              <SelectTrigger className="w-36 bg-[#3a2c16] text-yellow-100 border border-[#c9a93d] rounded-md hover:bg-[#4b381d]">
                 <SelectValue placeholder="Time Period" />
               </SelectTrigger>
               <SelectContent>
@@ -88,20 +89,21 @@ const LeaderboardSystem = ({
       </CardHeader>
       <CardContent className={compact ? "px-0 pb-0" : ""}>
         <Tabs value={scope} onValueChange={(value) => setScope(value as LeaderboardScope)}>
-          <TabsList className="grid grid-cols-4 mb-4 bg-[#2c2f36]  rounded-lg shadow-md overflow-hidden">
-            <TabsTrigger value={LeaderboardScope.GLOBAL} className="bg-[#333] text-white font-bold hover:bg-[#444] px-4 py-2 ">
-              <Trophy className="h-4 w-4" /> 
+          <TabsList className="grid grid-cols-4 mb-4 bg-[#2b2112] border border-[#7c5e26] rounded-lg shadow-inner overflow-hidden">
+            <TabsTrigger value={LeaderboardScope.GLOBAL} className="bg-[#2a3f9d] text-[#ffdf9e] font-bold border-r border-[#1f2e73] hover:bg-[#4b381d] px-3 py-2 transition-all duration-150 ease-in-out"
+            >
+              <Globe2 className="h-4 w-4 mr-1" /> 
               {!compact && <span>Global</span>}
             </TabsTrigger>
-            <TabsTrigger value={LeaderboardScope.REGIONAL} className="bg-[#333] text-white font-bold hover:bg-[#444] px-4 py-2 ">
+            <TabsTrigger value={LeaderboardScope.REGIONAL} className="bg-[#7c1c1c] text-white font-bold hover:bg-[#444] px-4 py-2 ">
               <Users className="h-4 w-4" /> 
               {!compact && <span>Regional</span>}
             </TabsTrigger>
-            <TabsTrigger value={LeaderboardScope.COMPANY} className="bg-[#333] text-white font-bold hover:bg-[#444] px-4 py-2 ">
+            <TabsTrigger value={LeaderboardScope.COMPANY} className="bg-[#2e4a2c] text-white font-bold hover:bg-[#444] px-4 py-2 ">
               <Building className="h-4 w-4" /> 
               {!compact && <span>Company</span>}
             </TabsTrigger>
-            <TabsTrigger value={LeaderboardScope.FRIENDS} className="bg-[#333] text-white font-bold hover:bg-[#444] px-4 py-2 ">
+            <TabsTrigger value={LeaderboardScope.FRIENDS} className="bg-[#d4af37] text-white font-bold hover:bg-[#444] px-4 py-2 ">
               <UserRound className="h-4 w-4" /> 
               {!compact && <span>Friends</span>}
             </TabsTrigger>

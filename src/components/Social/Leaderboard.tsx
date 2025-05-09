@@ -164,19 +164,19 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
     <div className="w-full">
       {!compact && (
         <div className="mb-4 space-y-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ">
             <Input
               placeholder="Search by name or guild..."
               value={searchQuery}
               onChange={handleSearchChange}
-              className="max-w-sm"
-              startIcon={<Search className="h-4 w-4" />}
+              className="max-w-sm bg-[#5c4b2a]"
+              startIcon={<Search className="h-4 w-4 text-[#fcefb4]"/>}
             />
             <Button 
               variant="outline" 
               size="sm"
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-1"
+              className="flex items-center gap-1 bg-[#5c4b2a]"
             >
               {showFilters ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               Filters
@@ -225,8 +225,8 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
         </div>
       )}
 
-      <div className="rounded-md border">
-        <div className="grid grid-cols-12 gap-2 p-3 bg-muted/50 font-medium text-sm">
+      <div className="rounded-md ">
+        <div className="grid grid-cols-12 gap-2 p-3 bg-[#5c4b2a] font-medium text-sm">
           <div className="col-span-1 text-center">#</div>
           <div className="col-span-5 md:col-span-3">Hero</div>
           <div className="col-span-3 md:col-span-2 text-right">XP</div>
@@ -245,17 +245,19 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
-                className={`grid grid-cols-12 gap-2 justify-between items-center px-4 py-2 rounded-lg text-white${
-                  entry.isCurrentUser ? "bg-primary/5 border-primary/20" : ""
-                } ${index % 2 === 0 && !entry.isCurrentUser ? "bg-muted/20" : ""} cursor-pointer hover:bg-gray-700`}
+                className={`grid grid-cols-12 gap-2 justify-between items-center px-4 py-2 rounded-lg text-[#7c1c1c] ${
+                  entry.isCurrentUser ? "bg-[#d4af37]/20 border-[#d4af37]/50" : ""
+                } ${
+                  index % 2 === 0 && !entry.isCurrentUser ? "bg-[#d4c07c]/60" : ""
+                } cursor-pointer hover:bg-[#bfa171]/40`}                
                 onClick={() => handleUserClick(entry)}
               >
                 <div className="col-span-1 text-center font-semibold">
-                  <div className="flex flex-col items-center text-white">
+                  <div className="flex flex-col items-center text-black">
                     {entry.rank <= 3 ? (
                       <div className={`inline-flex items-center justify-center w-6 h-6 rounded-full 
-                        ${entry.rank === 1 ? "bg-yellow-100 text-yellow-600" : 
-                          entry.rank === 2 ? "bg-gray-100 text-gray-600" : 
+                        ${entry.rank === 1 ? "bg-[f5e6c5] text-yellow-600" : 
+                          entry.rank === 2 ? "bg-[d4c07c] text-gray-600" : 
                           "bg-amber-100 text-amber-700"}`}>
                         <Trophy className="h-3 w-3" />
                       </div>
@@ -313,23 +315,23 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                   </TooltipProvider>
                   
                   <div>
-                    <div className="font-medium text-sm flex justify-between items-center px-4 py-2 rounded-lg text-white">
+                    <div className="font-medium text-sm flex justify-between items-center px-4 py-2 rounded-lg text-black">
                       {entry.name}
                       {entry.isCurrentUser && (
-                        <Badge variant="outline" className="ml-2 text-[10px] py-0 text-white">You</Badge>
+                        <Badge variant="outline" className="ml-2 text-[10px] py-0 bg-[#7c1c1c] text-[#d4af37]">You</Badge>
                       )}
                     </div>
                     <div className="text-xs text-muted-foreground flex items-center">
                       <Star className="h-3 w-3 mr-1 text-amber-500" />
                       Lvl {entry.level}
                       {entry.role && (
-                        <span className="ml-1 text-gray-400">• {entry.role}</span>
+                        <span className="ml-1 text-[#d4af37]">• {entry.role}</span>
                       )}
                     </div>
                   </div>
                 </div>
                 
-                <div className="col-span-3 md:col-span-2 text-right font-mono font-medium flex justify-between items-center px-4 py-2 rounded-lg text-white">
+                <div className="col-span-3 md:col-span-2 text-right font-mono font-medium flex justify-between items-center px-4 py-2 rounded-lg text-[#2e4a2c]">
                   {entry.xp.toLocaleString()} XP
                 </div>
                 
@@ -341,12 +343,12 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                           <img src={entry.guildLogo} alt={entry.guildName} className="w-full h-full object-cover" />
                         </div>
                       ) : (
-                        <Castle className="h-3 w-3 mr-1 text-white" />
+                        <Castle className="h-3 w-3 mr-1 text-black" />
                       )}
                       {entry.guildName}
                     </div>
                   ) : (
-                    <span className="text-xs text-muted-foreground">No Guild</span>
+                    <span className="text-sm text-[#7c1c1c]">No Guild</span>
                   )}
                 </div>
                 
@@ -380,7 +382,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
       
       {compact && leaderboardData.length >= 5 && (
         <div className="text-center mt-2">
-          <a href="/leaderboards" className="text-sm text-primary hover:underline">
+          <a href="/leaderboards" className="text-sm text-[#7c1c1c] hover:underline">
             View full leaderboard →
           </a>
         </div>
