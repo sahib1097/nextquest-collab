@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
@@ -66,29 +65,72 @@ const ContactPage = () => {
     setPreviousAddedXp(0);
   }
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log("Form submitted:", values);
-    
-    toast({
-      title: "Quest Completed!",
-      description: "Your message has been sent to the Council of Next Quest!",
-      variant: "default",
-      className: "bg-yellow-500 text-black font-semibold",
-    });
-
-    // Show final XP reward
-    const finalXp = Math.floor(Math.random() * 100) + 50;
-    setXpGained(prev => prev + finalXp);
-
-    setTimeout(() => {
-      toast({
-        title: `+${finalXp} XP Reward!`,
-        description: "The council will review your scroll shortly.",
-        variant: "default",
-        className: "bg-purple-600 text-white font-semibold",
+  const sendFinalEmail = async (formValues) => {
+    const { email, name, questType, message } = formValues;
+  
+    const subject = `New Contact Quest: ${questType.toUpperCase()}`;
+    const fullMessage = `
+    ${message}
+    `;
+  
+    try {
+      const response = await fetch('http://localhost:3000/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          subject,
+          message: fullMessage,
+          replyTo: email,
+          name,
+          questType,
+        }),
       });
-    }, 800);
+  
+      const result = await response.json();
+      if (result.success) {
+        console.log('✅ Email sent!');
+      } else {
+        console.error('❌ Email failed:', result.error);
+      }
+    } catch (err) {
+      console.error('Error calling backend:', err);
+    }
   };
+  
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      await sendFinalEmail(values); // move this here
+  
+      toast({
+        title: "Quest Completed!",
+        description: "Your message has been sent to the Council of Next Quest!",
+        className: "bg-yellow-500 text-black font-semibold",
+      });
+  
+      const finalXp = Math.floor(Math.random() * 100) + 50;
+      setXpGained((prev) => prev + finalXp);
+  
+      setTimeout(() => {
+        toast({
+          title: `+${finalXp} XP Reward!`,
+          description: "The council will review your scroll shortly.",
+          className: "bg-purple-600 text-white font-semibold",
+        });
+      }, 800);
+  
+      setFormLevel(1);
+    } catch (error) {
+      toast({
+        title: "Scroll Delivery Failed!",
+        description: "Something went wrong sending your message.",
+        className: "bg-red-600 text-white font-semibold",
+      });
+    }
+  };
+  
 
   const getQuestTypeIcon = (type: string) => {
     switch (type) {
@@ -198,7 +240,7 @@ const ContactPage = () => {
                         <Button
                           type="button"
                           onClick={() => {
-                            if (form.getValues().name && form.getValues().email) {
+                            if (form.getValues().name && form.getValues().email) {                    
                               if (form.formState.errors.name || form.formState.errors.email) {
                                 return;
                               }
@@ -322,7 +364,12 @@ const ContactPage = () => {
                         <Button
                           type="submit"
                           className="bg-yellow-500 hover:bg-yellow-600 text-black flex items-center"
-                          onClick ={() => setFormLevel(1)}
+                          onClick ={() => {
+                            setFormLevel(1)
+                            setXpGained(0)
+                            sendFinalEmail(form.getValues())
+                          }
+                          }
                         >
                           <SendHorizonal className="mr-2 h-4 w-4" />
                           Complete Quest
