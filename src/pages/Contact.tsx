@@ -32,6 +32,7 @@ const ContactPage = () => {
   const { toast } = useToast();
   const [formLevel, setFormLevel] = useState(1);
   const [xpGained, setXpGained] = useState(0);
+  const [previousAddedXp, setPreviousAddedXp] = useState(0);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,6 +47,7 @@ const ContactPage = () => {
   const advanceLevel = () => {
     const newXp = Math.floor(Math.random() * 50) + 20;
     setXpGained(prev => prev + newXp);
+    setPreviousAddedXp(newXp);
     
     toast({
       title: `+${newXp} XP Gained!`,
@@ -58,6 +60,11 @@ const ContactPage = () => {
       setFormLevel(prev => prev + 1);
     }
   };
+
+  const demoteLevel = () => {
+    setXpGained(prev => prev - previousAddedXp);
+    setPreviousAddedXp(0);
+  }
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log("Form submitted:", values);
@@ -251,7 +258,10 @@ const ContactPage = () => {
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={() => setFormLevel(1)}
+                          onClick={() => {
+                            setFormLevel(1)
+                            demoteLevel();
+                          }}
                           className="border-gray-700 text-gray-300 hover:bg-gray-800"
                         >
                           Back
@@ -301,7 +311,10 @@ const ContactPage = () => {
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={() => setFormLevel(2)}
+                          onClick={() => {
+                            setFormLevel(2)
+                            demoteLevel();
+                          }}
                           className="border-gray-700 text-gray-300 hover:bg-gray-800"
                         >
                           Back
@@ -309,6 +322,7 @@ const ContactPage = () => {
                         <Button
                           type="submit"
                           className="bg-yellow-500 hover:bg-yellow-600 text-black flex items-center"
+                          onClick ={() => setFormLevel(1)}
                         >
                           <SendHorizonal className="mr-2 h-4 w-4" />
                           Complete Quest
