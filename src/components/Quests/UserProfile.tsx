@@ -181,64 +181,49 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
                 </div>
                 
                 {/* Enhanced XP Progress Bar */}
-                <div className="relative w-full max-w-[1000px] h-8 flex items-center">
-                  {/* Full Bar Track */}
-                  <div className="absolute inset-0 flex">
-                    {/* Left cap */}
-                    <img src="/assets/tile000.png" className="h-full w-auto" alt="bar-left" />
+                <div className="w-full flex justify-start">
+                  {/* Wider responsive container */}
+                  <div className="relative w-full  h-8 flex items-center">
+                    
+                    {/* Full Bar Track */}
+                    <div className="absolute inset-0 flex w-full">
+                      <img src="/assets/tile000.png" className="h-full w-auto" alt="bar-left" />
+                      
+                      <div
+                        className="flex-1 h-full bg-repeat-x"
+                        style={{
+                          backgroundImage: "url('/assets/tile001.png')",
+                          backgroundSize: "auto 100%",
+                        }}
+                      />
+                      
+                      <img src="/assets/tile002.png" className="h-full w-auto" alt="bar-right" id="trackRightCap" />
+                    </div>
 
-                    {/* Middle stretchable background */}
+                    {/* Progress Fill */}
                     <div
-                      className="flex-1 h-full bg-repeat-x"
-                      style={{
-                        backgroundImage: "url('/assets/tile001.png')",
-                        backgroundSize: "auto 100%",
-                      }}
-                    />
+                      className="absolute inset-y-0 left-0 flex items-center overflow-hidden"
+                      style={{ width: `${progress}%` }}
+                    >
+                      <img src="/assets/GreenBar3.png" className="h-2 w-auto ml-8 pl-5" alt="bar-left" />
+                      
+                      <div
+                        className="flex-1 h-2 bg-repeat-x"
+                        style={{
+                          backgroundImage: "url('/assets/F_UI_GreenBar.png')",
+                          backgroundSize: "auto 100%",
+                        }}
+                      />
+                      
+                      <img src="/assets/GreenBar2.png" className="h-2 w-auto" alt="bar-right" />
+                    </div>
 
-                    {/* Right cap */}
-                    <img src="/assets/tile002.png" className="h-full w-auto" alt="bar-right" />
-                  </div>
-
-                  {/* Progress Fill */}
-                  <div
-                    className="absolute inset-y-0 left-0 flex items-center overflow-hidden"
-                    style={{ width: `${progress}%` }}
-                  >
-                    {/* Left cap */}
-                    <img src="/assets/GreenBar3.png" className="h-2 w-auto ml-8 pl-5" alt="bar-left" />
-
-                    {/* Middle fill */}
-                    <div
-                      className="flex-1 h-2 bg-repeat-x"
-                      style={{
-                        backgroundImage: "url('/assets/F_UI_GreenBar.png')",
-                        backgroundSize: "auto 100%",
-                      }}
-                    />
-
-                    {/* Right cap */}
-                    <img src="/assets/GreenBar2.png" className="h-2 w-auto" alt="bar-right" />
-                  </div>
-
-                  {/* Optional milestone markers 
-                  {[25, 50, 75].map((milestone) => (
-                    <div
-                      key={milestone}
-                      className={`absolute top-0 w-0.5 h-full bg-white opacity-70 ${
-                        milestone <= progress ? "animate-pulse" : ""
-                      }`}
-                      style={{ left: `${milestone}%` }}
-                    />
-                  ))}*/}
-
-                  {/* Text */}
-                  <div className="absolute -bottom-5 right-0 text-xs text-gray-500 font-medium">
-                    {progress}%
+                    {/* Progress Text under track right cap */}
+                    <div className="absolute -bottom-5 right-0 text-xs text-gray-500 font-medium">
+                      {progress}%
+                    </div>
                   </div>
                 </div>
-
-
               </div>
             </div>
           </CardContent>

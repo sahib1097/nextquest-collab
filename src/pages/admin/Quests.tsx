@@ -138,7 +138,7 @@ const Quests = () => {
                 className="h-32 w-auto object-contain"
               />
 
-              {/* Pixel-RPG Tabs (FF Tactics / Chrono Trigger style) */}
+              {/* Pixel-RPG Tabs  */}
               <TabsList className="flex w-full max-w-md bg-[#d6c8a2] border-4 border-[#5c4a2b] rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] overflow-hidden">
                 <TabsTrigger
                   value="quests"

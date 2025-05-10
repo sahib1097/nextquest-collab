@@ -95,15 +95,15 @@ const LeaderboardSystem = ({
               <Globe2 className="h-4 w-4 mr-1" /> 
               {!compact && <span>Global</span>}
             </TabsTrigger>
-            <TabsTrigger value={LeaderboardScope.REGIONAL} className="bg-[#7c1c1c] text-white font-bold hover:bg-[#444] px-4 py-2 ">
+            <TabsTrigger value={LeaderboardScope.REGIONAL} className="bg-[#7c1c1c] text-white font-bold hover:bg-[#4b381d] px-4 py-2 ">
               <Users className="h-4 w-4" /> 
               {!compact && <span>Regional</span>}
             </TabsTrigger>
-            <TabsTrigger value={LeaderboardScope.COMPANY} className="bg-[#2e4a2c] text-white font-bold hover:bg-[#444] px-4 py-2 ">
+            <TabsTrigger value={LeaderboardScope.COMPANY} className="bg-[#2e4a2c] text-white font-bold hover:bg-[#4b381d] px-4 py-2 ">
               <Building className="h-4 w-4" /> 
               {!compact && <span>Company</span>}
             </TabsTrigger>
-            <TabsTrigger value={LeaderboardScope.FRIENDS} className="bg-[#d4af37] text-white font-bold hover:bg-[#444] px-4 py-2 ">
+            <TabsTrigger value={LeaderboardScope.FRIENDS} className="bg-[#d4af37] text-white font-bold hover:bg-[#4b381d] px-4 py-2 ">
               <UserRound className="h-4 w-4" /> 
               {!compact && <span>Friends</span>}
             </TabsTrigger>

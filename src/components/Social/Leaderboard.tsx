@@ -169,7 +169,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
               placeholder="Search by name or guild..."
               value={searchQuery}
               onChange={handleSearchChange}
-              className="max-w-sm bg-[#5c4b2a]"
+              className="max-w-sm bg-[#5c4b2a] placeholder:text-[#fcefb4]"
               startIcon={<Search className="h-4 w-4 text-[#fcefb4]"/>}
             />
             <Button 
@@ -256,8 +256,8 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                   <div className="flex flex-col items-center text-black">
                     {entry.rank <= 3 ? (
                       <div className={`inline-flex items-center justify-center w-6 h-6 rounded-full 
-                        ${entry.rank === 1 ? "bg-[f5e6c5] text-yellow-600" : 
-                          entry.rank === 2 ? "bg-[d4c07c] text-gray-600" : 
+                        ${entry.rank === 1 ? "bg-[#f5e6c5] text-yellow-600" : 
+                          entry.rank === 2 ? "bg-[#f5e6c5] text-gray-600" : 
                           "bg-amber-100 text-amber-700"}`}>
                         <Trophy className="h-3 w-3" />
                       </div>
