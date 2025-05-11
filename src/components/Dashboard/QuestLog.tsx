@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -9,25 +8,67 @@ import { Award, Star, Clock, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { calculateLevelProgress } from "@/utils/questUtils";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { API } from "@/config";
 
 const QuestLog = () => {
   const [quests, setQuests] = useState<Quest[]>([]);
   const [userLevel, setUserLevel] = useState<UserLevel | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        // Try to fetch user data from API first
+        const res = await fetch(`${API}/api/auth/me`, {
+          credentials: 'include'
+        });
+        
+        if (res.ok) {
+          const userData = await res.json();
+          // Update user level with API data
+          const updatedUserLevel = {
+            userId: userData.id,
+            username: userData.name,
+            xp: userData.xp || 0,
+            level: userData.level || 1,
+            nextLevelXp: userData.nextLevelXp || 100,
+            profilePicture: userData.profilePicture
+          };
+          setUserLevel(updatedUserLevel);
+          localStorage.setItem("fluxUserLevel", JSON.stringify(updatedUserLevel));
+        } else {
+          // Fallback to localStorage if API fails
+          const storedUserLevel = localStorage.getItem("fluxUserLevel");
+          if (storedUserLevel) {
+            setUserLevel(JSON.parse(storedUserLevel));
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+        // Fallback to localStorage on error
+        const storedUserLevel = localStorage.getItem("fluxUserLevel");
+        if (storedUserLevel) {
+          setUserLevel(JSON.parse(storedUserLevel));
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     // Load quests from localStorage
     const storedQuests = localStorage.getItem("fluxQuests");
     if (storedQuests) {
-      const parsedQuests: Quest[] = JSON.parse(storedQuests);
-      setQuests(parsedQuests);
+      try {
+        const parsedQuests: Quest[] = JSON.parse(storedQuests);
+        setQuests(parsedQuests);
+      } catch (err) {
+        console.error("Error parsing quests:", err);
+        setError("Failed to load quests");
+      }
     }
     
-    // Load user level from localStorage
-    const storedUserLevel = localStorage.getItem("fluxUserLevel");
-    if (storedUserLevel) {
-      const parsedUserLevel = JSON.parse(storedUserLevel);
-      setUserLevel(parsedUserLevel);
-    }
+    fetchUserData();
   }, []);
   
   // Get counts of quests by status
@@ -37,6 +78,28 @@ const QuestLog = () => {
   
   // Calculate level progress
   const levelProgress = userLevel ? calculateLevelProgress(userLevel.xp, userLevel.level) : 0;
+  
+  if (isLoading) {
+    return (
+      <Card className="border border-gray-200 shadow-sm">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-center h-32">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="border border-gray-200 shadow-sm">
+        <CardContent className="p-4">
+          <div className="text-center text-red-500">{error}</div>
+        </CardContent>
+      </Card>
+    );
+  }
   
   return (
     <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
@@ -55,26 +118,26 @@ const QuestLog = () => {
                 <div className="flex items-center">
                   <div className="mr-3">
                     <Avatar className="h-8 w-8 border border-blue-100">
-                      {userLevel.profilePicture ? (
-                        <AvatarImage src={userLevel.profilePicture} alt={userLevel.username} />
+                      {userLevel?.profilePicture ? (
+                        <AvatarImage src={userLevel.profilePicture} alt={userLevel?.username || 'User'} />
                       ) : (
                         <AvatarFallback className="bg-gradient-to-br from-purple-500 to-blue-500 text-white">
-                          {userLevel.username.charAt(0).toUpperCase()}
+                          {userLevel?.username ? userLevel.username.charAt(0).toUpperCase() : 'U'}
                         </AvatarFallback>
                       )}
                     </Avatar>
                   </div>
-                  <span className="font-medium">{userLevel.username}</span>
+                  <span className="font-medium">{userLevel?.username || 'User'}</span>
                 </div>
                 <div className="flex items-center">
                   <Star className="h-4 w-4 text-purple-500 mr-1" />
-                  <span className="text-sm font-bold">Level {userLevel.level}</span>
+                  <span className="text-sm font-bold">Level {userLevel?.level || 1}</span>
                 </div>
               </div>
               <div className="mt-1">
                 <div className="flex justify-between text-xs text-gray-600 mb-1">
-                  <span>{userLevel.xp} XP</span>
-                  <span>{userLevel.nextLevelXp} XP</span>
+                  <span>{userLevel?.xp || 0} XP</span>
+                  <span>{userLevel?.nextLevelXp || 100} XP</span>
                 </div>
                 <div className="relative h-2 w-full bg-blue-100 rounded-full overflow-hidden">
                   <div 

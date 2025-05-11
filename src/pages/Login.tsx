@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -56,113 +55,16 @@ const Login = () => {
       });
   }, [navigate]);
 
-  // const handleLogin = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setIsLoginLoading(true);
-    
-  //   // Mock login with test user credentials
-  //   setTimeout(() => {
-  //     setIsLoginLoading(false);
-  //     if (loginEmail && loginPassword) {
-  //       // For demo purposes, check for test user or allow any credentials
-  //       if ((loginEmail === "test@test.com" && loginPassword === "test") || true) {
-  //         toast.success("Login successful");
-          
-  //         // Store user info in local storage to maintain session
-  //         localStorage.setItem("fluxUser", JSON.stringify({
-  //           email: loginEmail,
-  //           isAuthenticated: true,
-  //           name: loginEmail === "test@test.com" ? "Test User" : "Demo User",
-  //           lastLogin: new Date().toISOString(),
-  //         }));
-
-  //         // Only set up default user level if it doesn't already exist
-  //         const userLevel = localStorage.getItem("fluxUserLevel");
-  //         if (!userLevel) {
-  //           const defaultUserLevel = {
-  //             userId: "current-user",
-  //             username: loginEmail === "test@test.com" ? "Test User" : "Demo User",
-  //             xp: 0,
-  //             level: 1,
-  //             nextLevelXp: 100,
-  //           };
-  //           localStorage.setItem("fluxUserLevel", JSON.stringify(defaultUserLevel));
-  //         }
-          
-  //         // Update last activity timestamp for session tracking
-  //         updateLastActivity();
-          
-  //         navigate("/admin/dashboard");
-  //       } else {
-  //         toast.error("Invalid credentials");
-  //       }
-  //     } else {
-  //       toast.error("Please enter both email and password");
-  //     }
-  //   }, 800);
-  // };
-  
-  // const handleSignup = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setIsSignupLoading(true);
-    
-  //   // Validate form
-  //   if (!signupEmail || !signupPassword || !signupConfirm || !signupName) {
-  //     toast.error("Please fill out all fields");
-  //     setIsSignupLoading(false);
-  //     return;
-  //   }
-    
-  //   if (signupPassword !== signupConfirm) {
-  //     toast.error("Passwords don't match");
-  //     setIsSignupLoading(false);
-  //     return;
-  //   }
-    
-  //   // Mock signup
-  //   setTimeout(() => {
-  //     setIsSignupLoading(false);
-  //     toast.success("Account created successfully");
-      
-  //     // Store user in local storage (for demo)
-  //     localStorage.setItem("fluxUser", JSON.stringify({
-  //       email: signupEmail,
-  //       name: signupName,
-  //       isAuthenticated: true,
-  //       lastLogin: new Date().toISOString(),
-  //     }));
-      
-  //     // Only set up default user level if it doesn't already exist
-  //     const userLevel = localStorage.getItem("fluxUserLevel");
-  //     if (!userLevel) {
-  //       const defaultUserLevel = {
-  //         userId: "current-user",
-  //         username: signupName,
-  //         xp: 0,
-  //         level: 1,
-  //         nextLevelXp: 100,
-  //       };
-  //       localStorage.setItem("fluxUserLevel", JSON.stringify(defaultUserLevel));
-  //     }
-      
-  //     // Update last activity timestamp
-  //     updateLastActivity();
-      
-  //     navigate("/admin/dashboard");
-  //   }, 1000);
-  // };
-
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoginLoading(true);
   
     try {
       const res = await fetch(`${API}/api/auth/login`, {
-        method:      'POST',
-        headers:     { 'Content-Type': 'application/json' },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body:        JSON.stringify({ email: loginEmail, password: loginPassword }),
+        body: JSON.stringify({ email: loginEmail, password: loginPassword }),
       });
   
       if (!res.ok) {
@@ -171,41 +73,40 @@ const Login = () => {
       }
   
       // 1) Extract user from backend
-      const user = await res.json(); // { name, email }
+      const user = await res.json();
   
-      // 2) Persist fluxUser in localStorage (template logic)
+      // 2) Persist fluxUser in localStorage
       localStorage.setItem(
         'fluxUser',
         JSON.stringify({
-          email:           user.email,
+          email: user.email,
           isAuthenticated: true,
-          name:            user.name,
-          lastLogin:       new Date().toISOString(),
+          name: user.name,
+          lastLogin: new Date().toISOString(),
         })
       );
   
       // 3) Ensure fluxUserLevel exists
-      if (!localStorage.getItem('fluxUserLevel')) {
-        localStorage.setItem(
-          'fluxUserLevel',
-          JSON.stringify({
-            userId:      'current-user',
-            username:    user.name,
-            xp:          0,
-            level:       1,
-            nextLevelXp: 100,
-          })
-        );
-      }
+      const defaultUserLevel = {
+        userId: user.id,
+        username: user.name,
+        xp: user.xp || 0,
+        level: user.level || 1,
+        nextLevelXp: user.nextLevelXp || 100,
+        profilePicture: user.profilePicture
+      };
+      
+      localStorage.setItem('fluxUserLevel', JSON.stringify(defaultUserLevel));
   
-      // 4) Bump your activity timestamp
+      // 4) Update last activity timestamp
       updateLastActivity();
   
-      toast.success(`Welcome back, ${user.name}!`);
+      // 5) Show success message and redirect
+      toast.success('Login successful');
       navigate('/admin/dashboard');
-  
-    } catch (err: any) {
-      toast.error(err.message);
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error(error instanceof Error ? error.message : 'Login failed');
     } finally {
       setIsLoginLoading(false);
     }
