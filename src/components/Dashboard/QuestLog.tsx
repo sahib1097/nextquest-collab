@@ -59,7 +59,7 @@ const QuestLog = () => {
                         <AvatarImage src={userLevel.profilePicture} alt={userLevel.username} />
                       ) : (
                         <AvatarFallback className="bg-gradient-to-br from-purple-500 to-blue-500 text-white">
-                          {userLevel.username.charAt(0).toUpperCase()}
+                          {userLevel?.username?.charAt(0)?.toUpperCase() && '?'}
                         </AvatarFallback>
                       )}
                     </Avatar>

@@ -39,22 +39,23 @@ const Login = () => {
   }, [navigate]);
 
 
-  useEffect(() => {
-    fetch(`${API}/api/auth/me`, {
-      credentials: 'include'
-    })
-      .then(res => {
-        if (!res.ok) throw new Error();
-        return res.json();
-      })
-      .then(user => {
-        updateLastActivity();       // you can still bump a timestamp in your utils
-        navigate('/admin/dashboard');
-      })
-      .catch(() => {
-        setCheckingAuth(false);
-      });
-  }, [navigate]);
+  // useEffect(() => {
+  //   fetch(`${API}/api/auth/me`, {
+  //     method:      'GET',
+  //     credentials: 'include'
+  //   })
+  //     .then(res => {
+  //       if (!res.ok) throw new Error();
+  //       return res.json();
+  //     })
+  //     .then(user => {
+  //       updateLastActivity();       // you can still bump a timestamp in your utils
+  //       navigate('/admin/dashboard');
+  //     })
+  //     .catch(() => {
+  //       setCheckingAuth(false);
+  //     });
+  // }, [navigate]);
 
   // const handleLogin = (e: React.FormEvent) => {
   //   e.preventDefault();
