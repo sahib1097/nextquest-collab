@@ -36,7 +36,11 @@ class MapScene extends Phaser.Scene {
     // 1️⃣ Background
     const bg = this.add.image(0, 0, 'background').setOrigin(0, 0)
     const scale = DESIGN_HEIGHT / bg.height
+    const cam = this.cameras.main;
+    //const scale = cam.height / DESIGN_HEIGHT;
     bg.setScale(scale)
+
+    
 
     // 2️⃣ World bounds
     const worldWidth  = bg.width * scale
@@ -48,19 +52,19 @@ class MapScene extends Phaser.Scene {
     this.add.image(0, 0, 'mountain-pin')
       .setOrigin(0, 0)
       .setDepth(-1)
-      .setScrollFactor(0.7)
+      .setScrollFactor(0.2)
 
     // 4️⃣ Overlay pins/clouds
     this.add.image(1250, 740, 'mountain-pin2')
       .setOrigin(0, 0)
-      .setScale(0.5)
+      .setScale(0.5*scale)
       .setDepth(3)
       .setScrollFactor(1)
 
     this.add.image(1930, 350, 'cloud1')
       .setOrigin(0, 0)
-      .setScale(0.2)
-      .setDepth(3)
+      .setScale(0.2*scale)
+      .setDepth(2)
       .setScrollFactor(1)
 
     // 5️⃣ Bouncing frames (20 quests, y ≤ 400 except quest5 & quest7)
@@ -104,8 +108,8 @@ class MapScene extends Phaser.Scene {
       const charKey = Phaser.Utils.Array.GetRandom(characters)
       const container = this.add.container(x, y).setDepth(2)
 
-      const character = this.add.image(0, 0, charKey).setScale(0.8)
-      const frame     = this.add.image(0, 0, 'frame1').setScale(0.6)
+      const character = this.add.image(0, 0, charKey).setScale(0.8*scale)
+      const frame     = this.add.image(0, 0, 'frame1').setScale(0.6*scale)
         .setInteractive({ cursor: 'pointer' })
         .on('pointerdown', () =>
           console.log(`Clicked Quest ${idx+1} at (${x},${y})`)
@@ -116,7 +120,7 @@ class MapScene extends Phaser.Scene {
         frame.displayHeight / 2 + 10,
         `Quest – ${idx+1}`,
         {
-          fontSize: '18px',
+          fontSize: `${18*scale}px`,
           color: '#fff',
           backgroundColor: 'rgba(0,0,0,0.6)',
           padding: { x: 6, y: 4 },
@@ -150,6 +154,18 @@ class MapScene extends Phaser.Scene {
         worldWidth - this.cameras.main.width
       )
     })
+
+    // 7️⃣ Wheel-to-Pan
+    this.input.on(
+      'wheel',
+      (_ptr: Phaser.Input.Pointer, _objs: any, _dx: number, dy: number) => {
+        this.cameras.main.scrollX = Phaser.Math.Clamp(
+          this.cameras.main.scrollX + dy,
+          0,
+          worldWidth - this.cameras.main.width
+        )
+      }
+    )
   }
 }
 

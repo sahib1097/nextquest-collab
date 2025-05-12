@@ -75,12 +75,12 @@ class HellScene extends Phaser.Scene {
 
       // Character
       const character = this.add.image(0, -10, charKey)
-        .setScale(0.5 * scale);
+        .setScale(0.8 * scale);
       container.add(character);
 
       // Frame
       const frame = this.add.image(0, 0, 'frame1')
-        .setScale(0.4 * scale)
+        .setScale(0.6 * scale)
         .setInteractive({ cursor: 'pointer' })
         .on('pointerdown', () =>
           console.log(`Clicked on frame ${idx+1} at (${x}, ${y})`)
@@ -93,7 +93,7 @@ class HellScene extends Phaser.Scene {
         frame.displayHeight / 2 + 10,
         `Quest – ${idx+1}`,
         {
-          fontSize: '16px',
+          fontSize: `${18*scale}px`,
           color: '#fff',
           backgroundColor: 'rgba(0,0,0,0.6)',
           padding: { x: 6, y: 4 },
@@ -127,6 +127,20 @@ class HellScene extends Phaser.Scene {
         worldWidth - this.cameras.main.width
       );
     });
+  
+    // 6️⃣ Wheel-to-Pan
+    this.input.on(
+      'wheel',
+      (_ptr: Phaser.Input.Pointer, _objs: any, _dx: number, dy: number) => {
+        this.cameras.main.scrollX = Phaser.Math.Clamp(
+          this.cameras.main.scrollX + dy,
+          0,
+          worldWidth - this.cameras.main.width
+        );
+      }
+)
+
+
   }
 }
 
