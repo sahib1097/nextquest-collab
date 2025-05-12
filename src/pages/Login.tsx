@@ -9,6 +9,7 @@ import { Mail, Lock, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import { isAuthenticated, updateLastActivity } from "@/utils/authUtils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { API } from '@/config';
 
 const Login = () => {
   // Login state
@@ -37,101 +38,258 @@ const Login = () => {
     setCheckingAuth(false);
   }, [navigate]);
 
-  const handleLogin = (e: React.FormEvent) => {
+
+  useEffect(() => {
+    fetch(`${API}/api/auth/me`, {
+      credentials: 'include'
+    })
+      .then(res => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then(user => {
+        updateLastActivity();       // you can still bump a timestamp in your utils
+        navigate('/admin/dashboard');
+      })
+      .catch(() => {
+        setCheckingAuth(false);
+      });
+  }, [navigate]);
+
+  // const handleLogin = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setIsLoginLoading(true);
+    
+  //   // Mock login with test user credentials
+  //   setTimeout(() => {
+  //     setIsLoginLoading(false);
+  //     if (loginEmail && loginPassword) {
+  //       // For demo purposes, check for test user or allow any credentials
+  //       if ((loginEmail === "test@test.com" && loginPassword === "test") || true) {
+  //         toast.success("Login successful");
+          
+  //         // Store user info in local storage to maintain session
+  //         localStorage.setItem("fluxUser", JSON.stringify({
+  //           email: loginEmail,
+  //           isAuthenticated: true,
+  //           name: loginEmail === "test@test.com" ? "Test User" : "Demo User",
+  //           lastLogin: new Date().toISOString(),
+  //         }));
+
+  //         // Only set up default user level if it doesn't already exist
+  //         const userLevel = localStorage.getItem("fluxUserLevel");
+  //         if (!userLevel) {
+  //           const defaultUserLevel = {
+  //             userId: "current-user",
+  //             username: loginEmail === "test@test.com" ? "Test User" : "Demo User",
+  //             xp: 0,
+  //             level: 1,
+  //             nextLevelXp: 100,
+  //           };
+  //           localStorage.setItem("fluxUserLevel", JSON.stringify(defaultUserLevel));
+  //         }
+          
+  //         // Update last activity timestamp for session tracking
+  //         updateLastActivity();
+          
+  //         navigate("/admin/dashboard");
+  //       } else {
+  //         toast.error("Invalid credentials");
+  //       }
+  //     } else {
+  //       toast.error("Please enter both email and password");
+  //     }
+  //   }, 800);
+  // };
+  
+  // const handleSignup = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setIsSignupLoading(true);
+    
+  //   // Validate form
+  //   if (!signupEmail || !signupPassword || !signupConfirm || !signupName) {
+  //     toast.error("Please fill out all fields");
+  //     setIsSignupLoading(false);
+  //     return;
+  //   }
+    
+  //   if (signupPassword !== signupConfirm) {
+  //     toast.error("Passwords don't match");
+  //     setIsSignupLoading(false);
+  //     return;
+  //   }
+    
+  //   // Mock signup
+  //   setTimeout(() => {
+  //     setIsSignupLoading(false);
+  //     toast.success("Account created successfully");
+      
+  //     // Store user in local storage (for demo)
+  //     localStorage.setItem("fluxUser", JSON.stringify({
+  //       email: signupEmail,
+  //       name: signupName,
+  //       isAuthenticated: true,
+  //       lastLogin: new Date().toISOString(),
+  //     }));
+      
+  //     // Only set up default user level if it doesn't already exist
+  //     const userLevel = localStorage.getItem("fluxUserLevel");
+  //     if (!userLevel) {
+  //       const defaultUserLevel = {
+  //         userId: "current-user",
+  //         username: signupName,
+  //         xp: 0,
+  //         level: 1,
+  //         nextLevelXp: 100,
+  //       };
+  //       localStorage.setItem("fluxUserLevel", JSON.stringify(defaultUserLevel));
+  //     }
+      
+  //     // Update last activity timestamp
+  //     updateLastActivity();
+      
+  //     navigate("/admin/dashboard");
+  //   }, 1000);
+  // };
+
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoginLoading(true);
-    
-    // Mock login with test user credentials
-    setTimeout(() => {
-      setIsLoginLoading(false);
-      if (loginEmail && loginPassword) {
-        // For demo purposes, check for test user or allow any credentials
-        if ((loginEmail === "test@test.com" && loginPassword === "test") || true) {
-          toast.success("Login successful");
-          
-          // Store user info in local storage to maintain session
-          localStorage.setItem("fluxUser", JSON.stringify({
-            email: loginEmail,
-            isAuthenticated: true,
-            name: loginEmail === "test@test.com" ? "Test User" : "Demo User",
-            lastLogin: new Date().toISOString(),
-          }));
-
-          // Only set up default user level if it doesn't already exist
-          const userLevel = localStorage.getItem("fluxUserLevel");
-          if (!userLevel) {
-            const defaultUserLevel = {
-              userId: "current-user",
-              username: loginEmail === "test@test.com" ? "Test User" : "Demo User",
-              xp: 0,
-              level: 1,
-              nextLevelXp: 100,
-            };
-            localStorage.setItem("fluxUserLevel", JSON.stringify(defaultUserLevel));
-          }
-          
-          // Update last activity timestamp for session tracking
-          updateLastActivity();
-          
-          navigate("/admin/dashboard");
-        } else {
-          toast.error("Invalid credentials");
-        }
-      } else {
-        toast.error("Please enter both email and password");
+  
+    try {
+      const res = await fetch(`${API}/api/auth/login`, {
+        method:      'POST',
+        headers:     { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body:        JSON.stringify({ email: loginEmail, password: loginPassword }),
+      });
+  
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || 'Login failed');
       }
-    }, 800);
+  
+      // 1) Extract user from backend
+      const user = await res.json(); // { name, email }
+  
+      // 2) Persist fluxUser in localStorage (template logic)
+      localStorage.setItem(
+        'fluxUser',
+        JSON.stringify({
+          email:           user.email,
+          isAuthenticated: true,
+          name:            user.name,
+          lastLogin:       new Date().toISOString(),
+        })
+      );
+  
+      // 3) Ensure fluxUserLevel exists
+      if (!localStorage.getItem('fluxUserLevel')) {
+        localStorage.setItem(
+          'fluxUserLevel',
+          JSON.stringify({
+            userId:      'current-user',
+            username:    user.name,
+            xp:          0,
+            level:       1,
+            nextLevelXp: 100,
+          })
+        );
+      }
+  
+      // 4) Bump your activity timestamp
+      updateLastActivity();
+  
+      toast.success(`Welcome back, ${user.name}!`);
+      navigate('/admin/dashboard');
+  
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setIsLoginLoading(false);
+    }
   };
   
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSignupLoading(true);
-    
-    // Validate form
-    if (!signupEmail || !signupPassword || !signupConfirm || !signupName) {
-      toast.error("Please fill out all fields");
+  
+    // template validation logic
+    if (!signupName || !signupEmail || !signupPassword || !signupConfirm) {
+      toast.error('Please fill out all fields');
       setIsSignupLoading(false);
       return;
     }
-    
     if (signupPassword !== signupConfirm) {
       toast.error("Passwords don't match");
       setIsSignupLoading(false);
       return;
     }
-    
-    // Mock signup
-    setTimeout(() => {
-      setIsSignupLoading(false);
-      toast.success("Account created successfully");
-      
-      // Store user in local storage (for demo)
-      localStorage.setItem("fluxUser", JSON.stringify({
-        email: signupEmail,
-        name: signupName,
-        isAuthenticated: true,
-        lastLogin: new Date().toISOString(),
-      }));
-      
-      // Only set up default user level if it doesn't already exist
-      const userLevel = localStorage.getItem("fluxUserLevel");
-      if (!userLevel) {
-        const defaultUserLevel = {
-          userId: "current-user",
-          username: signupName,
-          xp: 0,
-          level: 1,
-          nextLevelXp: 100,
-        };
-        localStorage.setItem("fluxUserLevel", JSON.stringify(defaultUserLevel));
+  
+    try {
+      const res = await fetch(`${API}/api/auth/signup`, {
+        method:      'POST',
+        headers:     { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body:        JSON.stringify({
+          name:     signupName,
+          email:    signupEmail,
+          password: signupPassword,
+        }),
+      });
+  
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || 'Signup failed');
       }
-      
-      // Update last activity timestamp
+  
+      // 1) Get newly created user
+      const user = await res.json(); // { name, email }
+  
+      // 2) Persist fluxUser in localStorage
+      localStorage.setItem(
+        'fluxUser',
+        JSON.stringify({
+          email:           user.email,
+          isAuthenticated: true,
+          name:            user.name,
+          lastLogin:       new Date().toISOString(),
+        })
+      );
+  
+      // 3) Ensure fluxUserLevel exists
+      if (!localStorage.getItem('fluxUserLevel')) {
+        localStorage.setItem(
+          'fluxUserLevel',
+          JSON.stringify({
+            userId:      'current-user',
+            username:    user.name,
+            xp:          0,
+            level:       1,
+            nextLevelXp: 100,
+          })
+        );
+      }
+  
+      // 4) Bump activity
       updateLastActivity();
-      
-      navigate("/admin/dashboard");
-    }, 1000);
+  
+      toast.success(`Account created: ${user.name}`);
+      navigate('/admin/dashboard');
+  
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setIsSignupLoading(false);
+    }
   };
+
+
+
+
+
+
   
   const handleGoogleAuth = () => {
     // Store demo user info when using Google login
@@ -372,7 +530,7 @@ const Login = () => {
                     </div>
                   </div>
                   
-                  <Button 
+                  {/* <Button 
                     type="button" 
                     variant="outline" 
                     className="w-full border-gray-700 text-gray-300 hover:bg-gray-800"
@@ -386,7 +544,7 @@ const Login = () => {
                       <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                     </svg>
                     Google
-                  </Button>
+                  </Button> */}
                 </form>
               </TabsContent>
             </Tabs>

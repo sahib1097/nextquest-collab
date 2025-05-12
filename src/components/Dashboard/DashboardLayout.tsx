@@ -15,6 +15,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import { updateLastActivity, logoutUser } from "@/utils/authUtils";
+import { API } from "@/config";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -56,8 +57,15 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     setSidebarPosition(position);
   };
   
-  const handleLogout = () => {
-    logoutUser();
+  const handleLogout = async () => {
+    // 1) Tell the server to clear the cookie
+    await fetch(`${API}/api/auth/logout`, {
+      method:      'POST',
+      credentials: 'include',       // important to send the cookie
+    });
+
+    // 2) Then clear your localStorage flags
+    logoutUser();                  // your existing helper
   };
   
   return (
