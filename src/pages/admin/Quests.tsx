@@ -183,7 +183,7 @@ const Quests: React.FC = () => {
                       Change Map ▾
                     </Button>
                     {showMapMenu && (
-                      <div className="absolute right-0 mt-1 w-32 bg-white shadow-lg rounded">
+                      <div className="absolute right-0 mt-1 w-32 bg-white shadow-lg rounded z-50">
                         {[
                           ["Town", "town"],
                           ["Phaser", "phaser"],

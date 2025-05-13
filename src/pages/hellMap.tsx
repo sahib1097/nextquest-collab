@@ -74,7 +74,7 @@ class HellScene extends Phaser.Scene {
       const charKey = Phaser.Utils.Array.GetRandom(characterKeys);
 
       // Character
-      const character = this.add.image(0, -10, charKey)
+      const character = this.add.image(0, -15, charKey)
         .setScale(0.8 * scale);
       container.add(character);
 
@@ -146,29 +146,53 @@ class HellScene extends Phaser.Scene {
 
 // 5️⃣ React wrapper using FIT scaling for static map
 export const HellMap: React.FC = () => {
-  const phaserRef = useRef<HTMLDivElement>(null);
+  const phaserRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!phaserRef.current) return;
+    if (!phaserRef.current) return
+
     const game = new Phaser.Game({
       type: Phaser.AUTO,
       parent: phaserRef.current,
       scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        width:  DESIGN_WIDTH,
+        width: DESIGN_WIDTH,
         height: DESIGN_HEIGHT,
       },
       physics: {
         default: 'arcade',
-        arcade: { gravity: { x: 0, y: 0 } },
+        arcade: { gravity: { x: 0, y: 0 } }
       },
-      scene: HellScene,
-    });
-    return () => game.destroy(true);
-  }, []);
+      scene: HellScene
+    })
 
-  return <div ref={phaserRef} style={{ width: '100%', height: '100%', overflow: 'hidden' }} />;
-};
+    return () => game.destroy(true)
+  }, [])
+
+  // Maintain 16:9 aspect ratio using padding hack
+  return (
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        paddingTop: `${(DESIGN_HEIGHT / DESIGN_WIDTH) * 100}%`,
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        ref={phaserRef}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 0
+        }}
+      />
+    </div>
+  )
+}
 
 export default HellMap;

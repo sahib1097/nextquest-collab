@@ -9,13 +9,13 @@ interface PhaserMapProps {
   height?: string | number
 }
 
-class MapScene extends Phaser.Scene {
+class PhaserScene extends Phaser.Scene {
   private isDragging  = false
   private dragStartX  = 0
   private startCamX   = 0
 
   constructor() {
-    super({ key: 'MapScene' })
+    super({ key: 'PhaserScene' })
   }
 
   preload() {
@@ -167,14 +167,12 @@ class MapScene extends Phaser.Scene {
   }
 }
 
-export const PhaserMap: React.FC<PhaserMapProps> = ({
-  width = '100%',
-  height = '100%'
-}) => {
+export const PhaserMap: React.FC<PhaserMapProps> = () => {
   const phaserRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!phaserRef.current) return
+
     const game = new Phaser.Game({
       type: Phaser.AUTO,
       parent: phaserRef.current,
@@ -188,19 +186,35 @@ export const PhaserMap: React.FC<PhaserMapProps> = ({
         default: 'arcade',
         arcade: { gravity: { x: 0, y: 0 } }
       },
-      scene: MapScene
+      scene: PhaserScene
     })
+
     return () => game.destroy(true)
   }, [])
 
+  // Maintain 16:9 aspect ratio using padding hack
   return (
     <div
-      ref={phaserRef}
       style={{
-        width,
-        height,
-        overflow: 'hidden'
+        position: 'relative',
+        width: '100%',
+        paddingTop: `${(DESIGN_HEIGHT / DESIGN_WIDTH) * 100}%`,
+        overflow: 'hidden',
       }}
-    />
+    >
+      <div
+        ref={phaserRef}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 0
+        }}
+      />
+    </div>
   )
 }
+
+export default PhaserMap;

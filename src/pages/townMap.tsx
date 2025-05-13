@@ -174,14 +174,12 @@ class TownScene extends Phaser.Scene {
   }
 }
 
-export const TownMap: React.FC<TownMapProps> = ({
-  width = '100%',
-  height = '100%'
-}) => {
+export const TownMap: React.FC<TownMapProps> = () => {
   const phaserRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!phaserRef.current) return
+
     const game = new Phaser.Game({
       type: Phaser.AUTO,
       parent: phaserRef.current,
@@ -195,20 +193,34 @@ export const TownMap: React.FC<TownMapProps> = ({
         default: 'arcade',
         arcade: { gravity: { x: 0, y: 0 } }
       },
-      scene: TownScene,
+      scene: TownScene
     })
+
     return () => game.destroy(true)
   }, [])
 
+  // Maintain 16:9 aspect ratio using padding hack
   return (
     <div
-      ref={phaserRef}
       style={{
-        width,
-        height,
-        overflow: 'hidden'
+        position: 'relative',
+        width: '100%',
+        paddingTop: `${(DESIGN_HEIGHT / DESIGN_WIDTH) * 100}%`,
+        overflow: 'hidden',
       }}
-    />
+    >
+      <div
+        ref={phaserRef}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 0
+        }}
+      />
+    </div>
   )
 }
 
