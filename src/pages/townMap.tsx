@@ -97,52 +97,64 @@ class TownScene extends Phaser.Scene {
       'character6'
     ];
 
-    const framePositions: { x: number; y: number }[] = [
-      { x: 300, y: 450 },
-      { x: 400, y: 400 },
-      { x: 700, y: 450 },
-      { x: 1000, y: 400 },
-      { x: 1100, y: 450 },
-      { x: 1600, y: 400 },
-      { x: 1900, y: 450 },
-      { x: 2200, y: 400 },
-      { x: 2500, y: 450 },
-      { x: 2780, y: 400 },
+    const framePositions: { x: number; y: number; enable : boolean }[] = [
+      { x: 250,   y: 250, enable: true}, //1
+      { x: 300,   y: 900, enable: true},
+      { x: 550,   y: 450, enable: true},
+      { x: 700,   y: 800, enable: true},
+      { x: 1100,  y: 650, enable: true}, //5
+      { x: 1450,  y: 800, enable: true},
+      { x: 1900,  y: 850, enable: true},
+      { x: 2200,  y: 600, enable: true},
+      { x: 2500,  y: 575, enable: true},
+      { x: 2780,  y: 550, enable: true}, //10
+      { x: 3000,  y: 400, enable: true},
+      { x: 3300,  y: 800, enable: true},
+      { x: 275,   y: 525, enable: true},
+      { x: 1500,  y: 500, enable: true},
+      { x: 1800,  y: 500, enable: true}, //15
+      { x: 2225,  y: 850, enable: true},
+      { x: 2450,  y: 875, enable: true},
+      { x: 950,   y: 200, enable: true},
+      { x: 1000,  y: 900, enable: true},
+      { x: 3160,  y: 550, enable: true}, //20
     ];
 
-    framePositions.forEach(({ x, y }, idx) => {
-      const charKey = Phaser.Utils.Array.GetRandom(characters);
-      const container = this.add.container(x, y).setDepth(2);
+    framePositions.forEach(({ x, y, enable }, idx) => {
+      if (enable) {
+        const charKey = Phaser.Utils.Array.GetRandom(characters);
+        const container = this.add.container(x, y).setDepth(2);
 
-      const character = this.add.image(0, -15, charKey).setScale(0.8*scale);
-      const frame = this.add.image(0, 0, 'frame1').setScale(0.6*scale)
-        .setInteractive({ cursor: 'pointer' })
-        .on('pointerdown', () =>
-          console.log(`Clicked on frame ${idx + 1} at (${x}, ${y})`)
-        );
-      const label = this.add.text(
-          0,
-          frame.displayHeight / 2 + 10,
-          `Quest – ${idx + 1}`,
-          {
-            fontSize: `${18 * scale}px`,
-            color: '#fff',
-            backgroundColor: 'rgba(0,0,0,0.6)',
-            padding: { x: 6, y:4},
-          }
-        )
-        .setOrigin(0.5, 0);
+        const character = this.add.image(0, -15, charKey).setScale(0.8*scale);
+        const frame = this.add.image(0, 0, 'frame1').setScale(0.6*scale)
+          .setInteractive({ cursor: 'pointer' })
+          .on('pointerdown', () =>
+            console.log(`Clicked on frame ${idx + 1} at (${x}, ${y})`)
+          );
+        const label = this.add.text(
+            0,
+            frame.displayHeight / 2 + 10,
+            `Quest – ${idx + 1}`,
+            {
+              fontSize: `${18 * scale}px`,
+              color: '#fff',
+              backgroundColor: 'rgba(0,0,0,0.6)',
+              padding: { x: 6, y:4},
+            }
+          )
+          .setOrigin(0.5, 0);
 
-      container.add([character, frame, label]);
+        container.add([character, frame, label]);
 
-      this.tweens.add({
-        targets: container,
-        y: y - 10,
-        ease: 'Sine.easeInOut',
-        duration: 1000,
-        yoyo: true,
-        repeat: -1,
-      });
+        this.tweens.add({
+          targets: container,
+          y: y - 10,
+          ease: 'Sine.easeInOut',
+          duration: 1000,
+          yoyo: true,
+          repeat: -1,
+        });
+      }
     });
 
     // ── Drag & Wheel-to-Pan ──
