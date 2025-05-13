@@ -74,7 +74,7 @@ const ContactPage = () => {
     `;
   
     try {
-      const response = await fetch('http://localhost:3000/send-email', {
+      const response = await fetch('http://localhost:5001/api/contact/send-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -98,6 +98,34 @@ const ContactPage = () => {
       console.error('Error calling backend:', err);
     }
   };
+
+  const checkEmail = async (email: string) => {
+    console.log("Checking email:", email);
+    
+    try {
+      const response = await fetch('http://localhost:5001/api/contact/check-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+  
+      const result = await response.json();
+      if (!result.success) {
+        toast({
+          title: "Warning!",
+          description: result.error || "You can only submit one Contact Quest per day",
+          className: "bg-red-600 text-white font-semibold",
+        });
+        return false;
+      }
+      return true;
+
+    } catch (error) {
+      console.error("Error checking email:", error);
+    }
+  }
   
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -239,8 +267,10 @@ const ContactPage = () => {
                       <div className="flex justify-end mt-4">
                         <Button
                           type="button"
-                          onClick={() => {
-                            if (form.getValues().name && form.getValues().email) {                    
+                          onClick={async () => {
+                            const emailCheck = await checkEmail(form.getValues().email);
+                            console.log("Email check result:", emailCheck);
+                            if (form.getValues().name && form.getValues().email && emailCheck) {
                               if (form.formState.errors.name || form.formState.errors.email) {
                                 return;
                               }
@@ -249,6 +279,7 @@ const ContactPage = () => {
                               form.trigger(["name", "email"]);
                             }
                           }}
+                          
                           className="bg-amber-600 hover:bg-amber-700 text-black"
                         >
                           Continue Quest
