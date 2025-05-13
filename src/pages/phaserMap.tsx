@@ -33,7 +33,6 @@ class MapScene extends Phaser.Scene {
   }
 
   create() {
-    // 1️⃣ Background
     const bg = this.add.image(0, 0, 'background').setOrigin(0, 0)
     const scale = DESIGN_HEIGHT / bg.height
     const cam = this.cameras.main;
@@ -58,13 +57,13 @@ class MapScene extends Phaser.Scene {
     this.add.image(1250, 740, 'mountain-pin2')
       .setOrigin(0, 0)
       .setScale(0.5*scale)
-      .setDepth(3)
+      .setDepth(0)
       .setScrollFactor(1)
 
     this.add.image(1930, 350, 'cloud1')
       .setOrigin(0, 0)
       .setScale(0.2*scale)
-      .setDepth(2)
+      .setDepth(1)
       .setScrollFactor(1)
 
     // 5️⃣ Bouncing frames (20 quests, y ≤ 400 except quest5 & quest7)
@@ -108,13 +107,12 @@ class MapScene extends Phaser.Scene {
       const charKey = Phaser.Utils.Array.GetRandom(characters)
       const container = this.add.container(x, y).setDepth(2)
 
-      const character = this.add.image(0, 0, charKey).setScale(0.8*scale)
+      const character = this.add.image(0, -15, charKey).setScale(0.8*scale)
       const frame     = this.add.image(0, 0, 'frame1').setScale(0.6*scale)
         .setInteractive({ cursor: 'pointer' })
         .on('pointerdown', () =>
           console.log(`Clicked Quest ${idx+1} at (${x},${y})`)
-        )
-
+        );
       const label = this.add.text(
         0,
         frame.displayHeight / 2 + 10,

@@ -1,6 +1,14 @@
 import React, { useRef, useEffect } from 'react';
 import Phaser from 'phaser';
 
+const DESIGN_WIDTH  = 1920
+const DESIGN_HEIGHT = 1080
+
+interface TownMapProps {
+  width?: string | number
+  height?: string | number
+}
+
 class TownScene extends Phaser.Scene {
   private isDragging = false;
   private dragStartX = 0;
@@ -10,15 +18,10 @@ class TownScene extends Phaser.Scene {
     super({ key: 'TownScene' });
   }
 
-  preload(): void {
-    // Layers
-    this.load.image('bg', '/assets/phaser/town-map/background.png');
-    this.load.image('fg', '/assets/phaser/town-map/background-mid.png');
-    // Frame + Characters
-    this.load.image(
-      'frame1',
-      '/assets/phaser/c6807ce6f6d314f58b70d530034dd87b/location-marker.png'
-    );
+  preload(){
+    this.load.image('background', '/assets/phaser/town-map/background.png');
+    this.load.image('city', '/assets/phaser/town-map/background-mid.png');
+    this.load.image('frame1', '/assets/phaser/c6807ce6f6d314f58b70d530034dd87b/location-marker.png');
     this.load.image(
       'character1',
       '/assets/phaser/f6313571193a34c69bf86bd5f7534400/preview.png'
@@ -45,43 +48,47 @@ class TownScene extends Phaser.Scene {
     );
   }
 
-  create(): void {
+  create(){
+    const bg = this.add.image(0, 0, 'background').setOrigin(0, 0);
+    const scale = DESIGN_HEIGHT / bg.height;
     const cam = this.cameras.main;
-    const H = cam.height;
+    bg.setScale(scale);
 
-    // Source sizes
-    const imgBg = this.textures.get('bg').getSourceImage() as HTMLImageElement;
-    const imgFg = this.textures.get('fg').getSourceImage() as HTMLImageElement;
+    // World bounds
+    const worldWidth  = bg.width * scale;
+    const worldHeight = DESIGN_HEIGHT;
+    this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
+    this.physics.world.setBounds(0, 0, worldWidth, worldHeight);
 
-    // Scale so height fills viewport
-    const scaleBg = H / imgBg.height;
-    const scaleFg = H / imgFg.height;
+    // Parallax underlay
+    this.add.image(0, 0, 'background')
+      .setOrigin(0, 0)
+      .setDepth(-1)
+      .setScrollFactor(0.5);
 
-    // Scaled widths
-    const Wbg = imgBg.width * scaleBg;
-    const Wfg = imgFg.width * scaleFg;
-    const worldWidth = Math.max(Wbg, Wfg);
-
-    // Add layers
-    this.add
-      .image(0, 0, 'bg')
-      .setOrigin(0)
+    this.add.image(0, 0, 'city')
+      .setOrigin(0, 0)
       .setDepth(0)
-      .setScrollFactor(0.7)
-      .setScale(scaleBg);
+      .setScale(0.5 * scale)
+      .setScrollFactor(1)
 
-    this.add
-      .image(0, 0, 'fg')
-      .setOrigin(0)
-      .setDepth(1)
-      .setScale(scaleFg);
+    // // Add layers
+    // this.add
+    //   .image(0, 0, 'bg')
+    //   .setOrigin(0)
+    //   .setDepth(0)
+    //   .setScrollFactor(0.7)
+    //   .setScale(scale);
 
-    // World bounds (lock vertical, allow horizontal)
-    cam.setBounds(0, 0, worldWidth, H);
-    this.physics.world.setBounds(0, 0, worldWidth, H);
+    // this.add
+    //   .image(0, 0, 'city')
+    //   .setOrigin(0)
+    //   .setDepth(1)
+    //   .setScale(scale);
+
 
     // ── Characters & Floating Frames ──
-    const characterKeys: string[] = [
+    const characters = [
       'character1',
       'character2',
       'character3',
@@ -104,27 +111,24 @@ class TownScene extends Phaser.Scene {
     ];
 
     framePositions.forEach(({ x, y }, idx) => {
-      const charKey = Phaser.Utils.Array.GetRandom(characterKeys);
+      const charKey = Phaser.Utils.Array.GetRandom(characters);
       const container = this.add.container(x, y).setDepth(2);
 
-      const character = this.add.image(0, 0, charKey).setScale(0.6);
-      const frame = this.add
-        .image(0, 8, 'frame1')
-        .setScale(0.45)
+      const character = this.add.image(0, -15, charKey).setScale(0.8*scale);
+      const frame = this.add.image(0, 0, 'frame1').setScale(0.6*scale)
         .setInteractive({ cursor: 'pointer' })
         .on('pointerdown', () =>
           console.log(`Clicked on frame ${idx + 1} at (${x}, ${y})`)
         );
-      const label = this.add
-        .text(
+      const label = this.add.text(
           0,
-          frame.displayHeight / 2 + 8,
+          frame.displayHeight / 2 + 10,
           `Quest – ${idx + 1}`,
           {
-            fontSize: '16px',
+            fontSize: `${18 * scale}px`,
             color: '#fff',
             backgroundColor: 'rgba(0,0,0,0.6)',
-            padding: { x: 6, y: 2 },
+            padding: { x: 6, y:4},
           }
         )
         .setOrigin(0.5, 0);
@@ -147,60 +151,65 @@ class TownScene extends Phaser.Scene {
       this.dragStartX = p.x;
       this.startCamX = cam.scrollX;
     });
-    this.input.on('pointerup', () => (this.isDragging = false));
-    this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
-      if (!this.isDragging) return;
-      const dx = p.x - this.dragStartX;
-      cam.scrollX = Phaser.Math.Clamp(
-        this.startCamX - dx,
-        0,
-        worldWidth - cam.width
-      );
-    });
+    this.input.on('pointerup',   () => this.isDragging = false)
+        this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
+          if (!this.isDragging) return
+          this.cameras.main.scrollX = Phaser.Math.Clamp(
+            this.startCamX - (p.x - this.dragStartX),
+            0,
+            worldWidth - this.cameras.main.width
+          )
+        })
+
     this.input.on(
       'wheel',
       (_ptr: Phaser.Input.Pointer, _objs: any, _dx: number, dy: number) => {
-        cam.scrollX = Phaser.Math.Clamp(
-          cam.scrollX + dy,
+        this.cameras.main.scrollX = Phaser.Math.Clamp(
+          this.cameras.main.scrollX + dy,
           0,
-          worldWidth - cam.width
-        );
+          worldWidth - this.cameras.main.width
+        )
       }
     );
   }
 }
 
-const TownMap: React.FC = () => {
-  const phaserRef = useRef<HTMLDivElement>(null);
+export const TownMap: React.FC<TownMapProps> = ({
+  width = '100%',
+  height = '100%'
+}) => {
+  const phaserRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const config: Phaser.Types.Core.GameConfig = {
+    if (!phaserRef.current) return
+    const game = new Phaser.Game({
       type: Phaser.AUTO,
-      parent: phaserRef.current!,
+      parent: phaserRef.current,
       scale: {
-        mode: Phaser.Scale.RESIZE,
+        mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: DESIGN_WIDTH,
+        height: DESIGN_HEIGHT,
       },
       physics: {
         default: 'arcade',
-        arcade: { gravity: {
-            y: 0,
-            x: 0
-        } },
+        arcade: { gravity: { x: 0, y: 0 } }
       },
       scene: TownScene,
-    };
-
-    const game = new Phaser.Game(config);
-    return () => game.destroy(true);
-  }, []);
+    })
+    return () => game.destroy(true)
+  }, [])
 
   return (
     <div
       ref={phaserRef}
-      style={{ width: '100%', height: '80vh', overflow: 'hidden' }}
+      style={{
+        width,
+        height,
+        overflow: 'hidden'
+      }}
     />
-  );
-};
+  )
+}
 
 export default TownMap;
