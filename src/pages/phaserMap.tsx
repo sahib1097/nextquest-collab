@@ -71,7 +71,7 @@ class PhaserScene extends Phaser.Scene {
       'character1','character2','character3',
       'character4','character5','character6'
     ]
-
+    
     const framePositions = [
       // Quest 1–4 (y ≤ 400)
       { x: 300,  y: 700 },
@@ -102,6 +102,9 @@ class PhaserScene extends Phaser.Scene {
       { x:3550, y: 790 },
       { x:3700, y: 600 }
     ]
+
+    const numUsers = framePositions.length
+    console.log('Number of users:', numUsers)
 
     framePositions.forEach(({ x, y }, idx) => {
       const charKey = Phaser.Utils.Array.GetRandom(characters)
