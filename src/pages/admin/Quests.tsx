@@ -14,6 +14,7 @@ import { LeaderboardScope } from "@/types/social";
 import { Users, Trophy, Settings, Castle, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "@/contexts/ThemeContext";
 
 // lazy‑load QuestBoard
 const QuestBoard = lazy(() => import("@/components/Quests/QuestBoard"));
@@ -30,6 +31,7 @@ const HellMap = lazy(() =>
 );
 
 const Quests: React.FC = () => {
+  const { currentTheme } = useTheme();
   const [activeTab, setActiveTab] = useState("available");
   const [activeSection, setActiveSection] = useState("quests");
   const [userLevel, setUserLevel] = useState<UserLevel | null>(null);
@@ -107,7 +109,12 @@ const Quests: React.FC = () => {
         <div className="flex-1">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold text-gray-800">Quest Board</h1>
+            <h1 
+              className="text-2xl font-bold"
+              style={{ color: currentTheme.colors.text }}
+            >
+              Quest Board
+            </h1>
             <div className="flex items-center gap-2">
               {isAdmin && (
                 <Button

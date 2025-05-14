@@ -1,4 +1,3 @@
-
 import { ReactNode, useState, useEffect } from "react";
 import MovableSidebar, { SidebarPosition } from "./MovableSidebar";
 import { Bell, Search, Plus } from "lucide-react";
@@ -16,6 +15,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import { updateLastActivity, logoutUser } from "@/utils/authUtils";
 import { API } from "@/config";
+import { useTheme } from "@/contexts/ThemeContext";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -26,6 +27,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     return (localStorage.getItem("fluxSidebarPosition") as SidebarPosition) || "left";
   });
   const navigate = useNavigate();
+  const { currentTheme } = useTheme();
   
   const [user, setUser] = useState(() => {
     return JSON.parse(localStorage.getItem("fluxUser") || '{"name":"User"}');
@@ -58,18 +60,18 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
   
   const handleLogout = async () => {
-    // 1) Tell the server to clear the cookie
     await fetch(`${API}/api/auth/logout`, {
-      method:      'POST',
-      credentials: 'include',       // important to send the cookie
+      method: 'POST',
+      credentials: 'include',
     });
-
-    // 2) Then clear your localStorage flags
-    logoutUser();                  // your existing helper
+    logoutUser();
   };
   
   return (
-    <div className="flex h-screen bg-white">
+    <div 
+      className="flex h-screen"
+      style={{ backgroundColor: currentTheme.colors.background }}
+    >
       {sidebarPosition === "left" && (
         <MovableSidebar 
           position={sidebarPosition}
@@ -78,7 +80,13 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       )}
       
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white border-b border-[#E5E5EA] px-6 py-3 shadow-sm">
+        <header 
+          className="px-6 py-3 shadow-sm border-b"
+          style={{ 
+            backgroundColor: currentTheme.colors.background,
+            borderColor: currentTheme.colors.border
+          }}
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <img 
@@ -87,37 +95,78 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 className="h-8 w-auto mr-4"
               />
               <div className="max-w-md w-full relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#86868B]" />
+                <Search 
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4"
+                  style={{ color: currentTheme.colors.accent }}
+                />
                 <Input 
                   type="search" 
                   placeholder="Search projects, roadmaps, tasks..."
-                  className="pl-10 bg-[#F5F5F7] border-[#E5E5EA] text-[#1D1D1F] focus-visible:ring-[#007AFF]"
+                  className="pl-10"
+                  style={{
+                    backgroundColor: currentTheme.colors.secondary,
+                    borderColor: currentTheme.colors.border,
+                    color: currentTheme.colors.text
+                  }}
                 />
               </div>
             </div>
             
             <div className="flex items-center space-x-3">
-              <Button variant="outline" size="sm" className="flex items-center gap-1 border-[#E5E5EA] text-[#1D1D1F]">
+              <ThemeSwitcher />
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex items-center gap-1 hover:opacity-80 transition-opacity"
+                style={{
+                  borderColor: currentTheme.colors.border,
+                  color: currentTheme.colors.text
+                }}
+              >
                 <Plus className="h-4 w-4" /> New
               </Button>
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative text-[#1D1D1F] hover:bg-[#F5F5F7]">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="relative hover:opacity-80 transition-opacity"
+                    style={{
+                      color: currentTheme.colors.text,
+                      backgroundColor: 'transparent'
+                    }}
+                  >
                     <Bell className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-80 bg-white border border-[#E5E5EA] shadow-lg rounded-lg">
-                  <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-[#E5E5EA]" />
+                <DropdownMenuContent 
+                  align="end" 
+                  className="w-80 shadow-lg rounded-lg"
+                  style={{
+                    backgroundColor: currentTheme.colors.background,
+                    borderColor: currentTheme.colors.border
+                  }}
+                >
+                  <DropdownMenuLabel style={{ color: currentTheme.colors.text }}>
+                    Notifications
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator style={{ backgroundColor: currentTheme.colors.border }} />
                   <div className="max-h-80 overflow-y-auto p-2">
-                    <div className="text-center text-sm text-[#86868B] py-4">
+                    <div 
+                      className="text-center text-sm py-4"
+                      style={{ color: currentTheme.colors.accent }}
+                    >
                       No notifications yet
                     </div>
                   </div>
-                  <DropdownMenuSeparator className="bg-[#E5E5EA]" />
+                  <DropdownMenuSeparator style={{ backgroundColor: currentTheme.colors.border }} />
                   <DropdownMenuItem 
-                    className="justify-center cursor-pointer hover:text-[#007AFF] hover:bg-[#F5F5F7]" 
+                    className="justify-center cursor-pointer hover:bg-opacity-50 transition-colors"
+                    style={{
+                      color: currentTheme.colors.text,
+                      backgroundColor: 'transparent'
+                    }}
                     onClick={() => navigate("/admin/settings")}
                   >
                     Manage notifications
@@ -127,7 +176,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Avatar className="h-8 w-8 bg-[#007AFF] cursor-pointer">
+                  <Avatar 
+                    className="h-8 w-8 cursor-pointer hover:opacity-80 transition-opacity"
+                    style={{ backgroundColor: currentTheme.colors.primary }}
+                  >
                     {user.avatar ? (
                       <AvatarImage src={user.avatar} alt={user.name} />
                     ) : (
@@ -135,20 +187,56 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                     )}
                   </Avatar>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-white border border-[#E5E5EA] shadow-lg rounded-lg">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-[#E5E5EA]" />
-                  <DropdownMenuItem onClick={() => navigate("/profile")} className="hover:text-[#007AFF] hover:bg-[#F5F5F7]">
+                <DropdownMenuContent 
+                  align="end" 
+                  className="shadow-lg rounded-lg"
+                  style={{
+                    backgroundColor: currentTheme.colors.background,
+                    borderColor: currentTheme.colors.border
+                  }}
+                >
+                  <DropdownMenuLabel style={{ color: currentTheme.colors.text }}>
+                    My Account
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator style={{ backgroundColor: currentTheme.colors.border }} />
+                  <DropdownMenuItem 
+                    onClick={() => navigate("/profile")}
+                    className="hover:bg-opacity-50 transition-colors"
+                    style={{
+                      color: currentTheme.colors.text,
+                      backgroundColor: 'transparent'
+                    }}
+                  >
                     My Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/admin/settings")} className="hover:text-[#007AFF] hover:bg-[#F5F5F7]">
+                  <DropdownMenuItem 
+                    onClick={() => navigate("/admin/settings")}
+                    className="hover:bg-opacity-50 transition-colors"
+                    style={{
+                      color: currentTheme.colors.text,
+                      backgroundColor: 'transparent'
+                    }}
+                  >
                     Profile Settings
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/admin/settings")} className="hover:text-[#007AFF] hover:bg-[#F5F5F7]">
+                  <DropdownMenuItem 
+                    onClick={() => navigate("/admin/settings")}
+                    className="hover:bg-opacity-50 transition-colors"
+                    style={{
+                      color: currentTheme.colors.text,
+                      backgroundColor: 'transparent'
+                    }}
+                  >
                     Preferences
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-[#E5E5EA]" />
-                  <DropdownMenuItem onClick={handleLogout} className="text-red-500 hover:text-red-600 hover:bg-[#F5F5F7]">
+                  <DropdownMenuSeparator style={{ backgroundColor: currentTheme.colors.border }} />
+                  <DropdownMenuItem 
+                    onClick={handleLogout}
+                    className="text-red-500 hover:text-red-600 hover:bg-opacity-50 transition-colors"
+                    style={{
+                      backgroundColor: 'transparent'
+                    }}
+                  >
                     Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -157,7 +245,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           </div>
         </header>
         
-        <main className="flex-1 overflow-y-auto p-6 text-[#1D1D1F]">
+        <main 
+          className="flex-1 overflow-y-auto p-6"
+          style={{ color: currentTheme.colors.text }}
+        >
           {children}
         </main>
       </div>

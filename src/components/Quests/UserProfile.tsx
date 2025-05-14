@@ -1,4 +1,3 @@
-
 import { UserLevel } from "@/types/quest";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -22,23 +21,35 @@ type ActivityQuest = {
 };
 
 interface UserProfileProps {
-  userLevel: UserLevel;
+  userLevel?: UserLevel;
   publicProfile?: boolean; // optional: if true, show Activity tab
 }
 
 const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => {
-  const progress = calculateLevelProgress(userLevel.xp, userLevel.level);
+  // Default values if userLevel is undefined
+  const defaultUserLevel: UserLevel = {
+    userId: 'guest',
+    username: 'Guest User',
+    xp: 0,
+    level: 1,
+    nextLevelXp: 100,
+    profilePicture: undefined
+  };
+
+  // Use provided userLevel or fallback to default
+  const safeUserLevel = userLevel || defaultUserLevel;
+  const progress = calculateLevelProgress(safeUserLevel.xp, safeUserLevel.level);
 
   // Calculate how many XP needed for next level
-  const xpForNextLevel = userLevel.level >= 100 
+  const xpForNextLevel = safeUserLevel.level >= 100 
     ? 0 
-    : userLevel.nextLevelXp - userLevel.xp;
+    : safeUserLevel.nextLevelXp - safeUserLevel.xp;
     
   // Handle profile picture upload
   const handleProfilePictureUpload = (imageUrl: string) => {
     // Update the userLevel object with the new profile picture
     const updatedUserLevel = {
-      ...userLevel,
+      ...safeUserLevel,
       profilePicture: imageUrl
     };
     localStorage.setItem("fluxUserLevel", JSON.stringify(updatedUserLevel));
@@ -50,16 +61,16 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
   const [activityQuests, setActivityQuests] = useState<ActivityQuest[]>([]);
 
   useEffect(() => {
-    if (publicProfile && userLevel.userId) {
+    if (publicProfile && safeUserLevel.userId) {
       // Example: You may have a more sophisticated filter based on real quest data schema
       const quests = JSON.parse(localStorage.getItem("fluxQuests") || "[]");
       const activeQuests = quests
-        .filter((q: any) =>
-          (q.assignedTo === userLevel.userId || !q.assignedTo) &&
+        .filter((q: { assignedTo?: string; status: string }) =>
+          (q.assignedTo === safeUserLevel.userId || !q.assignedTo) &&
           (q.status === "In Progress" || q.status === "Available")
         )
         .slice(0, 5) // most recent 5 activities
-        .map((q: any) => ({
+        .map((q: { id: string; name: string; status: string; progress?: number; startedAt?: string; createdAt?: string }) => ({
           id: q.id,
           name: q.name,
           status: q.status,
@@ -68,7 +79,7 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
         }));
       setActivityQuests(activeQuests);
     }
-  }, [publicProfile, userLevel.userId]);
+  }, [publicProfile, safeUserLevel.userId]);
 
   return (
     <Tabs defaultValue="overview" className="w-full">
@@ -83,10 +94,10 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
             <div className="flex justify-between items-center">
               <CardTitle className="text-lg flex items-center">
                 <Award className="h-6 w-6 mr-2 text-yellow-500" /> 
-                {userLevel.username}
+                {safeUserLevel.username}
               </CardTitle>
               <Badge className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 px-3 py-1">
-                <Star className="h-3 w-3 mr-1 inline" /> Level {userLevel.level}
+                <Star className="h-3 w-3 mr-1 inline" /> Level {safeUserLevel.level}
               </Badge>
             </div>
           </CardHeader>
@@ -96,11 +107,11 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
               <ProfilePictureUploader onUpload={handleProfilePictureUpload}>
                 <div className="relative mr-4 flex-shrink-0">
                   <Avatar className="h-16 w-16 border-2 border-purple-200 shadow-sm">
-                    {userLevel.profilePicture ? (
-                      <AvatarImage src={userLevel.profilePicture} alt={userLevel.username} />
+                    {safeUserLevel.profilePicture ? (
+                      <AvatarImage src={safeUserLevel.profilePicture} alt={safeUserLevel.username || 'User'} />
                     ) : (
                       <AvatarFallback className="bg-gradient-to-br from-purple-500 to-blue-500 text-white text-xl font-medium">
-                        {userLevel.username.charAt(0).toUpperCase()}
+                        {(safeUserLevel.username || 'U').charAt(0).toUpperCase()}
                       </AvatarFallback>
                     )}
                   </Avatar>
@@ -116,12 +127,12 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
                 <div className="mb-3 flex justify-between items-center text-sm">
                   <div className="flex items-center">
                     <Zap className="h-4 w-4 mr-1 text-amber-500" />
-                    <span className="font-medium">{userLevel.xp} XP</span>
+                    <span className="font-medium">{safeUserLevel.xp} XP</span>
                   </div>
-                  {userLevel.level < 100 && (
+                  {safeUserLevel.level < 100 && (
                     <div className="flex items-center">
                       <TrendingUp className="h-4 w-4 mr-1 text-blue-500" />
-                      <span>{xpForNextLevel} XP to Level {userLevel.level + 1}</span>
+                      <span>{xpForNextLevel} XP to Level {safeUserLevel.level + 1}</span>
                     </div>
                   )}
                 </div>
@@ -154,7 +165,7 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
       </TabsContent>
       <TabsContent value="achievements">
         <div className="pt-2">
-          <AchievementShowcase userId={userLevel.userId} expanded={true} />
+          <AchievementShowcase userId={safeUserLevel.userId} expanded={true} />
         </div>
       </TabsContent>
       {publicProfile && (
