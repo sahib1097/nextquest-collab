@@ -33,7 +33,7 @@ class PhaserScene extends Phaser.Scene {
   }
 
   create() {
-    const bg = this.add.image(0, 0, 'background').setOrigin(0, 0)
+    const bg = this.add.image(0, 0, 'background').setOrigin(0, 0).setScrollFactor(1)
     const scale = DESIGN_HEIGHT / bg.height
     const cam = this.cameras.main;
     //const scale = cam.height / DESIGN_HEIGHT;
@@ -73,35 +73,34 @@ class PhaserScene extends Phaser.Scene {
     ]
     
     const framePositions = [
-      // Quest 1–4 (y ≤ 400)
-      { x: 300,  y: 700 },
-      { x: 450,  y: 850 },
-      { x: 600,  y: 750 },
-      { x: 750,  y: 680 },
+  // Spaced across map horizontally and vertically, now shifted
+  { x:  300, y:  500 },
+  { x:  700, y:  400 },
+  { x: 1100, y:  500 },
+  { x: 1450, y:  600 },
+  { x: 1900, y:  700 },
+  { x: 2150, y:  800 },
+  { x: 2500, y:  900 },
+  { x: 2800, y:  650 },
+  { x: 3100, y:  450 },
+  { x: 3350, y:  350 },  // maxed at ~3396 due to right padding
 
-      // Quest 5 (static original spot: y=530)
-      { x:1100, y: 530 },
+  // Additional 10 filling gaps, shifted
+  { x:  500, y:  750 },
+  { x:  900, y:  850 },
+  { x: 1250, y:  750 },
+  { x: 1650, y:  850 },
+  { x: 2000, y:  350 },
+  { x: 2350, y:  450 },
+  { x: 2600, y:  550 },
+  { x: 3050, y:  750 },
+  { x: 3350, y:  850 },
+  { x: 3600, y:  600 }   // close to lower limit with padding
+]
 
-      { x:1200, y: 780 },
-      { x:1380, y: 650 },
 
-      // Quest 7 (static original spot: y=400)
-      { x:1900, y: 400 },
 
-      // Quest 8–20 (y ≤ 400)
-      { x:1700, y: 620 },
-      { x:2000, y: 760 },
-      { x:2180, y: 690 },
-      { x:2360, y: 590 },
-      { x:2550, y: 500 },
-      { x:2700, y: 550 },
-      { x:2980, y: 700 },
-      { x:3120, y: 630 },
-      { x:3270, y: 720 },
-      { x:3400, y: 560 },
-      { x:3550, y: 790 },
-      { x:3700, y: 600 }
-    ]
+
 
     const numUsers = framePositions.length
     console.log('Number of users:', numUsers)

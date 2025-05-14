@@ -34,6 +34,7 @@ class HellScene extends Phaser.Scene {
     // 1️⃣ Background scaled to design height
     const bg = this.add.image(0, 0, 'background')
       .setOrigin(0, 0)
+      .setScrollFactor(0.5)
       .setDepth(-1);
     const scale = DESIGN_HEIGHT / bg.height;
     bg.setScale(scale);
@@ -42,13 +43,13 @@ class HellScene extends Phaser.Scene {
     this.add.image(0, 0, 'background-mid')
       .setOrigin(0, 0)
       .setDepth(0)
-      .setScrollFactor(0.7)
+      .setScrollFactor(1)
       .setScale(scale);
 
     this.add.image(0, 0, 'background-fore')
       .setOrigin(0, 0)
       .setDepth(1)
-      .setScrollFactor(0.7)
+      .setScrollFactor(1)
       .setScale(scale);
 
     // 3️⃣ World & camera bounds
@@ -63,10 +64,26 @@ class HellScene extends Phaser.Scene {
       'character4','character5','character6'
     ];
     const framePositions: { x: number; y: number }[] = [
-      { x: 300,  y: 500 }, { x: 400,  y: 650 }, { x: 700,  y: 550 },
-      { x: 1000, y: 700 }, { x: 1100, y: 530 }, { x: 1600, y: 680 },
-      { x: 1900, y: 400 }, { x: 2200, y: 520 }, { x: 2500, y: 700 },
-      { x: 2780, y: 500 },
+      { x: 250,  y: 450 }, //1
+      { x: 1200,  y: 300 }, 
+      { x: 450,  y: 250 },
+      { x: 250,  y: 900 }, 
+      { x: 850,  y: 200 }, //5
+      { x: 850,  y: 575 },
+      { x: 1100, y: 750 }, 
+      { x: 1030, y: 450 }, 
+      { x: 2500, y: 700 },
+      { x: 1700, y: 800 }, //10
+      { x: 1745,  y: 550 }, 
+      { x: 100,  y: 650 }, 
+      { x: 1400,  y: 400 },
+      { x: 2050, y: 700 }, 
+      { x: 1400, y: 850 }, //15
+      { x: 1600, y: 350 },
+      { x: 1900, y: 400 }, 
+      { x: 2300, y: 520 }, 
+      { x: 2700, y: 400 },
+      { x: 2750,  y: 850 } //20
     ];
 
     framePositions.forEach(({ x, y }, idx) => {
