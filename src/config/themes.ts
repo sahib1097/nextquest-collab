@@ -23,6 +23,7 @@ export type Theme = {
       border: string;
     };
   };
+  backgroundImage?: string;
 };
 
 export const themes: Record<string, Theme> = {
@@ -50,7 +51,8 @@ export const themes: Record<string, Theme> = {
         background: "bg-white",
         border: "border-[#E5E5EA]"
       }
-    }
+    },
+    backgroundImage: undefined
   },
   medieval: {
     name: "Medieval",
@@ -76,7 +78,8 @@ export const themes: Record<string, Theme> = {
         background: "bg-[#FDF5E6]",
         border: "border-[#D2B48C]"
       }
-    }
+    },
+    backgroundImage: "/assets/background/grey_brick.jpeg"
   },
   cyberpunk: {
     name: "Cyberpunk",
@@ -102,6 +105,7 @@ export const themes: Record<string, Theme> = {
         background: "bg-[#1E1E1E]",
         border: "border-[#00FFFF]"
       }
-    }
+    },
+    backgroundImage: undefined
   }
 }; 
