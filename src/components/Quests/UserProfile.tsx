@@ -86,7 +86,7 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
       <TabsList className="mb-4 grid grid-cols-3 w-full max-w-sm mx-auto bg-white rounded-md border">
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="achievements">Achievements</TabsTrigger>
-        {publicProfile && <TabsTrigger value="activity">Activity</TabsTrigger>}
+        <TabsTrigger value="activity">Activity</TabsTrigger>
       </TabsList>
       <TabsContent value="overview">
         <Card className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 border-2 border-blue-100 shadow-md overflow-hidden">

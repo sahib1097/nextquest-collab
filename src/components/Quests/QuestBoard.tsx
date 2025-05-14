@@ -5,6 +5,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { motion, Reorder } from "framer-motion";
 import { Scroll, Sparkles, Swords } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface QuestBoardProps {
   status: string;
@@ -13,6 +14,7 @@ interface QuestBoardProps {
 
 const QuestBoard = ({ status, questType }: QuestBoardProps) => {
   const [quests, setQuests] = useState<Quest[]>([]);
+  const { currentTheme } = useTheme();
 
   useEffect(() => {
     // Load quests from localStorage
@@ -75,26 +77,71 @@ const QuestBoard = ({ status, questType }: QuestBoardProps) => {
 
   // Quest board header based on status
   const getBoardHeader = () => {
+    let medievalSpanClass = "";
+    let medievalBg = "";
+    let medievalBorder = "";
+    let Icon = null;
+    if (currentTheme.name === "Medieval") {
+      switch (status) {
+        case "Available":
+          medievalBg = "bg-amber-600";
+          medievalBorder = "border-amber-900";
+          Icon = <Scroll className="h-6 w-6 inline-block mr-2" />;
+          break;
+        case "In Progress":
+          medievalBg = "bg-blue-600";
+          medievalBorder = "border-blue-900";
+          Icon = <Swords className="h-6 w-6 inline-block mr-2" />;
+          break;
+        case "Completed":
+          medievalBg = "bg-emerald-600";
+          medievalBorder = "border-emerald-900";
+          Icon = <Sparkles className="h-6 w-6 inline-block mr-2" />;
+          break;
+        default:
+          medievalBg = "";
+          medievalBorder = "";
+      }
+      medievalSpanClass = `px-4 py-2 ${medievalBg} text-[#ffe8a3] font-extrabold text-2xl tracking-wide border-4 ${medievalBorder} rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] uppercase flex items-center`;
+    }
     switch(status) {
       case "Available":
         return (
           <div className="flex items-center gap-2 mb-6 text-xl font-bold text-amber-600">
-            <Scroll className="h-6 w-6" />
-            <span>Available Quests</span>
+            {currentTheme.name === "Medieval" ? (
+              <span className={medievalSpanClass}>{Icon}Available Quests</span>
+            ) : (
+              <>
+                <Scroll className="h-6 w-6" />
+                <span>Available Quests</span>
+              </>
+            )}
           </div>
         );
       case "In Progress":
         return (
           <div className="flex items-center gap-2 mb-6 text-xl font-bold text-blue-600">
-            <Swords className="h-6 w-6" />
-            <span>Active Quests</span>
+            {currentTheme.name === "Medieval" ? (
+              <span className={medievalSpanClass}>{Icon}Active Quests</span>
+            ) : (
+              <>
+                <Swords className="h-6 w-6" />
+                <span>Active Quests</span>
+              </>
+            )}
           </div>
         );
       case "Completed":
         return (
           <div className="flex items-center gap-2 mb-6 text-xl font-bold text-emerald-600">
-            <Sparkles className="h-6 w-6" />
-            <span>Completed Quests</span>
+            {currentTheme.name === "Medieval" ? (
+              <span className={medievalSpanClass}>{Icon}Completed Quests</span>
+            ) : (
+              <>
+                <Sparkles className="h-6 w-6" />
+                <span>Completed Quests</span>
+              </>
+            )}
           </div>
         );
       default:

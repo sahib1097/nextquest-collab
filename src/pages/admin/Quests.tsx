@@ -109,9 +109,12 @@ const Quests: React.FC = () => {
         <div className="flex-1">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <h1 
-              className="text-2xl font-bold"
-              style={{ color: currentTheme.colors.text }}
+            <h1
+              className={
+                currentTheme.name === "Medieval"
+                  ? "px-4 py-2 bg-[#8B0000] text-[#ffe8a3] font-extrabold text-3xl tracking-wide border-4 border-[#5c0000] rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] uppercase"
+                  : "text-2xl font-bold"
+              }
             >
               Quest Board
             </h1>
@@ -199,7 +202,7 @@ const Quests: React.FC = () => {
                           <button
                             key={key}
                             onClick={() => {
-                              setSelectedMap(key as any);
+                              setSelectedMap(key as "town" | "phaser" | "hell");
                               setShowMapMenu(false);
                             }}
                             className="w-full px-4 py-2 text-left hover:bg-gray-100"
