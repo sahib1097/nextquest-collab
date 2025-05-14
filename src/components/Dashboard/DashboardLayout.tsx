@@ -26,6 +26,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [sidebarPosition, setSidebarPosition] = useState<SidebarPosition>(() => {
     return (localStorage.getItem("fluxSidebarPosition") as SidebarPosition) || "left";
   });
+  const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const { currentTheme } = useTheme();
   
@@ -69,19 +70,23 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   
   return (
     <div 
-      className="flex h-screen"
-      style={{ backgroundColor: currentTheme.colors.background }}
+      className="flex h-screen relative"
+      style={{ 
+        backgroundColor: currentTheme.colors.background,
+      }}
     >
       {sidebarPosition === "left" && (
         <MovableSidebar 
           position={sidebarPosition}
           onPositionChange={handlePositionChange}
+          collapsed={collapsed}
+          setCollapsed={setCollapsed}
         />
       )}
       
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden relative">
         <header 
-          className="px-6 py-3 shadow-sm border-b"
+          className="px-6 py-3 shadow-sm border-b relative z-10"
           style={{ 
             backgroundColor: currentTheme.colors.background,
             borderColor: currentTheme.colors.border
@@ -246,10 +251,29 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </header>
         
         <main 
-          className="flex-1 overflow-y-auto p-6"
+          className="flex-1 overflow-y-auto p-6 relative"
           style={{ color: currentTheme.colors.text }}
         >
-          {children}
+          {currentTheme.backgroundImage && (
+            <div 
+              className="fixed"
+              style={{
+                backgroundImage: `url(${currentTheme.backgroundImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                opacity: 0.9,
+                top: '64px', // Height of the header
+                left: sidebarPosition === 'left' ? (collapsed ? '80px' : '250px') : '0', // Responsive sidebar width
+                right: sidebarPosition === 'right' ? (collapsed ? '80px' : '250px') : '0',
+                bottom: 0,
+                zIndex: 0
+              }}
+            />
+          )}
+          <div className="relative z-10">
+            {children}
+          </div>
         </main>
       </div>
       
@@ -257,6 +281,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <MovableSidebar 
           position={sidebarPosition}
           onPositionChange={handlePositionChange}
+          collapsed={collapsed}
+          setCollapsed={setCollapsed}
         />
       )}
       
@@ -265,6 +291,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           <MovableSidebar 
             position={sidebarPosition}
             onPositionChange={handlePositionChange}
+            collapsed={collapsed}
+            setCollapsed={setCollapsed}
           />
         </div>
       )}

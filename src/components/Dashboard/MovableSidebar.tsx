@@ -29,10 +29,11 @@ export type SidebarPosition = "left" | "right" | "bottom";
 interface MovableSidebarProps {
   position: SidebarPosition;
   onPositionChange: (position: SidebarPosition) => void;
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
 }
 
-const MovableSidebar = ({ position, onPositionChange }: MovableSidebarProps) => {
-  const [collapsed, setCollapsed] = useState(false);
+const MovableSidebar = ({ position, onPositionChange, collapsed, setCollapsed }: MovableSidebarProps) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {

@@ -79,7 +79,7 @@ export const themes: Record<string, Theme> = {
         border: "border-[#D2B48C]"
       }
     },
-    backgroundImage: "/assets/background/grey_brick.jpeg"
+    backgroundImage: "/assets/themes/medieval/backgrounds/grey_brick.jpeg"
   },
   cyberpunk: {
     name: "Cyberpunk",
