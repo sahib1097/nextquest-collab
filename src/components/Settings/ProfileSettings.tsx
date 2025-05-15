@@ -20,7 +20,7 @@ const ProfileSettings = () => {
       if (!stored?.userId) return;
 
       try {
-        const res = await fetch(`${API}/api/userinfo/user-data`, {
+        const res = await fetch(`${API}/userinfo/user-data`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
