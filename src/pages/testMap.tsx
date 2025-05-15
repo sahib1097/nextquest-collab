@@ -143,6 +143,82 @@ class TestScene extends Phaser.Scene {
       'character4','character5','character6'
     ]
 
+    const landmarkPositions = [
+        {x: 800, y: 500},   // More spread out across the map
+        {x: 1600, y: 300},
+        {x: 2400, y: 500},
+        {x: 1600, y: 700},
+        {x: 3200, y: 500}
+    ]
+
+    // Create landmarks first
+    landmarkPositions.forEach(({ x, y }, idx) => {
+        const saved = localStorage.getItem(`landmark-${idx}`)
+        const pos = saved ? JSON.parse(saved) : { x, y }
+      
+        const container = this.add.container(pos.x, pos.y).setDepth(2)
+        container.setSize(300, 300)
+        container.setInteractive({ 
+            draggable: true,
+            useHandCursor: true
+        })
+
+        landmarkContainers.push(container)
+        ;(container as any).associatedQuests = []
+        ;(container as any).questOffsets = [] // Store original offsets
+      
+        const landmarkimg = this.add.image(0, -15, 'landmark1').setScale(0.8 * scale)
+
+        const label = this.add.text(
+          0,
+          landmarkimg.displayHeight / 2 + 10,
+          `Project – ${idx + 1}`,
+          {
+            fontSize: `${18 * scale}px`,
+            color: '#fff',
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            padding: { x: 6, y: 4 },
+          }
+        ).setOrigin(0.5, 0)
+      
+        container.add([landmarkimg, label])
+
+        // Enable dragging
+        this.input.setDraggable(container)
+      
+        container.on('drag', (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+            container.setPosition(dragX, dragY)
+
+            // Update all associated quests positions using stored offsets
+            ;(container as any).associatedQuests.forEach((quest: Phaser.GameObjects.Container, questIndex: number) => {
+                const offset = (container as any).questOffsets[questIndex]
+                if (offset) {
+                    const newX = dragX + offset.x
+                    const newY = dragY + offset.y
+                    quest.setPosition(newX, newY)
+
+                    // Update the bounce tween
+                    if ((quest as any).bounceTween) {
+                        (quest as any).bounceTween.stop()
+                        ;(quest as any).bounceTween = this.tweens.add({
+                            targets: quest,
+                            y: newY - 10,
+                            ease: 'Sine.easeInOut',
+                            duration: 1000,
+                            yoyo: true,
+                            repeat: -1
+                        })
+                    }
+                }
+            })
+        })
+      
+        container.on('dragend', () => {
+            localStorage.setItem(`landmark-${idx}`, JSON.stringify({ x: container.x, y: container.y }))
+        })
+    })
+
+    // Distribute quests among landmarks
     const framePositions = [
       { x:  300, y:  500, enable: false},
       { x:  700, y:  400, enable: true },
@@ -166,78 +242,37 @@ class TestScene extends Phaser.Scene {
       { x: 3600, y:  600, enable: true }
     ]
 
-    const landmarkPositions = [
-        {x: 2000, y: 500},
-        {x: 1000, y: 500},
-        {x: 2500, y: 500}
-    ]
-
-    const numUsers = framePositions.length
-    console.log('Number of users:', numUsers)
-
-    landmarkPositions.forEach(({ x, y }, idx) => {
-        const saved = localStorage.getItem(`landmark-${idx}`)
-        const pos = saved ? JSON.parse(saved) : { x, y }
-      
-        const container = this.add.container(pos.x, pos.y).setDepth(2)
-        container.setSize(300, 300) // Size required for draggable hitbox
-        container.setInteractive({ draggable: true })
-
-        landmarkContainers.push(container);
-        (container as any).linkedCharacters = new Set<Phaser.GameObjects.Container>();
-      
-        const landmarkimg = this.add.image(0, -15, 'landmark1').setScale(0.8 * scale)
-
-        const label = this.add.text(
-          0,
-          landmarkimg.displayHeight / 2 + 10,
-          `Landmark – ${idx + 1}`,
-          {
-            fontSize: `${18 * scale}px`,
-            color: '#fff',
-            backgroundColor: 'rgba(0,0,0,0.6)',
-            padding: { x: 6, y: 4 },
-          }
-        ).setOrigin(0.5, 0)
-      
-        container.add([landmarkimg, label])
-      
-        // Enable dragging on the container
-        this.input.setDraggable(container)
-
-        container.on('dragstart', () => {
-            // Example: stop any bounce tween here if you have one
-          })
-    
-        container.on('drag', (_pointer: any, dragX: number, dragY: number) => {
-          container.x = dragX
-          container.y = dragY
-        })
-      
-        container.on('dragend', () => {
-          localStorage.setItem(`landmark-${idx}`, JSON.stringify({ x: container.x, y: container.y }))
-        })
-      })
-
     framePositions.forEach(({ x, y, enable}, idx) => {
       if(enable) {
-        const saved = localStorage.getItem(`quest-${idx}`)
-        const pos = saved ? JSON.parse(saved) : { x, y }
+        const landmarkIndex = idx % landmarkContainers.length
+        const landmark = landmarkContainers[landmarkIndex]
+        
+        // Calculate position in a semicircle above the landmark
+        const questCount = (landmark as any).associatedQuests.length
+        const questsPerLandmark = Math.ceil(framePositions.length / landmarkContainers.length)
+        const angleStep = questsPerLandmark > 1 ? 180 / (questsPerLandmark - 1) : 0
+        const angle = (-180 + (questCount * angleStep)) * (Math.PI / 180)
+        const radius = 250
+        
+        const offsetX = Math.cos(angle) * radius
+        const offsetY = Math.sin(angle) * radius
+        
+        const container = this.add.container(landmark.x + offsetX, landmark.y + offsetY).setDepth(2)
+        container.setSize(100, 100)
+        
+        characterContainers.push(container)
+        // Add to landmark's associated quests and store the offset
+        ;(landmark as any).associatedQuests.push(container)
+        ;(landmark as any).questOffsets.push({ x: offsetX, y: offsetY })
       
         const charKey = Phaser.Utils.Array.GetRandom(characters)
-        const container = this.add.container(pos.x, pos.y).setDepth(2)
-        container.setSize(100, 100) // Size required for draggable hitbox
-        container.setInteractive({ draggable: true })
-
-        characterContainers.push(container)
-      
         const character = this.add.image(0, -15, charKey).setScale(0.8 * scale)
         const frame = this.add.image(0, 0, 'frame1').setScale(0.6 * scale)
       
         const label = this.add.text(
           0,
           frame.displayHeight / 2 + 10,
-          `Quest – ${idx + 1}`,
+          `Task – ${idx + 1}`,
           {
             fontSize: `${18 * scale}px`,
             color: '#fff',
@@ -248,128 +283,44 @@ class TestScene extends Phaser.Scene {
       
         container.add([character, frame, label])
       
-        // Store bounce tween reference on the container
-        const bounceTween = this.tweens.add({
+        // Store bounce tween reference on the container with reduced intensity
+        ;(container as any).bounceTween = this.tweens.add({
           targets: container,
-          y: container.y - 10,
+          y: container.y - 10, // Reduced from -10 to -5
           ease: 'Sine.easeInOut',
-          duration: 1000,
+          duration: 1000, // Increased from 1000 to 1500 for slower movement
           yoyo: true,
           repeat: -1
-        });
-        (container as any).bounceTween = bounceTween;
-      
-        // Enable dragging on the container
-        this.input.setDraggable(container)
-      
-        container.on('dragstart', () => {
-          // Stop the bounce tween when dragging starts
-          if ((container as any).bounceTween) {
-            (container as any).bounceTween.stop();
-          }
-        })
-      
-        container.on('drag', (_pointer: any, dragX: number, dragY: number) => {
-          container.x = dragX
-          container.y = dragY
-          updateLinkForCharacter(container)
-        })
-      
-        container.on('dragend', () => {
-          localStorage.setItem(`quest-${idx}`, JSON.stringify({ x: container.x, y: container.y }))
-          updateLinkForCharacter(container)
-          
-          // Restart the bounce tween from the new position
-          if ((container as any).bounceTween) {
-            (container as any).bounceTween.destroy();
-          }
-          (container as any).bounceTween = this.tweens.add({
-            targets: container,
-            y: container.y - 10,
-            ease: 'Sine.easeInOut',
-            duration: 1000,
-            yoyo: true,
-            repeat: -1
-          });
         })
       }
-      })
+    })
 
-    if (landmarkContainers.length === 0) return; // safety check
-
-    const LINK_RANGE = 250;  // <-- Adjust this number to control range (in pixels)
-
-    const isWithinRange = (c1: Phaser.GameObjects.Container, c2: Phaser.GameObjects.Container) => {
-        const dx = c1.x - c2.x;
-        const dy = c1.y - c2.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        return dist <= LINK_RANGE;
-    };
-
-    const updateLinkForCharacter = (charContainer: Phaser.GameObjects.Container) => {
-        // Check links for all landmarks
-        landmarkContainers.forEach(landmark => {
-            const linkedChars = (landmark as any).linkedCharacters;
-            if (isWithinRange(charContainer, landmark)) {
-                if (!linkedChars.has(charContainer)) {
-                    linkedChars.add(charContainer);
-                    console.log('Character linked to landmark');
-                }
-            } else {
-                if (linkedChars.has(charContainer)) {
-                    linkedChars.delete(charContainer);
-                    console.log('Character unlinked from landmark');
-                }
-            }
-        });
-        updateLines();
-    };
-      
-    const graphics = this.add.graphics();
-    graphics.setDepth(1); // beneath containers but above background
+    const graphics = this.add.graphics()
+    graphics.setDepth(1)
 
     const updateLines = () => {
-        graphics.clear();
-        graphics.lineStyle(3, 0xffd700, 0.9); // Gold lines
+        graphics.clear()
+        graphics.lineStyle(3, 0xffd700, 0.9)
       
-        // Draw lines for all landmarks
+        // Draw lines from landmarks to their associated quests
         landmarkContainers.forEach(landmark => {
-            const linkedChars: Set<Phaser.GameObjects.Container> = (landmark as any).linkedCharacters;
-            linkedChars.forEach(char => {
-                graphics.beginPath();
-                graphics.moveTo(landmark.x, landmark.y);
-                graphics.lineTo(char.x, char.y);
-                graphics.strokePath();
-            });
-        });
-    };
+            const quests = (landmark as any).associatedQuests
+            quests.forEach((quest: Phaser.GameObjects.Container) => {
+                graphics.beginPath()
+                graphics.moveTo(landmark.x, landmark.y)
+                graphics.lineTo(quest.x, quest.y)
+                graphics.strokePath()
+            })
+        })
+    }
 
-    // Call this once at start:
-    updateLines();
+    // Initial line drawing
+    updateLines()
 
-    // Then call again whenever things move:
-    [...landmarkContainers, ...characterContainers].forEach(container => {
-        container.on('drag', updateLines);
-        container.on('dragend', updateLines);
-    });
-
-    this.events.on('update', updateLines);
-
-    characterContainers.forEach(container => {
-        container.on('drag', (_pointer: any, dragX: number, dragY: number) => {
-            container.x = dragX;
-            container.y = dragY;
-            updateLinkForCharacter(container);
-        });
-        
-        container.on('dragend', () => {
-            localStorage.setItem(`quest-${characterContainers.indexOf(container)}`, JSON.stringify({ x: container.x, y: container.y }));
-            updateLinkForCharacter(container); // final check on drag end
-        });
-        
-        // Also check once on start so initial links can be detected
-        updateLinkForCharacter(container);
-    });
+    // Add update method to the scene
+    this.events.on('update', () => {
+        updateLines()
+    })
 
     // Scroll wheel to pan
     this.input.on('wheel', (_ptr, _objs, _dx, dy) => {
@@ -384,6 +335,7 @@ class TestScene extends Phaser.Scene {
 
 export const TestMap: React.FC<TestMapProps> = () => {
   const phaserRef = useRef<HTMLDivElement>(null)
+
 
   useEffect(() => {
     if (!phaserRef.current) return
@@ -432,3 +384,4 @@ export const TestMap: React.FC<TestMapProps> = () => {
 }
 
 export default TestMap
+

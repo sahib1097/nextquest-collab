@@ -151,7 +151,7 @@ const Quests: React.FC = () => {
 
           {/* Main Tabs */}
           <Tabs value={activeSection} onValueChange={handleSectionChange} className="w-full mb-6">
-            <TabsList className="grid grid-cols-3 w-full max-w-md">
+            <TabsList className="w-[90%] mx-auto grid grid-cols-3 w-full max-w-md">
               <TabsTrigger value="quests" className="flex items-center gap-1">
                 <Trophy className="h-4 w-4" /> Quests
               </TabsTrigger>
@@ -172,7 +172,7 @@ const Quests: React.FC = () => {
                 transition={{ duration: 0.5 }}
               >
                 {/* Map header & selector */}
-                <div className="flex items-center justify-between mb-4">
+                <div className="w-[90%] mx-auto flex items-center justify-between mb-4">
                   <h2 className="text-xl font-semibold flex items-center gap-2">
                     <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                       Quest Map
@@ -210,13 +210,15 @@ const Quests: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Lazy‑loaded map */}
-                <Suspense fallback={<div className="h-64 bg-muted animate-pulse rounded-lg" />}>
-                  {selectedMap === "town" && <TownMap />}
-                  {selectedMap === "phaser" && <PhaserMap />}
-                  {selectedMap === "hell" && <HellMap />}
-                  {selectedMap === "test" && <TestMap />}
-                </Suspense>
+                {/* Lazy‑loaded map with padding container */}
+                <div className="w-[90%] mx-auto rounded-xl border border-border/40 overflow-hidden">
+                  <Suspense fallback={<div className="h-64 bg-muted animate-pulse rounded-lg" />}>
+                    {selectedMap === "town" && <TownMap />}
+                    {selectedMap === "phaser" && <PhaserMap />}
+                    {selectedMap === "hell" && <HellMap />}
+                    {selectedMap === "test" && <TestMap />}
+                  </Suspense>
+                </div>
               </motion.div>
 
               {/* Lazy‑load QuestBoard & its tabs */}
