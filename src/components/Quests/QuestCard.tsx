@@ -1,4 +1,3 @@
-
 import { useState, forwardRef } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -243,11 +242,17 @@ const QuestCard = forwardRef<HTMLDivElement, QuestCardProps>(({ quest, isDraggin
   };
   
   const getBadgeColor = () => {
-    switch (quest.difficulty) {
-      case "Simple": return "bg-green-100 text-green-800 border-green-200";
-      case "Moderate": return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "Difficult": return "bg-red-100 text-red-800 border-red-200";
-      default: return "bg-gray-100 text-gray-800 border-gray-200";
+    switch (quest.status) {
+      case QuestStatus.AVAILABLE:
+        return "secondary";
+      case QuestStatus.IN_PROGRESS:
+        return "default";
+      case QuestStatus.COMPLETED:
+        return "outline";
+      case QuestStatus.FAILED:
+        return "destructive";
+      default:
+        return "secondary";
     }
   };
   
@@ -255,28 +260,56 @@ const QuestCard = forwardRef<HTMLDivElement, QuestCardProps>(({ quest, isDraggin
     switch (quest.status) {
       case QuestStatus.AVAILABLE:
         return (
-          <Button 
-            className="w-full" 
+          <Button
+            variant="default"
+            className="w-full"
             onClick={handleAcceptQuest}
             disabled={isAccepting}
           >
-            {isAccepting ? "Accepting..." : "Accept Quest"}
+            {isAccepting ? (
+              <span className="flex items-center">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  className="mr-2"
+                >
+                  ⚔️
+                </motion.div>
+                Accepting...
+              </span>
+            ) : (
+              "Accept Quest"
+            )}
           </Button>
         );
       case QuestStatus.IN_PROGRESS:
         return (
           <div className="flex gap-2">
-            <Button 
-              className={`flex-1 ${isCompleting ? "bg-green-400" : "bg-green-600 hover:bg-green-700"}`}
+            <Button
+              variant="default"
+              className="flex-1"
               onClick={handleCompleteQuest}
               disabled={isCompleting}
             >
-              {isCompleting ? "Completing..." : "Complete"}
+              {isCompleting ? (
+                <span className="flex items-center">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="mr-2"
+                  >
+                    🎉
+                  </motion.div>
+                  Completing...
+                </span>
+              ) : (
+                "Complete Quest"
+              )}
             </Button>
-            <Button 
-              variant="destructive" 
-              className="flex-1" 
+            <Button
+              variant="destructive"
               onClick={handleFailQuest}
+              disabled={isCompleting}
             >
               Abandon
             </Button>
@@ -317,105 +350,82 @@ const QuestCard = forwardRef<HTMLDivElement, QuestCardProps>(({ quest, isDraggin
   return (
     <motion.div
       ref={ref}
-      variants={cardVariants}
-      animate={isDragging ? "dragging" : quest.status === QuestStatus.AVAILABLE ? "ready" : "idle"}
-      className={`group ${isDragging ? "z-50" : "z-0"}`}
+      animate={{ scale: isDragging ? 1.05 : 1 }}
+      className={`relative ${glowing ? "animate-glow" : ""}`}
+      style={{ transformOrigin: "center" }}
     >
-      <Card className={`overflow-hidden transition-all duration-300 hover:shadow-lg ${glowing ? "ring-2 ring-purple-500 ring-opacity-60" : ""}`}>
-        <CardHeader className="p-4 pb-2 border-b">
+      <Card className="bg-card border-2 border-border shadow-md overflow-hidden">
+        <CardHeader className="pb-2">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <div {...dragHandleProps} className="cursor-move opacity-0 group-hover:opacity-100 transition-opacity">
-                  <GripVertical className="h-4 w-4 text-gray-400" />
-                </div>
-                <h3 className="text-lg font-semibold leading-tight">{quest.title}</h3>
-              </div>
-              <p className="text-sm text-gray-500 mt-1">
-                {quest.isGroupQuest ? (
-                  <span className="flex items-center">
-                    <Users className="h-3 w-3 mr-1" />
-                    Group Quest • {Array.isArray(quest.groupMembers) ? quest.groupMembers.length : 0} members
-                  </span>
-                ) : (
-                  <span className="flex items-center">
-                    <User className="h-3 w-3 mr-1" />
-                    {typeof quest.assignedTo === 'string' ? quest.assignedTo : 'Multiple users'}
-                  </span>
+              <div className="flex items-center gap-2 mb-1">
+                <Badge variant={getBadgeColor()}>
+                  {quest.status}
+                </Badge>
+                {quest.isGroupQuest && (
+                  <Badge variant="secondary">
+                    <Users className="h-3 w-3 mr-1" /> Group Quest
+                  </Badge>
                 )}
-              </p>
+              </div>
+              <h3 className="text-lg font-semibold">{quest.name}</h3>
             </div>
-            <div className="flex items-start gap-2">
-              <QuestProgressRing
-                xpReward={quest.xpReward}
-                dueDate={quest.dueDate}
-                difficulty={quest.difficulty}
-                description={quest.description}
-              />
-              <Badge className={`${getBadgeColor()} font-normal`}>
-                {quest.difficulty}
-              </Badge>
-            </div>
+            {quest.status === QuestStatus.IN_PROGRESS && quest.isGroupQuest && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground hover:text-foreground"
+                onClick={() => setIsChatOpen(true)}
+              >
+                <MessageSquare className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </CardHeader>
-        
-        <CardContent className="p-4 pt-3 pb-3">
-          <p className="mb-3 text-gray-800">{quest.description}</p>
-          
-          <div className="flex flex-wrap items-center text-xs text-gray-500 mb-2">
-            {quest.projectName && (
-              <div className="flex items-center mr-4 mb-1">
-                <MapPin className="h-3 w-3 mr-1" />
-                {quest.projectName}
+        <CardContent className="pb-2">
+          <div className="flex items-start gap-4">
+            <div className="flex-1 space-y-2">
+              <p className="text-muted-foreground">{quest.description}</p>
+              <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+                {quest.location && (
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    <span>{quest.location}</span>
+                  </div>
+                )}
+                {quest.dueDate && (
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
+                    <span>Due {formatDistanceToNow(new Date(quest.dueDate), { addSuffix: true })}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-1">
+                  <Clock className="h-4 w-4" />
+                  <span>{quest.estimatedTime}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Award className="h-4 w-4" />
+                  <span>{quest.xpReward} XP</span>
+                </div>
+                {quest.assignedTo && (
+                  <div className="flex items-center gap-1">
+                    <User className="h-4 w-4" />
+                    <span>Assigned to {quest.assignedTo}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            {quest.status === QuestStatus.IN_PROGRESS && (
+              <div className="flex-shrink-0">
+                <QuestProgressRing progress={quest.progress || 0} />
               </div>
             )}
-            <div className="flex items-center mr-4 mb-1">
-              <Calendar className="h-3 w-3 mr-1" />
-              Due: {quest.dueDate}
-            </div>
-            <div className="flex items-center mr-4 mb-1">
-              <Clock className="h-3 w-3 mr-1" />
-              Posted {timeAgo}
-            </div>
           </div>
-          
-          {quest.isGroupQuest && Array.isArray(quest.groupMembers) && quest.groupMembers.length > 0 && (
-            <div className="mt-3 pt-2 border-t border-gray-100">
-              <p className="text-xs text-gray-500 mb-1 flex items-center justify-between">
-                <span>Group Members:</span>
-                {quest.status === QuestStatus.IN_PROGRESS && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 text-xs px-2 text-purple-600 hover:text-purple-700 hover:bg-purple-50"
-                    onClick={() => setIsChatOpen(!isChatOpen)}
-                  >
-                    <MessageSquare className="h-3 w-3 mr-1" />
-                    Party Chat
-                  </Button>
-                )}
-              </p>
-              <div className="flex flex-wrap gap-1">
-                {quest.groupMembers.map((member, idx) => (
-                  <Badge key={idx} variant="outline" className="bg-gray-50 text-xs">
-                    {member}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
         </CardContent>
-        
-        <CardFooter className="p-4 pt-0 flex items-center justify-between">
-          <div className="flex items-center">
-            <Award className="h-4 w-4 text-yellow-500 mr-1" />
-            <span className="font-medium">{quest.xpReward} XP</span>
-          </div>
-          
+        <CardFooter className="pt-2">
           {getStatusActions()}
         </CardFooter>
       </Card>
-
       {quest.isGroupQuest && (
         <PartyChat
           questId={quest.id}

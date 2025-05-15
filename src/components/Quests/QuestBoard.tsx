@@ -5,6 +5,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { motion, Reorder } from "framer-motion";
 import { Scroll, Sparkles, Swords } from "lucide-react";
+import MovableSidebar from "@/components/Dashboard/MovableSidebar";
 
 interface QuestBoardProps {
   status: string;
@@ -13,6 +14,7 @@ interface QuestBoardProps {
 
 const QuestBoard = ({ status, questType }: QuestBoardProps) => {
   const [quests, setQuests] = useState<Quest[]>([]);
+  const [sidebarPosition, setSidebarPosition] = useState<"left" | "right" | "bottom">("left");
 
   useEffect(() => {
     // Load quests from localStorage
@@ -78,21 +80,21 @@ const QuestBoard = ({ status, questType }: QuestBoardProps) => {
     switch(status) {
       case "Available":
         return (
-          <div className="flex items-center gap-2 mb-6 text-xl font-bold text-amber-600">
+          <div className="flex items-center gap-2 mb-6 text-xl font-bold text-primary">
             <Scroll className="h-6 w-6" />
             <span>Available Quests</span>
           </div>
         );
       case "In Progress":
         return (
-          <div className="flex items-center gap-2 mb-6 text-xl font-bold text-blue-600">
+          <div className="flex items-center gap-2 mb-6 text-xl font-bold text-primary">
             <Swords className="h-6 w-6" />
             <span>Active Quests</span>
           </div>
         );
       case "Completed":
         return (
-          <div className="flex items-center gap-2 mb-6 text-xl font-bold text-emerald-600">
+          <div className="flex items-center gap-2 mb-6 text-xl font-bold text-primary">
             <Sparkles className="h-6 w-6" />
             <span>Completed Quests</span>
           </div>
@@ -102,6 +104,10 @@ const QuestBoard = ({ status, questType }: QuestBoardProps) => {
     }
   };
 
+  const handlePositionChange = (newPosition: "left" | "right" | "bottom") => {
+    setSidebarPosition(newPosition);
+  };
+
   if (quests.length === 0) {
     return (
       <motion.div
@@ -109,14 +115,15 @@ const QuestBoard = ({ status, questType }: QuestBoardProps) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Alert className="bg-gradient-to-r from-slate-50 to-slate-100 border-2 border-slate-200">
+        <Alert className="bg-card border-2 border-border">
           <AlertDescription className="flex flex-col items-center py-8">
             <div className="text-lg mb-4">
               No {questType === "group" ? "group " : ""}quests {status.toLowerCase()} at the moment.
             </div>
             {status === "Available" && (
               <Button 
-                className="mt-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                variant="default"
+                className="mt-2"
                 onClick={() => document.getElementById("new-quest-dialog")?.click()}
               >
                 <Sparkles className="h-4 w-4 mr-2" />
@@ -130,24 +137,34 @@ const QuestBoard = ({ status, questType }: QuestBoardProps) => {
   }
 
   return (
-    <div>
-      {getBoardHeader()}
-      <Reorder.Group 
-        axis="y"
-        values={quests} 
-        onReorder={handleReorder}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-      >
-        {quests.map((quest) => (
-          <Reorder.Item 
-            key={quest.id} 
-            value={quest}
-            className="cursor-move"
+    <div className="flex h-screen bg-white">
+      {sidebarPosition === "left" && (
+        <MovableSidebar 
+          position={sidebarPosition}
+          onPositionChange={handlePositionChange}
+        />
+      )}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <div>
+          {getBoardHeader()}
+          <Reorder.Group 
+            axis="y"
+            values={quests} 
+            onReorder={handleReorder}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            <QuestCard quest={quest} />
-          </Reorder.Item>
-        ))}
-      </Reorder.Group>
+            {quests.map((quest) => (
+              <Reorder.Item 
+                key={quest.id} 
+                value={quest}
+                className="cursor-move"
+              >
+                <QuestCard quest={quest} />
+              </Reorder.Item>
+            ))}
+          </Reorder.Group>
+        </div>
+      </div>
     </div>
   );
 };

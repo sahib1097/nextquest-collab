@@ -1,4 +1,3 @@
-
 import { UserLevel } from "@/types/quest";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -72,20 +71,20 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
 
   return (
     <Tabs defaultValue="overview" className="w-full">
-      <TabsList className="mb-4 grid grid-cols-3 w-full max-w-sm mx-auto bg-white rounded-md border">
+      <TabsList className="mb-4 grid grid-cols-3 w-full max-w-sm mx-auto bg-background rounded-md border">
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="achievements">Achievements</TabsTrigger>
         {publicProfile && <TabsTrigger value="activity">Activity</TabsTrigger>}
       </TabsList>
       <TabsContent value="overview">
-        <Card className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 border-2 border-blue-100 shadow-md overflow-hidden">
-          <CardHeader className="pb-2 border-b border-blue-100">
+        <Card className="bg-card border-2 shadow-md overflow-hidden">
+          <CardHeader className="pb-2 border-b border-border">
             <div className="flex justify-between items-center">
               <CardTitle className="text-lg flex items-center">
-                <Award className="h-6 w-6 mr-2 text-yellow-500" /> 
+                <Award className="h-6 w-6 mr-2 text-primary" /> 
                 {userLevel.username}
               </CardTitle>
-              <Badge className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 px-3 py-1">
+              <Badge className="bg-primary hover:bg-primary/90 px-3 py-1">
                 <Star className="h-3 w-3 mr-1 inline" /> Level {userLevel.level}
               </Badge>
             </div>
@@ -95,18 +94,18 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
               {/* Profile Picture */}
               <ProfilePictureUploader onUpload={handleProfilePictureUpload}>
                 <div className="relative mr-4 flex-shrink-0">
-                  <Avatar className="h-16 w-16 border-2 border-purple-200 shadow-sm">
+                  <Avatar className="h-16 w-16 border-2 border-border shadow-sm">
                     {userLevel.profilePicture ? (
                       <AvatarImage src={userLevel.profilePicture} alt={userLevel.username} />
                     ) : (
-                      <AvatarFallback className="bg-gradient-to-br from-purple-500 to-blue-500 text-white text-xl font-medium">
+                      <AvatarFallback className="bg-primary text-primary-foreground text-xl font-medium">
                         {userLevel.username.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     )}
                   </Avatar>
-                  <div className="absolute -bottom-1 -right-1 rounded-full bg-white p-0.5 shadow-sm">
-                    <div className="rounded-full bg-purple-500 p-1">
-                      <UserRound className="h-3 w-3 text-white" />
+                  <div className="absolute -bottom-1 -right-1 rounded-full bg-background p-0.5 shadow-sm">
+                    <div className="rounded-full bg-primary p-1">
+                      <UserRound className="h-3 w-3 text-primary-foreground" />
                     </div>
                   </div>
                 </div>
@@ -115,12 +114,12 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
               <div className="flex-1">
                 <div className="mb-3 flex justify-between items-center text-sm">
                   <div className="flex items-center">
-                    <Zap className="h-4 w-4 mr-1 text-amber-500" />
+                    <Zap className="h-4 w-4 mr-1 text-accent-foreground" />
                     <span className="font-medium">{userLevel.xp} XP</span>
                   </div>
                   {userLevel.level < 100 && (
                     <div className="flex items-center">
-                      <TrendingUp className="h-4 w-4 mr-1 text-blue-500" />
+                      <TrendingUp className="h-4 w-4 mr-1 text-primary" />
                       <span>{xpForNextLevel} XP to Level {userLevel.level + 1}</span>
                     </div>
                   )}
@@ -130,22 +129,22 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
                 <div className="relative pt-1">
                   <Progress
                     value={progress}
-                    className="h-3 bg-blue-100"
+                    className="h-3 bg-secondary"
                   />
                   <div 
-                    className="absolute top-1 left-0 h-3 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-1000"
+                    className="absolute top-1 left-0 h-3 bg-primary rounded-full transition-all duration-1000"
                     style={{ width: `${progress}%` }}
                   />
                   <div className="absolute top-1 left-0 h-3 w-full">
                     {[25, 50, 75].map(milestone => (
                       <div 
                         key={milestone}
-                        className={`absolute top-0 w-0.5 h-full bg-white opacity-70 ${milestone <= progress ? "animate-pulse" : ""}`}
+                        className={`absolute top-0 w-0.5 h-full bg-background opacity-70 ${milestone <= progress ? "animate-pulse" : ""}`}
                         style={{ left: `${milestone}%` }}
                       />
                     ))}
                   </div>
-                  <div className="text-right text-xs mt-1 text-gray-500 font-medium">{progress}%</div>
+                  <div className="text-right text-xs mt-1 text-muted-foreground font-medium">{progress}%</div>
                 </div>
               </div>
             </div>
@@ -160,38 +159,38 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
       {publicProfile && (
         <TabsContent value="activity">
           <div className="pt-2">
-            <Card className="border-2 border-blue-100 bg-white">
+            <Card className="border-2 border-border bg-card">
               <CardHeader className="pb-2 flex flex-row items-center gap-2">
-                <Award className="h-5 w-5 text-purple-600" />
+                <Award className="h-5 w-5 text-primary" />
                 <CardTitle className="text-base font-semibold">Recent Activity</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 pt-2">
                 {activityQuests.length === 0 ? (
-                  <div className="text-sm text-gray-500 py-6 text-center">No recent activity or in-progress quests.</div>
+                  <div className="text-sm text-muted-foreground py-6 text-center">No recent activity or in-progress quests.</div>
                 ) : (
                   <div className="space-y-3">
                     {activityQuests.map((quest) => (
                       <div
                         key={quest.id}
-                        className="flex flex-col sm:flex-row sm:items-center gap-2 justify-between px-4 py-2 bg-blue-50 rounded-lg border border-blue-100"
+                        className="flex flex-col sm:flex-row sm:items-center gap-2 justify-between px-4 py-2 bg-muted rounded-lg border border-border"
                       >
                         <div className="font-medium text-sm flex items-center gap-1">
-                          <Star className="h-4 w-4 text-amber-400 mr-1" />
+                          <Star className="h-4 w-4 text-primary mr-1" />
                           {quest.name}
                         </div>
                         <div className="flex items-center gap-2">
                           <Badge
-                            className={
-                              quest.status === "Available" ? "bg-gray-200 text-gray-600" :
-                              quest.status === "In Progress" ? "bg-blue-200 text-blue-800" : 
-                              quest.status === "Completed" ? "bg-green-100 text-green-700" :
-                              "bg-gray-100 text-gray-400"
+                            variant={
+                              quest.status === "Available" ? "secondary" :
+                              quest.status === "In Progress" ? "default" : 
+                              quest.status === "Completed" ? "outline" :
+                              "secondary"
                             }
                           >
                             {quest.status}
                           </Badge>
                           {quest.progress !== undefined && (
-                            <span className="text-xs text-gray-500">{quest.progress}%</span>
+                            <span className="text-xs text-muted-foreground">{quest.progress}%</span>
                           )}
                         </div>
                       </div>
