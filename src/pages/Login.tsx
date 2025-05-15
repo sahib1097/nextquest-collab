@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -171,37 +170,41 @@ const Login = () => {
         throw new Error(err.message || 'Login failed');
       }
   
-      // 1) Extract user from backend
-      const user = await res.json(); // { name, email }
+      // Parse response once
+      const data = await res.json();
+      const { user } = data;
   
-      // 2) Persist fluxUser in localStorage (template logic)
-      localStorage.setItem(
-        'fluxUser',
-        JSON.stringify({
-          email:           user.email,
-          isAuthenticated: true,
-          name:            user.name,
-          lastLogin:       new Date().toISOString(),
-        })
-      );
+      // Store complete user data in localStorage
+      const userData = {
+        userId: user.id,
+        email: user.email,
+        name: user.name,
+        position: user.position || '',
+        bio: user.bio || '',
+        avatar: user.avatarUrl || '',
+        isAuthenticated: true,
+        lastLogin: new Date().toISOString(),
+        role: user.roleIds?.[0]?.name || 'User'
+      };
+      
+      localStorage.setItem('fluxUser', JSON.stringify(userData));
   
-      // 3) Ensure fluxUserLevel exists
+      // Set up user level data if it doesn't exist
       if (!localStorage.getItem('fluxUserLevel')) {
         localStorage.setItem(
           'fluxUserLevel',
           JSON.stringify({
-            userId:      'current-user',
-            username:    user.name,
-            xp:          0,
-            level:       1,
+            userId: user.id,
+            username: user.name,
+            xp: 0,
+            level: 1,
             nextLevelXp: 100,
+            profilePicture: user.avatarUrl || ''
           })
         );
       }
   
-      // 4) Bump your activity timestamp
       updateLastActivity();
-  
       toast.success(`Welcome back, ${user.name}!`);
       navigate('/admin/dashboard');
   
