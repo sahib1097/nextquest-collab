@@ -42,11 +42,90 @@ class TestScene extends Phaser.Scene {
     this.cameras.main.setBounds(0, 0, worldWidth, worldHeight)
     this.physics.world.setBounds(0, 0, worldWidth, worldHeight)
 
+    // Create scrollbar
+    const scrollbarHeight = 20
+    const scrollbarY = DESIGN_HEIGHT - scrollbarHeight
+    const scrollbarBg = this.add.rectangle(0, scrollbarY, DESIGN_WIDTH, scrollbarHeight, 0x333333)
+        .setOrigin(0, 0)
+        .setScrollFactor(0)
+        .setDepth(100)
+        .setAlpha(0.7)
+
+    // Calculate handle width based on viewport ratio
+    const viewportRatio = DESIGN_WIDTH / worldWidth
+    const handleWidth = Math.max(DESIGN_WIDTH * viewportRatio, 50) // minimum 50px width
+    const handle = this.add.rectangle(0, scrollbarY, handleWidth, scrollbarHeight, 0xffd700)
+        .setOrigin(0, 0)
+        .setScrollFactor(0)
+        .setDepth(101)
+        .setInteractive({ draggable: true })
+        .setAlpha(0.9)
+
+    // Track drag state
+    let isDragging = false
+    let lastDragX = 0
+
+    // Make scrollbar interactive with reduced sensitivity
+    handle.on('dragstart', () => {
+        isDragging = true
+        lastDragX = handle.x
+    })
+
+    handle.on('drag', (pointer: Phaser.Input.Pointer, dragX: number) => {
+        if (!isDragging) return
+
+        // Calculate movement with reduced sensitivity
+        const sensitivity = 0.2 // Reduced from 0.5 to 0.2 for much slower movement
+        const delta = (dragX - lastDragX) * sensitivity
+        
+        // Update handle position with constraints
+        const maxX = DESIGN_WIDTH - handle.width
+        const newX = Phaser.Math.Clamp(handle.x + delta, 0, maxX)
+        handle.x = newX
+        lastDragX = dragX
+
+        // Calculate camera position
+        const scrollRatio = handle.x / maxX
+        const cameraX = (worldWidth - DESIGN_WIDTH) * scrollRatio
+        this.cameras.main.scrollX = cameraX
+    })
+
+    handle.on('dragend', () => {
+        isDragging = false
+    })
+
+    // Update handle position when using mouse wheel
+    this.events.on('postupdate', () => {
+        if (!isDragging) {  // Only update handle position if not being dragged
+            const scrollRatio = this.cameras.main.scrollX / (worldWidth - DESIGN_WIDTH)
+            const maxX = DESIGN_WIDTH - handle.width
+            handle.x = maxX * scrollRatio
+        }
+    })
+
+    // Make scrollbar background clickable to jump to position
+    scrollbarBg.setInteractive()
+    scrollbarBg.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+        const localX = pointer.x - scrollbarBg.x
+        const maxX = DESIGN_WIDTH - handle.width
+        const targetX = Phaser.Math.Clamp(localX - handle.width / 2, 0, maxX)
+        
+        // Animate the handle to the target position
+        this.tweens.add({
+            targets: handle,
+            x: targetX,
+            duration: 200,
+            ease: 'Power2',
+            onUpdate: () => {
+                const scrollRatio = handle.x / maxX
+                const cameraX = (worldWidth - DESIGN_WIDTH) * scrollRatio
+                this.cameras.main.scrollX = cameraX
+            }
+        })
+    })
+
     const characterContainers: Phaser.GameObjects.Container[] = []
     const landmarkContainers: Phaser.GameObjects.Container[] = [];
-
-    let landmarkContainer: Phaser.GameObjects.Container | null = null
-
 
     this.add.image(0, 0, 'mountain-pin')
       .setOrigin(0, 0)
@@ -65,13 +144,26 @@ class TestScene extends Phaser.Scene {
     ]
 
     const framePositions = [
-      { x: 300, y: 500 }, { x: 700, y: 400 }, { x: 1100, y: 500 },
-      { x: 1450, y: 600 }, { x: 1900, y: 700 }, { x: 2150, y: 800 },
-      { x: 2500, y: 900 }, { x: 2800, y: 650 }, { x: 3100, y: 450 },
-      { x: 3350, y: 350 }, { x: 500, y: 750 }, { x: 900, y: 850 },
-      { x: 1250, y: 750 }, { x: 1650, y: 850 }, { x: 2000, y: 350 },
-      { x: 2350, y: 450 }, { x: 2600, y: 550 }, { x: 3050, y: 750 },
-      { x: 3350, y: 850 }, { x: 3600, y: 600 }
+      { x:  300, y:  500, enable: false},
+      { x:  700, y:  400, enable: true },
+      { x: 1100, y:  500, enable: true },
+      { x: 1450, y:  600, enable: true },
+      { x: 1900, y:  700, enable: true },
+      { x: 2150, y:  800, enable: true },
+      { x: 2500, y:  900, enable: true },
+      { x: 2800, y:  650, enable: true },
+      { x: 3100, y:  450, enable: true },
+      { x: 3350, y:  350, enable: true },
+      { x:  500, y:  750, enable: true },
+      { x:  900, y:  850, enable: true },
+      { x: 1250, y:  750, enable: true },
+      { x: 1650, y:  850, enable: true },
+      { x: 2000, y:  350, enable: true },
+      { x: 2350, y:  450, enable: true },
+      { x: 2600, y:  550, enable: true },
+      { x: 3050, y:  750, enable: true },
+      { x: 3350, y:  850, enable: true },
+      { x: 3600, y:  600, enable: true }
     ]
 
     const landmarkPositions = [
@@ -83,7 +175,6 @@ class TestScene extends Phaser.Scene {
     const numUsers = framePositions.length
     console.log('Number of users:', numUsers)
 
-
     landmarkPositions.forEach(({ x, y }, idx) => {
         const saved = localStorage.getItem(`landmark-${idx}`)
         const pos = saved ? JSON.parse(saved) : { x, y }
@@ -94,14 +185,9 @@ class TestScene extends Phaser.Scene {
 
         landmarkContainers.push(container);
         (container as any).linkedCharacters = new Set<Phaser.GameObjects.Container>();
-
-        if (idx === 0) {
-            landmarkContainer = container
-          }
       
         const landmarkimg = this.add.image(0, -15, 'landmark1').setScale(0.8 * scale)
 
-      
         const label = this.add.text(
           0,
           landmarkimg.displayHeight / 2 + 10,
@@ -116,9 +202,6 @@ class TestScene extends Phaser.Scene {
       
         container.add([landmarkimg, label])
       
-        // Bounce tween — store reference to stop it later
-
-      
         // Enable dragging on the container
         this.input.setDraggable(container)
 
@@ -126,7 +209,6 @@ class TestScene extends Phaser.Scene {
             // Example: stop any bounce tween here if you have one
           })
     
-      
         container.on('drag', (_pointer: any, dragX: number, dragY: number) => {
           container.x = dragX
           container.y = dragY
@@ -137,8 +219,8 @@ class TestScene extends Phaser.Scene {
         })
       })
 
-
-    framePositions.forEach(({ x, y }, idx) => {
+    framePositions.forEach(({ x, y, enable}, idx) => {
+      if(enable) {
         const saved = localStorage.getItem(`quest-${idx}`)
         const pos = saved ? JSON.parse(saved) : { x, y }
       
@@ -166,7 +248,7 @@ class TestScene extends Phaser.Scene {
       
         container.add([character, frame, label])
       
-        // Bounce tween — store reference to stop it later
+        // Store bounce tween reference on the container
         const bounceTween = this.tweens.add({
           targets: container,
           y: container.y - 10,
@@ -174,29 +256,46 @@ class TestScene extends Phaser.Scene {
           duration: 1000,
           yoyo: true,
           repeat: -1
-        })
+        });
+        (container as any).bounceTween = bounceTween;
       
         // Enable dragging on the container
         this.input.setDraggable(container)
       
         container.on('dragstart', () => {
-          bounceTween.stop() // Prevent tween from interfering
+          // Stop the bounce tween when dragging starts
+          if ((container as any).bounceTween) {
+            (container as any).bounceTween.stop();
+          }
         })
       
         container.on('drag', (_pointer: any, dragX: number, dragY: number) => {
           container.x = dragX
           container.y = dragY
+          updateLinkForCharacter(container)
         })
       
         container.on('dragend', () => {
           localStorage.setItem(`quest-${idx}`, JSON.stringify({ x: container.x, y: container.y }))
+          updateLinkForCharacter(container)
+          
+          // Restart the bounce tween from the new position
+          if ((container as any).bounceTween) {
+            (container as any).bounceTween.destroy();
+          }
+          (container as any).bounceTween = this.tweens.add({
+            targets: container,
+            y: container.y - 10,
+            ease: 'Sine.easeInOut',
+            duration: 1000,
+            yoyo: true,
+            repeat: -1
+          });
         })
+      }
       })
 
-
-    if (!landmarkContainer) return; // safety
-
-    (landmarkContainer as any).linkedCharacters = new Set<Phaser.GameObjects.Container>();
+    if (landmarkContainers.length === 0) return; // safety check
 
     const LINK_RANGE = 250;  // <-- Adjust this number to control range (in pixels)
 
@@ -207,53 +306,54 @@ class TestScene extends Phaser.Scene {
         return dist <= LINK_RANGE;
     };
 
-
     const updateLinkForCharacter = (charContainer: Phaser.GameObjects.Container) => {
-        const linkedChars = (landmarkContainer as any).linkedCharacters;
-        if (isWithinRange(charContainer, landmarkContainer)) {
-          if (!linkedChars.has(charContainer)) {
-            linkedChars.add(charContainer);
-            console.log('Character linked to landmark');
-          }
-        } else {
-          if (linkedChars.has(charContainer)) {
-            linkedChars.delete(charContainer);
-            console.log('Character unlinked from landmark');
-          }
-        }
+        // Check links for all landmarks
+        landmarkContainers.forEach(landmark => {
+            const linkedChars = (landmark as any).linkedCharacters;
+            if (isWithinRange(charContainer, landmark)) {
+                if (!linkedChars.has(charContainer)) {
+                    linkedChars.add(charContainer);
+                    console.log('Character linked to landmark');
+                }
+            } else {
+                if (linkedChars.has(charContainer)) {
+                    linkedChars.delete(charContainer);
+                    console.log('Character unlinked from landmark');
+                }
+            }
+        });
         updateLines();
-      };
-      
+    };
       
     const graphics = this.add.graphics();
     graphics.setDepth(1); // beneath containers but above background
 
     const updateLines = () => {
         graphics.clear();
-        graphics.lineStyle(2, 0xffd700, 0.9); // Gold lines
+        graphics.lineStyle(3, 0xffd700, 0.9); // Gold lines
       
-        if (!landmarkContainer) return;
-      
-        const linkedChars: Set<Phaser.GameObjects.Container> = (landmarkContainer as any).linkedCharacters;
-      
-        linkedChars.forEach(char => {
-          graphics.beginPath();
-          graphics.moveTo(landmarkContainer.x, landmarkContainer.y);
-          graphics.lineTo(char.x, char.y);
-          graphics.strokePath();
+        // Draw lines for all landmarks
+        landmarkContainers.forEach(landmark => {
+            const linkedChars: Set<Phaser.GameObjects.Container> = (landmark as any).linkedCharacters;
+            linkedChars.forEach(char => {
+                graphics.beginPath();
+                graphics.moveTo(landmark.x, landmark.y);
+                graphics.lineTo(char.x, char.y);
+                graphics.strokePath();
+            });
         });
-      };
+    };
 
     // Call this once at start:
     updateLines();
 
     // Then call again whenever things move:
-    [landmarkContainer, ...characterContainers].forEach(container => {
-    container.on('drag', updateLines);
-    container.on('dragend', updateLines);
+    [...landmarkContainers, ...characterContainers].forEach(container => {
+        container.on('drag', updateLines);
+        container.on('dragend', updateLines);
     });
 
-    this.events.on('update', updateLines)
+    this.events.on('update', updateLines);
 
     characterContainers.forEach(container => {
         container.on('drag', (_pointer: any, dragX: number, dragY: number) => {
@@ -267,25 +367,9 @@ class TestScene extends Phaser.Scene {
             updateLinkForCharacter(container); // final check on drag end
         });
         
-        // Also check once on start so initial links can be detected (optional)
+        // Also check once on start so initial links can be detected
         updateLinkForCharacter(container);
-        });
-
-    // Horizontal drag (camera)
-    // this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
-    //   this.isDragging = true
-    //   this.dragStartX = p.x
-    //   this.startCamX = this.cameras.main.scrollX
-    // })
-    // this.input.on('pointerup', () => this.isDragging = false)
-    // this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
-    //   if (!this.isDragging) return
-    //   this.cameras.main.scrollX = Phaser.Math.Clamp(
-    //     this.startCamX - (p.x - this.dragStartX),
-    //     0,
-    //     worldWidth - this.cameras.main.width
-    //   )
-    // })
+    });
 
     // Scroll wheel to pan
     this.input.on('wheel', (_ptr, _objs, _dx, dy) => {

@@ -63,70 +63,72 @@ class HellScene extends Phaser.Scene {
       'character1','character2','character3',
       'character4','character5','character6'
     ];
-    const framePositions: { x: number; y: number }[] = [
-      { x: 250,  y: 450 }, //1
-      { x: 1200,  y: 300 }, 
-      { x: 450,  y: 250 },
-      { x: 250,  y: 900 }, 
-      { x: 850,  y: 200 }, //5
-      { x: 850,  y: 575 },
-      { x: 1100, y: 750 }, 
-      { x: 1030, y: 450 }, 
-      { x: 2500, y: 700 },
-      { x: 1700, y: 800 }, //10
-      { x: 1745,  y: 550 }, 
-      { x: 100,  y: 650 }, 
-      { x: 1400,  y: 400 },
-      { x: 2050, y: 700 }, 
-      { x: 1400, y: 850 }, //15
-      { x: 1600, y: 350 },
-      { x: 1900, y: 400 }, 
-      { x: 2300, y: 520 }, 
-      { x: 2700, y: 400 },
-      { x: 2750,  y: 850 } //20
+    const framePositions: { x: number; y: number; enable: boolean}[] = [
+      { x: 250,  y: 450, enable: true }, //1
+      { x: 1200, y: 300, enable: true }, 
+      { x: 450,  y: 250, enable: true },
+      { x: 250,  y: 900, enable: true }, 
+      { x: 850,  y: 200, enable: true }, //5
+      { x: 850,  y: 575, enable: true },
+      { x: 1100, y: 750, enable: true }, 
+      { x: 1030, y: 450, enable: true }, 
+      { x: 2500, y: 700, enable: true },
+      { x: 1700, y: 800, enable: true }, //10
+      { x: 1745, y: 550, enable: true}, 
+      { x: 100,  y: 650, enable: true}, 
+      { x: 1400, y: 400, enable: true},
+      { x: 2050, y: 700, enable: true}, 
+      { x: 1400, y: 850, enable: true}, //15
+      { x: 1600, y: 350, enable: true},
+      { x: 1900, y: 400, enable: true}, 
+      { x: 2300, y: 520, enable: true}, 
+      { x: 2700, y: 400, enable: true},
+      { x: 2750, y: 850, enable: true} //20
     ];
 
-    framePositions.forEach(({ x, y }, idx) => {
-      const container = this.add.container(x, y).setDepth(2);
-      const charKey = Phaser.Utils.Array.GetRandom(characterKeys);
+    framePositions.forEach(({ x, y, enable}, idx) => {
+      if(enable){
+        const container = this.add.container(x, y).setDepth(2);
+        const charKey = Phaser.Utils.Array.GetRandom(characterKeys);
 
-      // Character
-      const character = this.add.image(0, -15, charKey)
-        .setScale(0.8 * scale);
-      container.add(character);
+        // Character
+        const character = this.add.image(0, -15, charKey)
+          .setScale(0.8 * scale);
+        container.add(character);
 
-      // Frame
-      const frame = this.add.image(0, 0, 'frame1')
-        .setScale(0.6 * scale)
-        .setInteractive({ cursor: 'pointer' })
-        .on('pointerdown', () =>
-          console.log(`Clicked on frame ${idx+1} at (${x}, ${y})`)
-        );
-      container.add(frame);
+        // Frame
+        const frame = this.add.image(0, 0, 'frame1')
+          .setScale(0.6 * scale)
+          .setInteractive({ cursor: 'pointer' })
+          .on('pointerdown', () =>
+            console.log(`Clicked on frame ${idx+1} at (${x}, ${y})`)
+          );
+        container.add(frame);
 
-      // Label
-      const label = this.add.text(
-        0,
-        frame.displayHeight / 2 + 10,
-        `Quest – ${idx+1}`,
-        {
-          fontSize: `${18*scale}px`,
-          color: '#fff',
-          backgroundColor: 'rgba(0,0,0,0.6)',
-          padding: { x: 6, y: 4 },
-        }
-      ).setOrigin(0.5, 0);
-      container.add(label);
+        // Label
+        const label = this.add.text(
+          0,
+          frame.displayHeight / 2 + 10,
+          `Quest – ${idx+1}`,
+          {
+            fontSize: `${18*scale}px`,
+            color: '#fff',
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            padding: { x: 6, y: 4 },
+          }
+        ).setOrigin(0.5, 0);
+        container.add(label);
 
-      // Tween
-      this.tweens.add({
-        targets: container,
-        y:       y - 10,
-        ease:    'Sine.easeInOut',
-        duration:1000,
-        yoyo:    true,
-        repeat:  -1,
-      });
+        // Tween
+        this.tweens.add({
+          targets: container,
+          y:       y - 10,
+          ease:    'Sine.easeInOut',
+          duration:1000,
+          yoyo:    true,
+          repeat:  -1,
+        });
+      }
     });
 
     // 5️⃣ Horizontal drag to pan

@@ -29,6 +29,11 @@ const HellMap = lazy(() =>
   import("../hellMap").then(mod => ({ default: mod.HellMap }))
 );
 
+const TestMap = lazy(() =>
+  import("../testMap").then(mod => ({ default: mod.TestMap }))
+);
+
+
 const Quests: React.FC = () => {
   const [activeTab, setActiveTab] = useState("available");
   const [activeSection, setActiveSection] = useState("quests");
@@ -37,7 +42,7 @@ const Quests: React.FC = () => {
   const [showAchievementManager, setShowAchievementManager] = useState(false);
 
   // map selector
-  const [selectedMap, setSelectedMap] = useState<"town" | "phaser" | "hell">("town");
+  const [selectedMap, setSelectedMap] = useState<"town" | "phaser" | "hell" | "test">("town");
   const [showMapMenu, setShowMapMenu] = useState(false);
 
   // preload map images
@@ -107,7 +112,7 @@ const Quests: React.FC = () => {
         <div className="flex-1">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold text-gray-800">Quest Board</h1>
+            <h1 className="text-2xl font-bold text-foreground">Quest Board</h1>
             <div className="flex items-center gap-2">
               {isAdmin && (
                 <Button
@@ -169,25 +174,25 @@ const Quests: React.FC = () => {
                 {/* Map header & selector */}
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xl font-semibold flex items-center gap-2">
-                    <span className="bg-gradient-to-r from-cyan-500 to-purple-500 bg-clip-text text-transparent">
+                    <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                       Quest Map
                     </span>
                   </h2>
                   <div className="relative">
                     <Button
-                      variant="ghost"
+                      variant="secondary"
                       size="sm"
-                      className="bg-gray-900 text-white hover:bg-gray-800"
                       onClick={() => setShowMapMenu(v => !v)}
                     >
                       Change Map ▾
                     </Button>
                     {showMapMenu && (
-                      <div className="absolute right-0 mt-1 w-32 bg-white shadow-lg rounded z-50">
+                      <div className="absolute right-0 mt-1 w-32 bg-popover text-popover-foreground shadow-lg rounded-md border border-border z-50">
                         {[
                           ["Town", "town"],
                           ["Phaser", "phaser"],
                           ["Hell", "hell"],
+                          ["Test", "test"]
                         ].map(([label, key]) => (
                           <button
                             key={key}
@@ -195,7 +200,7 @@ const Quests: React.FC = () => {
                               setSelectedMap(key as any);
                               setShowMapMenu(false);
                             }}
-                            className="w-full px-4 py-2 text-left hover:bg-gray-100"
+                            className="w-full px-4 py-2 text-left hover:bg-muted"
                           >
                             {label}
                           </button>
@@ -206,10 +211,11 @@ const Quests: React.FC = () => {
                 </div>
 
                 {/* Lazy‑loaded map */}
-                <Suspense fallback={<div className="h-64 bg-gray-100 animate-pulse" />}>
+                <Suspense fallback={<div className="h-64 bg-muted animate-pulse rounded-lg" />}>
                   {selectedMap === "town" && <TownMap />}
                   {selectedMap === "phaser" && <PhaserMap />}
                   {selectedMap === "hell" && <HellMap />}
+                  {selectedMap === "test" && <TestMap />}
                 </Suspense>
               </motion.div>
 
@@ -217,7 +223,7 @@ const Quests: React.FC = () => {
               <Suspense
                 fallback={
                   <div className="flex items-center justify-center py-16">
-                    <svg className="animate-spin h-8 w-8 text-gray-500" viewBox="0 0 24 24">
+                    <svg className="animate-spin h-8 w-8 text-muted-foreground" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
                     </svg>

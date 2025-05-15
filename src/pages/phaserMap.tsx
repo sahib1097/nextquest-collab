@@ -23,7 +23,7 @@ class PhaserScene extends Phaser.Scene {
     this.load.image('frame1',        '/assets/phaser/c6807ce6f6d314f58b70d530034dd87b/preview.png')
     this.load.image('mountain-pin',  '/assets/phaser/6bb25211af052438abadba4168b38faf/preview-back.png')
     this.load.image('mountain-pin2', '/assets/phaser/ed628ce2c541949c99f4b1e045ebe644/preview.png')
-    this.load.image('cloud1',        '/assets/phaser/c9c9105953fdb412a9bd078cc80725bf/preview.png')
+    // this.load.image('cloud1',        '/assets/phaser/c9c9105953fdb412a9bd078cc80725bf/preview.png')
     this.load.image('character1',    '/assets/phaser/f6313571193a34c69bf86bd5f7534400/preview.png')
     this.load.image('character2',    '/assets/phaser/e197b7adebadb41cc9fa48e9315dec30/preview.png')
     this.load.image('character3',    '/assets/phaser/e2b11d76254d44099902f08f8a982d07/preview.png')
@@ -35,8 +35,6 @@ class PhaserScene extends Phaser.Scene {
   create() {
     const bg = this.add.image(0, 0, 'background').setOrigin(0, 0).setScrollFactor(1)
     const scale = DESIGN_HEIGHT / bg.height
-    const cam = this.cameras.main;
-    //const scale = cam.height / DESIGN_HEIGHT;
     bg.setScale(scale)
 
     
@@ -60,11 +58,11 @@ class PhaserScene extends Phaser.Scene {
       .setDepth(0)
       .setScrollFactor(1)
 
-    this.add.image(1930, 350, 'cloud1')
-      .setOrigin(0, 0)
-      .setScale(0.2*scale)
-      .setDepth(1)
-      .setScrollFactor(1)
+    // this.add.image(1930, 350, 'cloud1')
+    //   .setOrigin(0, 0)
+    //   .setScale(0.2*scale)
+    //   .setDepth(1)
+    //   .setScrollFactor(1)
 
     // 5️⃣ Bouncing frames (20 quests, y ≤ 400 except quest5 & quest7)
     const characters = [
@@ -72,30 +70,28 @@ class PhaserScene extends Phaser.Scene {
       'character4','character5','character6'
     ]
     
-    const framePositions = [
+    const framePositions: { x: number; y: number; enable: boolean}[]= [
   // Spaced across map horizontally and vertically, now shifted
-  { x:  300, y:  500 },
-  { x:  700, y:  400 },
-  { x: 1100, y:  500 },
-  { x: 1450, y:  600 },
-  { x: 1900, y:  700 },
-  { x: 2150, y:  800 },
-  { x: 2500, y:  900 },
-  { x: 2800, y:  650 },
-  { x: 3100, y:  450 },
-  { x: 3350, y:  350 },  // maxed at ~3396 due to right padding
-
-  // Additional 10 filling gaps, shifted
-  { x:  500, y:  750 },
-  { x:  900, y:  850 },
-  { x: 1250, y:  750 },
-  { x: 1650, y:  850 },
-  { x: 2000, y:  350 },
-  { x: 2350, y:  450 },
-  { x: 2600, y:  550 },
-  { x: 3050, y:  750 },
-  { x: 3350, y:  850 },
-  { x: 3600, y:  600 }   // close to lower limit with padding
+  { x:  300, y:  500, enable: true },
+  { x:  700, y:  400, enable: true },
+  { x: 1100, y:  500, enable: true },
+  { x: 1450, y:  600, enable: true },
+  { x: 1900, y:  700, enable: true },
+  { x: 2150, y:  800, enable: true },
+  { x: 2500, y:  900, enable: true },
+  { x: 2800, y:  650, enable: true },
+  { x: 3100, y:  450, enable: true },
+  { x: 3350, y:  350, enable: true },
+  { x:  500, y:  750, enable: true },
+  { x:  900, y:  850, enable: true },
+  { x: 1250, y:  750, enable: true },
+  { x: 1650, y:  850, enable: true },
+  { x: 2000, y:  350, enable: true },
+  { x: 2350, y:  450, enable: true },
+  { x: 2600, y:  550, enable: true },
+  { x: 3050, y:  750, enable: true },
+  { x: 3350, y:  850, enable: true },
+  { x: 3600, y:  600, enable: true }
 ]
 
 
@@ -105,38 +101,40 @@ class PhaserScene extends Phaser.Scene {
     const numUsers = framePositions.length
     console.log('Number of users:', numUsers)
 
-    framePositions.forEach(({ x, y }, idx) => {
-      const charKey = Phaser.Utils.Array.GetRandom(characters)
-      const container = this.add.container(x, y).setDepth(2)
+    framePositions.forEach(({ x, y, enable }, idx) => {
+      if(enable) {
+        const charKey = Phaser.Utils.Array.GetRandom(characters)
+        const container = this.add.container(x, y).setDepth(2)
 
-      const character = this.add.image(0, -15, charKey).setScale(0.8*scale)
-      const frame     = this.add.image(0, 0, 'frame1').setScale(0.6*scale)
-        .setInteractive({ cursor: 'pointer' })
-        .on('pointerdown', () =>
-          console.log(`Clicked Quest ${idx+1} at (${x},${y})`)
-        );
-      const label = this.add.text(
-        0,
-        frame.displayHeight / 2 + 10,
-        `Quest – ${idx+1}`,
-        {
-          fontSize: `${18*scale}px`,
-          color: '#fff',
-          backgroundColor: 'rgba(0,0,0,0.6)',
-          padding: { x: 6, y: 4 },
-        }
-      ).setOrigin(0.5, 0)
+        const character = this.add.image(0, -15, charKey).setScale(0.8*scale)
+        const frame     = this.add.image(0, 0, 'frame1').setScale(0.6*scale)
+          .setInteractive({ cursor: 'pointer' })
+          .on('pointerdown', () =>
+            console.log(`Clicked Quest ${idx+1} at (${x},${y})`)
+          );
+        const label = this.add.text(
+          0,
+          frame.displayHeight / 2 + 10,
+          `Quest – ${idx+1}`,
+          {
+            fontSize: `${18*scale}px`,
+            color: '#fff',
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            padding: { x: 6, y: 4 },
+          }
+        ).setOrigin(0.5, 0)
 
-      container.add([character, frame, label])
+        container.add([character, frame, label])
 
-      this.tweens.add({
-        targets: container,
-        y:       y - 10,
-        ease:    'Sine.easeInOut',
-        duration:1000,
-        yoyo:    true,
-        repeat:  -1
-      })
+        this.tweens.add({
+          targets: container,
+          y:       y - 10,
+          ease:    'Sine.easeInOut',
+          duration:1000,
+          yoyo:    true,
+          repeat:  -1
+        })
+      }
     })
 
     // 6️⃣ Horizontal drag

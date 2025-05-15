@@ -21,6 +21,7 @@ export enum UserRole {
 export interface Quest {
   id: string;
   title: string;
+  name: string;  // Add name field as an alias for title
   description: string;
   assignedBy: string;
   assignedTo: string | string[]; // Updated to support multiple assignees
@@ -35,6 +36,9 @@ export interface Quest {
   projectId?: string;
   projectName?: string;
   linkedTaskId?: string;
+  location?: string;  // Add location field
+  estimatedTime?: string;  // Add estimatedTime field
+  progress?: number;  // Add progress field
 }
 
 export interface UserLevel {
