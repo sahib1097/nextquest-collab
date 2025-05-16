@@ -103,6 +103,33 @@ const SettingsDialogs = () => {
       toast.error("New passwords do not match");
       return;
     }
+
+    const updatePassword = async () => {
+      const user = JSON.parse(localStorage.getItem("fluxUser") || '{}');
+
+      try {
+        const res = await fetch(`${API}/api/userinfo/update-password`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ 
+            userId: user.userId,
+            newPassword: newPassword,
+            currentPassword: currentPassword }),
+        });
+
+        if (!res.ok) {
+          throw new Error('Failed to update password');
+        }
+
+      } catch (error) {
+        console.error('Error updating password:', error);
+        toast.error("Failed to update password");
+      }
+    }
+
+    updatePassword();
     
     // Here you would verify the current password and update with an API call
     // For now, we'll just simulate success
@@ -158,7 +185,7 @@ const SettingsDialogs = () => {
             <Button variant="outline" onClick={() => setShowEmailDialog(false)}>
               Cancel
             </Button>
-            <Button onClick={handleEmailChange}>
+            <Button>
               Update Email
             </Button>
           </DialogFooter>
