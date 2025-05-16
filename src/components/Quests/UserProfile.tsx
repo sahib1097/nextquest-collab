@@ -29,6 +29,7 @@ interface UserProfileProps {
 const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => {
   const { currentTheme } = useTheme();
   const isMedievalTheme = currentTheme.name === "Medieval";
+  const isCyberpunkTheme = currentTheme.name === "Cyberpunk";
 
   // Default values if userLevel is undefined
   const defaultUserLevel: UserLevel = {
@@ -124,6 +125,29 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
             alt="Right Banner"
             className="h-32 w-auto object-contain"
           />
+        </div>
+      ) : isCyberpunkTheme ? (
+        <div className="flex items-stretch justify-center w-full max-w-3xl mx-auto mb-8">
+          <TabsList className="flex w-full max-w-md bg-[#141622] border-2 border-[#2DE2E6] rounded-lg shadow-[0_0_20px_rgba(45,226,230,0.2)] overflow-hidden backdrop-blur-sm">
+            <TabsTrigger
+              value="overview"
+              className="flex-1 text-sm font-bold py-4 border-r border-[#2DE2E6] bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF2E97] data-[state=active]:to-[#2DE2E6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(45,226,230,0.3)] hover:bg-[#261D54] transition-all duration-300"
+            >
+              <UserRound className="h-4 w-4 mr-2" /> Overview
+            </TabsTrigger>
+            <TabsTrigger
+              value="achievements"
+              className="flex-1 text-sm font-bold py-4 border-r border-[#2DE2E6] bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF2E97] data-[state=active]:to-[#2DE2E6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(45,226,230,0.3)] hover:bg-[#261D54] transition-all duration-300"
+            >
+              <Trophy className="h-4 w-4 mr-2" /> Achievements
+            </TabsTrigger>
+            <TabsTrigger
+              value="activity"
+              className="flex-1 text-sm font-bold py-4 bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF2E97] data-[state=active]:to-[#2DE2E6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(45,226,230,0.3)] hover:bg-[#261D54] transition-all duration-300"
+            >
+              <Star className="h-4 w-4 mr-2" /> Activity
+            </TabsTrigger>
+          </TabsList>
         </div>
       ) : (
         <TabsList className="mb-4 grid grid-cols-3 w-full max-w-sm mx-auto bg-white rounded-md border">
@@ -228,6 +252,79 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
                       <div className="absolute -bottom-5 right-0 text-xs text-gray-500 font-medium">
                         {progress}%
                       </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ) : isCyberpunkTheme ? (
+          <Card className="bg-[#141622]/80 border-2 border-[#2DE2E6] shadow-[0_0_30px_rgba(45,226,230,0.2)] backdrop-blur-sm overflow-hidden">
+            <CardHeader className="pb-2 border-b border-[#2DE2E6]">
+              <div className="flex justify-between items-center">
+                <CardTitle className="text-lg flex items-center text-[#E0F2FF]">
+                  <Award className="h-6 w-6 mr-2 text-[#FF2E97] filter drop-shadow-[0_0_8px_rgba(255,46,151,0.5)]" /> 
+                  {safeUserLevel.username}
+                </CardTitle>
+                <Badge className="bg-gradient-to-r from-[#FF2E97] to-[#2DE2E6] text-white px-3 py-1 shadow-[0_0_10px_rgba(45,226,230,0.3)]">
+                  <Star className="h-3 w-3 mr-1 inline animate-pulse" /> Level {safeUserLevel.level}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <div className="flex items-start">
+                {/* Profile Picture */}
+                <ProfilePictureUploader onUpload={handleProfilePictureUpload}>
+                  <div className="relative mr-4 flex-shrink-0">
+                    <Avatar className="h-16 w-16 border-2 border-[#2DE2E6] shadow-[0_0_15px_rgba(45,226,230,0.3)]">
+                      {safeUserLevel.profilePicture ? (
+                        <AvatarImage src={safeUserLevel.profilePicture} alt={safeUserLevel.username || 'User'} />
+                      ) : (
+                        <AvatarFallback className="bg-gradient-to-br from-[#FF2E97] to-[#2DE2E6] text-white text-xl font-medium">
+                          {(safeUserLevel.username || 'U').charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
+                    <div className="absolute -bottom-1 -right-1 rounded-full bg-[#141622] p-0.5 shadow-[0_0_10px_rgba(45,226,230,0.3)] border border-[#2DE2E6]">
+                      <div className="rounded-full bg-gradient-to-r from-[#FF2E97] to-[#2DE2E6] p-1">
+                        <UserRound className="h-3 w-3 text-white" />
+                      </div>
+                    </div>
+                  </div>
+                </ProfilePictureUploader>
+                
+                <div className="flex-1">
+                  <div className="mb-3 flex justify-between items-center text-sm text-[#E0F2FF]">
+                    <div className="flex items-center">
+                      <Zap className="h-4 w-4 mr-1 text-[#FF2E97] filter drop-shadow-[0_0_8px_rgba(255,46,151,0.5)]" />
+                      <span className="font-medium">{safeUserLevel.xp} XP</span>
+                    </div>
+                    {safeUserLevel.level < 100 && (
+                      <div className="flex items-center">
+                        <TrendingUp className="h-4 w-4 mr-1 text-[#2DE2E6] filter drop-shadow-[0_0_8px_rgba(45,226,230,0.5)]" />
+                        <span>{xpForNextLevel} XP to Level {safeUserLevel.level + 1}</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Enhanced XP Progress Bar */}
+                  <div className="relative pt-1">
+                    <div className="h-3 w-full bg-[#261D54] rounded-full border border-[#2DE2E6] shadow-[inset_0_0_10px_rgba(45,226,230,0.2)]" />
+                    <div 
+                      className="absolute top-1 left-0 h-3 bg-gradient-to-r from-[#FF2E97] to-[#2DE2E6] rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(45,226,230,0.3)]"
+                      style={{ width: `${progress}%` }}
+                    />
+                    <div className="absolute top-1 left-0 h-3 w-full">
+                      {[25, 50, 75].map(milestone => (
+                        <div 
+                          key={milestone}
+                          className={`absolute top-0 w-0.5 h-full bg-white opacity-70 ${milestone <= progress ? "animate-pulse" : ""}`}
+                          style={{ left: `${milestone}%` }}
+                        />
+                      ))}
+                    </div>
+                    <div className="text-right text-xs mt-1 text-[#2DE2E6] font-medium filter drop-shadow-[0_0_8px_rgba(45,226,230,0.5)]">
+                      {progress}%
                     </div>
                   </div>
                 </div>
@@ -357,6 +454,50 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
                             </Badge>
                             {quest.progress !== undefined && (
                               <span className="text-xs text-[#4b3f2b]">{quest.progress}%</span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ) : isCyberpunkTheme ? (
+              <Card className="bg-[#141622]/80 border-2 border-[#2DE2E6] shadow-[0_0_30px_rgba(45,226,230,0.2)] backdrop-blur-sm">
+                <CardHeader className="pb-2 flex flex-row items-center gap-2 border-b border-[#2DE2E6]">
+                  <Award className="h-5 w-5 text-[#FF2E97] filter drop-shadow-[0_0_8px_rgba(255,46,151,0.5)]" />
+                  <CardTitle className="text-base font-semibold text-[#E0F2FF]">Recent Activity</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3 pt-2">
+                  {activityQuests.length === 0 ? (
+                    <div className="text-sm text-[#E0F2FF] py-6 text-center">No recent activity or in-progress quests.</div>
+                  ) : (
+                    <div className="space-y-3">
+                      {activityQuests.map((quest) => (
+                        <div
+                          key={quest.id}
+                          className="flex flex-col sm:flex-row sm:items-center gap-2 justify-between px-4 py-2 bg-[#261D54] rounded-lg border border-[#2DE2E6] shadow-[0_0_15px_rgba(45,226,230,0.2)]"
+                        >
+                          <div className="font-medium text-sm flex items-center gap-1 text-[#E0F2FF]">
+                            <Star className="h-4 w-4 text-[#FF2E97] filter drop-shadow-[0_0_8px_rgba(255,46,151,0.5)] mr-1" />
+                            {quest.name}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge
+                              className={
+                                quest.status === "Available" 
+                                  ? "bg-gradient-to-r from-[#FF2E97] to-[#2DE2E6] text-white" 
+                                  : quest.status === "In Progress" 
+                                  ? "bg-[#261D54] text-[#2DE2E6] border border-[#2DE2E6]" 
+                                  : quest.status === "Completed" 
+                                  ? "bg-[#2DE2E6] text-[#141622]" 
+                                  : "bg-[#261D54] text-[#E0F2FF] border border-[#2DE2E6]"
+                              }
+                            >
+                              {quest.status}
+                            </Badge>
+                            {quest.progress !== undefined && (
+                              <span className="text-xs text-[#2DE2E6]">{quest.progress}%</span>
                             )}
                           </div>
                         </div>

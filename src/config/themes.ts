@@ -84,28 +84,28 @@ export const themes: Record<string, Theme> = {
   cyberpunk: {
     name: "Cyberpunk",
     colors: {
-      primary: "#00FFFF",
-      secondary: "#2A2A2A",
-      background: "#1E1E1E",
-      text: "#FFFFFF",
-      border: "#00FFFF",
-      hover: "#2A2A2A",
-      accent: "#FF00FF"
+      primary: "#FF2E97",
+      secondary: "#141622",
+      background: "#0A0C14",
+      text: "#E0F2FF",
+      border: "#2DE2E6",
+      hover: "#261D54",
+      accent: "#F706CF"
     },
     fonts: {
       heading: "'Orbitron', sans-serif",
-      body: "'Orbitron', sans-serif"
+      body: "'Share Tech Mono', monospace"
     },
     components: {
       button: {
-        primary: "bg-[#00FFFF] text-black",
-        secondary: "bg-[#2A2A2A] text-[#00FFFF]"
+        primary: "bg-gradient-to-r from-[#FF2E97] to-[#2DE2E6] text-white shadow-[0_0_15px_rgba(45,226,230,0.5)]",
+        secondary: "bg-[#141622] text-[#2DE2E6] border-[1px] border-[#2DE2E6] shadow-[0_0_10px_rgba(45,226,230,0.3)]"
       },
       card: {
-        background: "bg-[#1E1E1E]",
-        border: "border-[#00FFFF]"
+        background: "bg-[#141622]/80 backdrop-blur-sm",
+        border: "border-[#2DE2E6] shadow-[0_0_20px_rgba(45,226,230,0.2)]"
       }
     },
-    backgroundImage: undefined
+    backgroundImage: "/assets/themes/cyberpunk/grid.svg"
   }
 }; 

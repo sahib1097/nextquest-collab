@@ -15,6 +15,7 @@ import { Users, Trophy, Settings, Castle, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/ThemeContext";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 // Lazy-load QuestBoard
 const QuestBoard = lazy(() => import("@/components/Quests/QuestBoard"));
@@ -33,6 +34,8 @@ const HellMap = lazy(() =>
 
 const Quests: React.FC = () => {
   const { currentTheme } = useTheme();
+  const isMedievalTheme = currentTheme.name === "Medieval";
+  const isCyberpunkTheme = currentTheme.name === "Cyberpunk";
   const [activeTab, setActiveTab] = useState("available");
   const [activeSection, setActiveSection] = useState("quests");
   const [userLevel, setUserLevel] = useState<UserLevel | null>(null);
@@ -120,6 +123,7 @@ const Quests: React.FC = () => {
               Quest Board
             </h1>
             <div className="flex items-center gap-2">
+              <ThemeSwitcher />
               {isAdmin && (
                 <Button
                   variant="outline"
@@ -195,6 +199,29 @@ const Quests: React.FC = () => {
                   className="h-32 w-auto object-contain"
                 />
               </div>
+            ) : isCyberpunkTheme ? (
+              <div className="flex items-stretch justify-center mb-8 w-full max-w-3xl mx-auto">
+                <TabsList className="flex w-full max-w-md bg-[#141622] border-2 border-[#2DE2E6] rounded-lg shadow-[0_0_20px_rgba(45,226,230,0.2)] overflow-hidden backdrop-blur-sm">
+                  <TabsTrigger
+                    value="quests"
+                    className="flex-1 text-sm font-bold py-4 border-r border-[#2DE2E6] bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF2E97] data-[state=active]:to-[#2DE2E6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(45,226,230,0.3)] hover:bg-[#261D54] transition-all duration-300"
+                  >
+                    <Trophy className="h-4 w-4 mr-2" /> Quests
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="guilds"
+                    className="flex-1 text-sm font-bold py-4 border-r border-[#2DE2E6] bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF2E97] data-[state=active]:to-[#2DE2E6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(45,226,230,0.3)] hover:bg-[#261D54] transition-all duration-300"
+                  >
+                    <Castle className="h-4 w-4 mr-2" /> Guilds
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="leaderboards"
+                    className="flex-1 text-sm font-bold py-4 bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF2E97] data-[state=active]:to-[#2DE2E6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(45,226,230,0.3)] hover:bg-[#261D54] transition-all duration-300"
+                  >
+                    <Star className="h-4 w-4 mr-2" /> Rankings
+                  </TabsTrigger>
+                </TabsList>
+              </div>
             ) : (
               <TabsList className="grid grid-cols-3 w-full max-w-md">
                 <TabsTrigger value="quests" className="flex items-center gap-1">
@@ -219,8 +246,14 @@ const Quests: React.FC = () => {
               >
                 {/* Map header & selector */}
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold flex items-center gap-2">
-                    <span className="bg-gradient-to-r from-cyan-500 to-purple-500 bg-clip-text text-transparent">
+                  <h2 className={`text-xl font-semibold flex items-center gap-2 ${
+                    isCyberpunkTheme ? 'text-[#E0F2FF]' : ''
+                  }`}>
+                    <span className={
+                      isCyberpunkTheme 
+                        ? "text-transparent bg-gradient-to-r from-[#FF2E97] to-[#2DE2E6] bg-clip-text filter drop-shadow-[0_0_8px_rgba(45,226,230,0.5)]"
+                        : "bg-gradient-to-r from-cyan-500 to-purple-500 bg-clip-text text-transparent"
+                    }>
                       Quest Map
                     </span>
                   </h2>
@@ -229,13 +262,21 @@ const Quests: React.FC = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="bg-gray-900 text-white hover:bg-gray-800"
+                      className={
+                        isCyberpunkTheme 
+                          ? "bg-[#141622] text-[#2DE2E6] border border-[#2DE2E6] hover:bg-[#261D54] shadow-[0_0_10px_rgba(45,226,230,0.2)] transition-all duration-300"
+                          : "bg-gray-900 text-white hover:bg-gray-800"
+                      }
                       onClick={() => setShowMapMenu(v => !v)}
                     >
                       Change Map ▾
                     </Button>
                     {showMapMenu && (
-                      <div className="absolute right-0 mt-1 w-32 bg-white shadow-lg rounded">
+                      <div className={
+                        isCyberpunkTheme 
+                          ? "absolute right-0 mt-1 w-32 bg-[#141622] border border-[#2DE2E6] shadow-[0_0_20px_rgba(45,226,230,0.2)] rounded-lg backdrop-blur-sm z-50"
+                          : "absolute right-0 mt-1 w-32 bg-white shadow-lg rounded"
+                      }>
                         {[
                           ["Town", "town"],
                           ["Phaser", "phaser"],
@@ -247,7 +288,11 @@ const Quests: React.FC = () => {
                               setSelectedMap(key as "town" | "phaser" | "hell");
                               setShowMapMenu(false);
                             }}
-                            className="w-full px-4 py-2 text-left hover:bg-gray-100"
+                            className={
+                              isCyberpunkTheme
+                                ? "w-full px-4 py-2 text-left text-[#E0F2FF] hover:bg-[#261D54] hover:text-[#2DE2E6] transition-all duration-300"
+                                : "w-full px-4 py-2 text-left hover:bg-gray-100"
+                            }
                           >
                             {label}
                           </button>
@@ -314,6 +359,41 @@ const Quests: React.FC = () => {
                       className="h-32 w-auto object-contain"
                     />
                   </div>
+                ) : isCyberpunkTheme ? (
+                  <div className="flex items-stretch justify-center mb-8 w-full max-w-4xl mx-auto">
+                    <TabsList className="flex w-full bg-[#141622] border-2 border-[#2DE2E6] rounded-lg shadow-[0_0_20px_rgba(45,226,230,0.2)] overflow-hidden backdrop-blur-sm">
+                      <TabsTrigger
+                        value="available"
+                        className="flex-1 text-sm font-bold py-4 border-r border-[#2DE2E6] bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF2E97] data-[state=active]:to-[#2DE2E6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(45,226,230,0.3)] hover:bg-[#261D54] transition-all duration-300"
+                      >
+                        Available
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="groupQuests"
+                        className="flex-1 text-sm font-bold py-4 border-r border-[#2DE2E6] bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF2E97] data-[state=active]:to-[#2DE2E6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(45,226,230,0.3)] hover:bg-[#261D54] transition-all duration-300"
+                      >
+                        <Users className="h-4 w-4 mr-2" /> Group
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="inProgress"
+                        className="flex-1 text-sm font-bold py-4 border-r border-[#2DE2E6] bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF2E97] data-[state=active]:to-[#2DE2E6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(45,226,230,0.3)] hover:bg-[#261D54] transition-all duration-300"
+                      >
+                        In Progress
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="completed"
+                        className="flex-1 text-sm font-bold py-4 border-r border-[#2DE2E6] bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF2E97] data-[state=active]:to-[#2DE2E6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(45,226,230,0.3)] hover:bg-[#261D54] transition-all duration-300"
+                      >
+                        Completed
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="failed"
+                        className="flex-1 text-sm font-bold py-4 bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF2E97] data-[state=active]:to-[#2DE2E6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(45,226,230,0.3)] hover:bg-[#261D54] transition-all duration-300"
+                      >
+                        Failed
+                      </TabsTrigger>
+                    </TabsList>
+                  </div>
                 ) : (
                   <TabsList className="grid grid-cols-5 w-full max-w-md mb-8">
                     <TabsTrigger value="available">Available</TabsTrigger>
@@ -357,7 +437,11 @@ const Quests: React.FC = () => {
         {/* Mini-Leaderboard */}
         {activeSection !== "leaderboards" && (
           <motion.div
-            className="w-full rounded-lg shadow-lg p-4 mt-8"
+            className={`w-full rounded-lg shadow-lg p-4 mt-8 ${
+              isCyberpunkTheme 
+                ? 'bg-[#141622]/80 border-2 border-[#2DE2E6] shadow-[0_0_30px_rgba(45,226,230,0.2)] backdrop-blur-sm'
+                : ''
+            }`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
