@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -13,8 +12,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogOverlay } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface LeaderboardProps {
   scope: LeaderboardScope;
@@ -58,9 +58,9 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
   const [roleFilter, setRoleFilter] = useState<string | null>(null);
   const [userDetailsOpen, setUserDetailsOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<LeaderboardEntry | null>(null);
-
-  // New state for live updates
   const [liveUpdates, setLiveUpdates] = useState<{userId: string, change: number}[]>([]);
+  const { currentTheme } = useTheme();
+  const isMedievalTheme = currentTheme.name === "Medieval";
 
   useEffect(() => {
     // In a real app, this would fetch data from an API
@@ -168,14 +168,14 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
               placeholder="Search by name or guild..."
               value={searchQuery}
               onChange={handleSearchChange}
-              className="max-w-sm"
-              startIcon={<Search className="h-4 w-4" />}
+              className={`max-w-sm ${isMedievalTheme ? "bg-[#5c4b2a] placeholder:text-[#fcefb4]" : ""}`}
+              startIcon={<Search className={`h-4 w-4 ${isMedievalTheme ? "text-[#fcefb4]" : ""}`} />}
             />
             <Button 
               variant="outline" 
               size="sm"
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-1"
+              className={`flex items-center gap-1 ${isMedievalTheme ? "bg-[#5c4b2a]" : ""}`}
             >
               {showFilters ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               Filters
@@ -190,42 +190,25 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                 exit={{ height: 0, opacity: 0 }}
                 className="overflow-hidden space-x-2 pt-2"
               >
-                <Button 
-                  variant={roleFilter === "Freelancer" ? "default" : "outline"} 
-                  size="sm"
-                  onClick={() => toggleRoleFilter("Freelancer")}
-                >
-                  Freelancer
-                </Button>
-                <Button 
-                  variant={roleFilter === "Student" ? "default" : "outline"} 
-                  size="sm"
-                  onClick={() => toggleRoleFilter("Student")}
-                >
-                  Student
-                </Button>
-                <Button 
-                  variant={roleFilter === "Corporate Hero" ? "default" : "outline"} 
-                  size="sm"
-                  onClick={() => toggleRoleFilter("Corporate Hero")}
-                >
-                  Corporate Hero
-                </Button>
-                <Button 
-                  variant={roleFilter === "Guild Master" ? "default" : "outline"} 
-                  size="sm"
-                  onClick={() => toggleRoleFilter("Guild Master")}
-                >
-                  Guild Master
-                </Button>
+                {["Freelancer", "Student", "Corporate Hero", "Guild Master"].map((role) => (
+                  <Button 
+                    key={role}
+                    variant={roleFilter === role ? "default" : "outline"} 
+                    size="sm"
+                    onClick={() => toggleRoleFilter(role)}
+                    className={isMedievalTheme ? "bg-[#5c4b2a] text-[#fcefb4] border-[#d4af37]" : ""}
+                  >
+                    {role}
+                  </Button>
+                ))}
               </motion.div>
             )}
           </AnimatePresence>
         </div>
       )}
 
-      <div className="rounded-md border">
-        <div className="grid grid-cols-12 gap-2 p-3 bg-muted/50 font-medium text-sm">
+      <div className={`rounded-md ${isMedievalTheme ? "border-[#d4af37]" : "border"}`}>
+        <div className={`grid grid-cols-12 gap-2 p-3 ${isMedievalTheme ? "bg-[#5c4b2a]" : "bg-muted/50"} font-medium text-sm`}>
           <div className="col-span-1 text-center">#</div>
           <div className="col-span-5 md:col-span-3">Hero</div>
           <div className="col-span-3 md:col-span-2 text-right">XP</div>
@@ -235,7 +218,6 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
         
         <div>
           {filteredData.map((entry, index) => {
-            // Check if this entry has a live update
             const liveUpdate = liveUpdates.find(update => update.userId === entry.id);
             
             return (
@@ -244,18 +226,32 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
-                className={`grid grid-cols-12 gap-2 p-3 items-center border-t ${
-                  entry.isCurrentUser ? "bg-primary/5 border-primary/20" : ""
-                } ${index % 2 === 0 && !entry.isCurrentUser ? "bg-muted/20" : ""} cursor-pointer hover:bg-gray-50`}
+                className={`grid grid-cols-12 gap-2 justify-between items-center px-4 py-2 rounded-lg ${
+                  isMedievalTheme ? `
+                    text-[#7c1c1c]
+                    ${entry.isCurrentUser ? "bg-[#d4af37]/20 border-[#d4af37]/50" : ""}
+                    ${index % 2 === 0 && !entry.isCurrentUser ? "bg-[#d4c07c]/60" : ""}
+                    hover:bg-[#bfa171]/40
+                  ` : `
+                    ${entry.isCurrentUser ? "bg-primary/5 border-primary/20" : ""}
+                    ${index % 2 === 0 && !entry.isCurrentUser ? "bg-muted/20" : ""}
+                    hover:bg-gray-50
+                  `}
+                `}
                 onClick={() => handleUserClick(entry)}
               >
                 <div className="col-span-1 text-center font-semibold">
-                  <div className="flex flex-col items-center">
+                  <div className={`flex flex-col items-center ${isMedievalTheme ? "text-black" : ""}`}>
                     {entry.rank <= 3 ? (
-                      <div className={`inline-flex items-center justify-center w-6 h-6 rounded-full 
-                        ${entry.rank === 1 ? "bg-yellow-100 text-yellow-600" : 
-                          entry.rank === 2 ? "bg-gray-100 text-gray-600" : 
-                          "bg-amber-100 text-amber-700"}`}>
+                      <div className={`inline-flex items-center justify-center w-6 h-6 rounded-full ${
+                        isMedievalTheme 
+                          ? `${entry.rank === 1 ? "bg-[#f5e6c5] text-yellow-600" : 
+                              entry.rank === 2 ? "bg-[#f5e6c5] text-gray-600" : 
+                              "bg-amber-100 text-amber-700"}`
+                          : `${entry.rank === 1 ? "bg-yellow-100 text-yellow-600" : 
+                              entry.rank === 2 ? "bg-gray-100 text-gray-600" : 
+                              "bg-amber-100 text-amber-700"}`
+                      }`}>
                         <Trophy className="h-3 w-3" />
                       </div>
                     ) : (
@@ -312,23 +308,33 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                   </TooltipProvider>
                   
                   <div>
-                    <div className="font-medium text-sm flex items-center">
+                    <div className={`font-medium text-sm flex justify-between items-center px-4 py-2 rounded-lg ${
+                      isMedievalTheme ? "text-black" : ""
+                    }`}>
                       {entry.name}
                       {entry.isCurrentUser && (
-                        <Badge variant="outline" className="ml-2 text-[10px] py-0">You</Badge>
+                        <Badge variant="outline" className={`ml-2 text-[10px] py-0 ${
+                          isMedievalTheme ? "bg-[#7c1c1c] text-[#d4af37]" : ""
+                        }`}>
+                          You
+                        </Badge>
                       )}
                     </div>
                     <div className="text-xs text-muted-foreground flex items-center">
                       <Star className="h-3 w-3 mr-1 text-amber-500" />
                       Lvl {entry.level}
                       {entry.role && (
-                        <span className="ml-1 text-gray-400">• {entry.role}</span>
+                        <span className={`ml-1 ${isMedievalTheme ? "text-[#d4af37]" : "text-gray-400"}`}>
+                          • {entry.role}
+                        </span>
                       )}
                     </div>
                   </div>
                 </div>
                 
-                <div className="col-span-3 md:col-span-2 text-right font-mono font-medium">
+                <div className={`col-span-3 md:col-span-2 text-right font-mono font-medium flex justify-between items-center px-4 py-2 rounded-lg ${
+                  isMedievalTheme ? "text-[#2e4a2c]" : ""
+                }`}>
                   {entry.xp.toLocaleString()} XP
                 </div>
                 
@@ -340,12 +346,14 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                           <img src={entry.guildLogo} alt={entry.guildName} className="w-full h-full object-cover" />
                         </div>
                       ) : (
-                        <Castle className="h-3 w-3 mr-1 text-primary" />
+                        <Castle className={`h-3 w-3 mr-1 ${isMedievalTheme ? "text-black" : "text-primary"}`} />
                       )}
                       {entry.guildName}
                     </div>
                   ) : (
-                    <span className="text-xs text-muted-foreground">No Guild</span>
+                    <span className={`text-sm ${isMedievalTheme ? "text-[#7c1c1c]" : "text-muted-foreground"}`}>
+                      No Guild
+                    </span>
                   )}
                 </div>
                 
@@ -379,100 +387,253 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
       
       {compact && leaderboardData.length >= 5 && (
         <div className="text-center mt-2">
-          <a href="/leaderboards" className="text-sm text-primary hover:underline">
+          <a href="/leaderboards" className={`text-sm ${isMedievalTheme ? "text-[#7c1c1c]" : "text-primary"} hover:underline`}>
             View full leaderboard →
           </a>
         </div>
       )}
       
-      {/* User Details Dialog */}
+      {/* Medieval themed dialog */}
       <Dialog open={userDetailsOpen} onOpenChange={setUserDetailsOpen}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Avatar className={`h-6 w-6 ${getAvatarBorderClass(selectedUser)}`}>
-                {selectedUser?.avatar ? (
-                  <AvatarImage src={selectedUser.avatar} alt={selectedUser.name} />
-                ) : (
-                  <AvatarFallback className={getAvatarFallbackClass(selectedUser)}>
-                    {selectedUser?.name.charAt(0)}
-                  </AvatarFallback>
-                )}
-              </Avatar>
-              {selectedUser?.name}'s Profile
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold">{selectedUser?.name}</h3>
-                <p className="text-sm text-gray-500">
-                  Level {selectedUser?.level} {selectedUser?.role}
-                </p>
-              </div>
-              <div className="text-right">
-                <div className="text-2xl font-bold">{selectedUser?.xp.toLocaleString()} XP</div>
-                <p className="text-xs text-gray-500">Rank #{selectedUser?.rank}</p>
-              </div>
-            </div>
-            
-            {/* Guild information */}
-            {selectedUser?.guildName && (
-              <div className="bg-gray-50 p-3 rounded-md">
-                <div className="flex items-center gap-2">
-                  {selectedUser.guildLogo ? (
-                    <div className="w-5 h-5 rounded-full overflow-hidden">
-                      <img src={selectedUser.guildLogo} alt={selectedUser.guildName} className="w-full h-full object-cover" />
-                    </div>
-                  ) : (
-                    <Castle className="h-4 w-4 text-purple-600" />
-                  )}
-                  <span className="font-medium">{selectedUser.guildName}</span>
-                </div>
-              </div>
-            )}
-            
-            {/* Achievements */}
-            {selectedUser?.achievements && selectedUser.achievements.length > 0 && (
-              <div>
-                <h4 className="font-medium mb-2">Achievements</h4>
-                <div className="flex flex-wrap gap-2">
-                  {selectedUser.achievements.map((achievement, i) => (
-                    <Badge key={i} variant="outline" className="px-2 py-1">
-                      {achievement}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {/* Quest History */}
-            <div>
-              <h4 className="font-medium mb-2">Recent Quests</h4>
-              {selectedUser?.questHistory ? (
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {selectedUser.questHistory.map((quest, i) => (
-                    <div key={i} className="bg-gray-50 p-2 rounded-md text-sm">
+        {isMedievalTheme ? (
+          <>
+            <DialogOverlay className="fixed inset-0 bg-black/50 z-40" />
+            <DialogContent className="fixed left-[50%] top-[50%] z-50 grid translate-x-[-85%] translate-y-[-50%] p-0 bg-transparent border-none shadow-none">
+              <div className="flex justify-center items-center p-6">
+                <div
+                  className="relative flex justify-center items-center"
+                  style={{
+                    backgroundImage: "url('/assets/themes/medieval/sprites/F_UI_Panel_N.png')",
+                    width: "900px",
+                    height: "900px",
+                    backgroundSize: "contain",
+                    backgroundRepeat: "no-repeat",
+                    imageRendering: "pixelated",
+                    padding: "40px",
+                    boxSizing: "border-box",
+                  }}
+                >
+                  <div className="w-full max-w-[600px] h-[600px] overflow-y-auto pr-2 custom-scroll text-brown-800"
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                    }}>
+                    <DialogHeader>
+                      <DialogTitle className="flex items-center gap-2">
+                        <Avatar className={`h-6 w-6 ${getAvatarBorderClass(selectedUser)}`}>
+                          {selectedUser?.avatar ? (
+                            <AvatarImage src={selectedUser.avatar} alt={selectedUser.name} />
+                          ) : (
+                            <AvatarFallback className={getAvatarFallbackClass(selectedUser)}>
+                              {selectedUser?.name.charAt(0)}
+                            </AvatarFallback>
+                          )}
+                        </Avatar>
+                        {selectedUser?.name}'s Profile
+                      </DialogTitle>
+                    </DialogHeader>
+
+                    <div className="space-y-4">
                       <div className="flex items-center justify-between">
-                        <span>{quest.name}</span>
-                        <span className="font-mono font-semibold text-green-600">+{quest.xp} XP</span>
+                        <div>
+                          <h3 className="text-lg font-semibold">{selectedUser?.name}</h3>
+                          <p className="text-sm text-gray-500">
+                            Level {selectedUser?.level} {selectedUser?.role}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-bold">{selectedUser?.xp.toLocaleString()} XP</div>
+                          <p className="text-xs text-gray-500">Rank #{selectedUser?.rank}</p>
+                        </div>
                       </div>
-                      <div className="text-xs text-gray-500 flex items-center justify-between mt-1">
-                        <span>Completed {new Date(quest.completedDate).toLocaleDateString()}</span>
-                        {quest.completedEarly && (
-                          <span className="text-amber-600">{quest.daysEarly} days early!</span>
+
+                      {selectedUser?.guildName && (
+                        <div className="bg-gray-50 p-3 rounded-md">
+                          <div className="flex items-center gap-2">
+                            {selectedUser.guildLogo ? (
+                              <div className="w-5 h-5 rounded-full overflow-hidden">
+                                <img src={selectedUser.guildLogo} alt={selectedUser.guildName} className="w-full h-full object-cover" />
+                              </div>
+                            ) : (
+                              <Castle className="h-4 w-4 text-purple-600" />
+                            )}
+                            <span className="font-medium">{selectedUser.guildName}</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {selectedUser?.achievements?.length > 0 && (
+                        <div>
+                          <h4 className="font-medium mb-2">Achievements</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {selectedUser.achievements.map((achievement, i) => {
+                              const formattedAchievement =
+                                achievement.length > 16 && achievement.includes(" ")
+                                  ? (() => {
+                                      const words = achievement.split(" ");
+                                      const midpoint = Math.ceil(words.length / 2);
+                                      return words.slice(0, midpoint).join(" ") + "\n" + words.slice(midpoint).join(" ");
+                                    })()
+                                  : achievement;
+
+                              return (
+                                <div
+                                  key={i}
+                                  className="relative px-4 py-2 flex items-center justify-center text-center text-white font-bold text-sm min-w-[140px] min-h-[140px]"
+                                  style={{
+                                    backgroundImage: "url('/assets/themes/medieval/sprites/F_UI_Banner_A1.png')",
+                                    backgroundRepeat: "repeat-x",
+                                    backgroundSize: "auto 100%",
+                                    backgroundPosition: "center",
+                                    imageRendering: "pixelated",
+                                  }}
+                                >
+                                  <span className="text-xs leading-snug break-words whitespace-pre-wrap">
+                                    {formattedAchievement}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      <div>
+                        <h4 className="font-medium mb-2">Recent Quests</h4>
+                        {selectedUser?.questHistory ? (
+                          <div className="space-y-2 max-h-48 overflow-y-auto pr-1 custom-scroll">
+                            {selectedUser.questHistory.map((quest, i) => {
+                              const spriteIndex = quest.spriteIndex || 0;
+                              const spriteSize = 22;
+                              const columns = 18;
+                              const x = -(spriteIndex % columns) * spriteSize;
+                              const y = -Math.floor(spriteIndex / columns) * spriteSize;
+
+                              return (
+                                <div key={i} className="bg-gray-50 p-2 rounded-md text-sm">
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                      <div
+                                        className="w-[22px] h-[22px] bg-no-repeat"
+                                        style={{
+                                          backgroundImage: "url('/assets/themes/medieval/sprites/F_U_ObjectIconTileMap1.png')",
+                                          backgroundSize: "396px 242px",
+                                          backgroundPosition: `${x}px ${y}px`,
+                                          imageRendering: "pixelated",
+                                        }}
+                                      />
+                                      <span>{quest.name}</span>
+                                    </div>
+                                    <span className="font-mono font-semibold text-green-600">+{quest.xp} XP</span>
+                                  </div>
+                                  <div className="text-xs text-gray-500 flex items-center justify-between mt-1">
+                                    <span>Completed {new Date(quest.completedDate).toLocaleDateString()}</span>
+                                    {quest.completedEarly && (
+                                      <span className="text-amber-600">{quest.daysEarly} days early!</span>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <p className="text-sm text-gray-500">No recent quests</p>
                         )}
                       </div>
                     </div>
-                  ))}
+                  </div>
                 </div>
-              ) : (
-                <p className="text-sm text-gray-500">No recent quests</p>
+              </div>
+            </DialogContent>
+          </>
+        ) : (
+          <DialogContent className="sm:max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Avatar className={`h-6 w-6 ${getAvatarBorderClass(selectedUser)}`}>
+                  {selectedUser?.avatar ? (
+                    <AvatarImage src={selectedUser.avatar} alt={selectedUser.name} />
+                  ) : (
+                    <AvatarFallback className={getAvatarFallbackClass(selectedUser)}>
+                      {selectedUser?.name.charAt(0)}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                {selectedUser?.name}'s Profile
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold">{selectedUser?.name}</h3>
+                  <p className="text-sm text-gray-500">
+                    Level {selectedUser?.level} {selectedUser?.role}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold">{selectedUser?.xp.toLocaleString()} XP</div>
+                  <p className="text-xs text-gray-500">Rank #{selectedUser?.rank}</p>
+                </div>
+              </div>
+              
+              {/* Guild information */}
+              {selectedUser?.guildName && (
+                <div className="bg-gray-50 p-3 rounded-md">
+                  <div className="flex items-center gap-2">
+                    {selectedUser.guildLogo ? (
+                      <div className="w-5 h-5 rounded-full overflow-hidden">
+                        <img src={selectedUser.guildLogo} alt={selectedUser.guildName} className="w-full h-full object-cover" />
+                      </div>
+                    ) : (
+                      <Castle className="h-4 w-4 text-purple-600" />
+                    )}
+                    <span className="font-medium">{selectedUser.guildName}</span>
+                  </div>
+                </div>
               )}
+              
+              {/* Achievements */}
+              {selectedUser?.achievements && selectedUser.achievements.length > 0 && (
+                <div>
+                  <h4 className="font-medium mb-2">Achievements</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedUser.achievements.map((achievement, i) => (
+                      <Badge key={i} variant="outline" className="px-2 py-1">
+                        {achievement}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Quest History */}
+              <div>
+                <h4 className="font-medium mb-2">Recent Quests</h4>
+                {selectedUser?.questHistory ? (
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    {selectedUser.questHistory.map((quest, i) => (
+                      <div key={i} className="bg-gray-50 p-2 rounded-md text-sm">
+                        <div className="flex items-center justify-between">
+                          <span>{quest.name}</span>
+                          <span className="font-mono font-semibold text-green-600">+{quest.xp} XP</span>
+                        </div>
+                        <div className="text-xs text-gray-500 flex items-center justify-between mt-1">
+                          <span>Completed {new Date(quest.completedDate).toLocaleDateString()}</span>
+                          {quest.completedEarly && (
+                            <span className="text-amber-600">{quest.daysEarly} days early!</span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500">No recent quests</p>
+                )}
+              </div>
             </div>
-          </div>
-        </DialogContent>
+          </DialogContent>
+        )}
       </Dialog>
     </div>
   );
