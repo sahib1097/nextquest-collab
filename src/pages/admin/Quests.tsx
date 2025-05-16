@@ -16,8 +16,9 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/ThemeContext";
 
-// lazy‑load QuestBoard
+// Lazy-load QuestBoard
 const QuestBoard = lazy(() => import("@/components/Quests/QuestBoard"));
+const QuestMap = lazy(() => import("@/components/Quests/QuestMap/QuestMap"));
 
 // TownMap has a default export
 const TownMap = lazy(() => import("../townMap"));
@@ -156,87 +157,126 @@ const Quests: React.FC = () => {
 
           {/* Main Tabs */}
           <Tabs value={activeSection} onValueChange={handleSectionChange} className="w-full mb-6">
-            <TabsList className="grid grid-cols-3 w-full max-w-md">
-              <TabsTrigger value="quests" className="flex items-center gap-1">
-                <Trophy className="h-4 w-4" /> Quests
-              </TabsTrigger>
-              <TabsTrigger value="guilds" className="flex items-center gap-1">
-                <Castle className="h-4 w-4" /> Guilds
-              </TabsTrigger>
-              <TabsTrigger value="leaderboards" className="flex items-center gap-1">
-                <Star className="h-4 w-4" /> Rankings
-              </TabsTrigger>
-            </TabsList>
+            {currentTheme.name === "Medieval" ? (
+              <div className="flex items-stretch justify-center mb-8 w-full max-w-3xl mx-auto">
+                {/* Left Banner */}
+                <img
+                  src="/assets/themes/medieval/sprites/F_UI_BlueBannerB.png"
+                  alt="Left Banner"
+                  className="h-32 w-auto object-contain"
+                />
+
+                {/* Pixel-RPG Tabs */}
+                <TabsList className="flex w-full max-w-md bg-[#d6c8a2] border-4 border-[#5c4a2b] rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] overflow-hidden">
+                  <TabsTrigger
+                    value="quests"
+                    className="flex-1 text-s font-bold py-4 border-r-2 border-[#5c4a2b] bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+                  >
+                    <Trophy className="h-3 w-3 mx-1" /> Quests
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="guilds"
+                    className="flex-1 text-s font-bold py-4 border-r-2 border-[#5c4a2b] bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+                  >
+                    <Castle className="h-3 w-3 mx-1" /> Guilds
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="leaderboards"
+                    className="flex-1 text-s font-bold py-4 bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+                  >
+                    <Star className="h-3 w-3 mx-1" /> Rankings
+                  </TabsTrigger>
+                </TabsList>
+
+                {/* Right Banner */}
+                <img
+                  src="/assets/themes/medieval/sprites/F_UI_BlueBannerB.png"
+                  alt="Right Banner"
+                  className="h-32 w-auto object-contain"
+                />
+              </div>
+            ) : (
+              <TabsList className="grid grid-cols-3 w-full max-w-md">
+                <TabsTrigger value="quests" className="flex items-center gap-1">
+                  <Trophy className="h-4 w-4" /> Quests
+                </TabsTrigger>
+                <TabsTrigger value="guilds" className="flex items-center gap-1">
+                  <Castle className="h-4 w-4" /> Guilds
+                </TabsTrigger>
+                <TabsTrigger value="leaderboards" className="flex items-center gap-1">
+                  <Star className="h-4 w-4" /> Rankings
+                </TabsTrigger>
+              </TabsList>
+            )}
 
             {/* Quests Section */}
             <TabsContent value="quests">
-              <motion.div
+              <motion.div 
                 className="mb-8"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                {/* Map header & selector */}
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold flex items-center gap-2">
-                    <span className="bg-gradient-to-r from-cyan-500 to-purple-500 bg-clip-text text-transparent">
-                      Quest Map
-                    </span>
-                  </h2>
-                  <div className="relative">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="bg-gray-900 text-white hover:bg-gray-800"
-                      onClick={() => setShowMapMenu(v => !v)}
-                    >
-                      Change Map ▾
-                    </Button>
-                    {showMapMenu && (
-                      <div className="absolute right-0 mt-1 w-32 bg-white shadow-lg rounded">
-                        {[
-                          ["Town", "town"],
-                          ["Phaser", "phaser"],
-                          ["Hell", "hell"],
-                        ].map(([label, key]) => (
-                          <button
-                            key={key}
-                            onClick={() => {
-                              setSelectedMap(key as "town" | "phaser" | "hell");
-                              setShowMapMenu(false);
-                            }}
-                            className="w-full px-4 py-2 text-left hover:bg-gray-100"
-                          >
-                            {label}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Lazy‑loaded map */}
+                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                  <span className="bg-gradient-to-r from-cyan-500 to-purple-500 bg-clip-text text-transparent">
+                    Quest Map
+                  </span>
+                </h2>
                 <Suspense fallback={<div className="h-64 bg-gray-100 animate-pulse" />}>
-                  {selectedMap === "town" && <TownMap />}
-                  {selectedMap === "phaser" && <PhaserMap />}
-                  {selectedMap === "hell" && <HellMap />}
+                  <QuestMap quests={JSON.parse(localStorage.getItem("fluxQuests") || "[]")} />
                 </Suspense>
               </motion.div>
 
-              {/* Lazy‑load QuestBoard & its tabs */}
-              <Suspense
-                fallback={
-                  <div className="flex items-center justify-center py-16">
-                    <svg className="animate-spin h-8 w-8 text-gray-500" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
-                    </svg>
-                  </div>
-                }
-              >
-                <XPBoostItem onCollect={handleCollectBoost} />
+              <XPBoostItem onCollect={handleCollectBoost} />
 
-                <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+              <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+                {currentTheme.name === "Medieval" ? (
+                  <div className="flex items-stretch justify-center mb-8 w-full max-w-3xl mx-auto">
+                    {/* Left Banner */}
+                    <img
+                      src="/assets/themes/medieval/sprites/F_UI_GreenBannerB.png"
+                      alt="Left Banner"
+                      className="h-32 w-auto object-contain"
+                    />
+                    <TabsList className="flex w-full max-w-md bg-[#d6c8a2] border-4 border-[#5c4a2b] rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] overflow-hidden">
+                      <TabsTrigger
+                        value="available"
+                        className="flex-1 text-s font-bold py-4 border-r-2 border-[#5c4a2b] bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+                      >
+                        Available
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="groupQuests"
+                        className="flex-1 text-s font-bold py-4 border-r-2 border-[#5c4a2b] bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+                      >
+                        <Users className="h-4 w-4 mr-1" /> Group
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="inProgress"
+                        className="flex-1 text-s font-bold py-4 border-r-2 border-[#5c4a2b] bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+                      >
+                        In Progress
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="completed"
+                        className="flex-1 text-s font-bold py-4 border-r-2 border-[#5c4a2b] bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+                      >
+                        Completed
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="failed"
+                        className="flex-1 text-s font-bold py-4 bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+                      >
+                        Failed
+                      </TabsTrigger>
+                    </TabsList>
+                    <img
+                      src="/assets/themes/medieval/sprites/F_UI_GreenBannerB.png"
+                      alt="Right Banner"
+                      className="h-32 w-auto object-contain"
+                    />
+                  </div>
+                ) : (
                   <TabsList className="grid grid-cols-5 w-full max-w-md mb-8">
                     <TabsTrigger value="available">Available</TabsTrigger>
                     <TabsTrigger value="groupQuests" className="flex items-center">
@@ -246,39 +286,37 @@ const Quests: React.FC = () => {
                     <TabsTrigger value="completed">Completed</TabsTrigger>
                     <TabsTrigger value="failed">Failed</TabsTrigger>
                   </TabsList>
+                )}
 
-                  <TabsContent value="available">
-                    <QuestBoard status="Available" questType="individual" />
-                  </TabsContent>
-                  <TabsContent value="groupQuests">
-                    <QuestBoard status="Available" questType="group" />
-                  </TabsContent>
-                  <TabsContent value="inProgress">
-                    <QuestBoard status="In Progress" />
-                  </TabsContent>
-                  <TabsContent value="completed">
-                    <QuestBoard status="Completed" />
-                  </TabsContent>
-                  <TabsContent value="failed">
-                    <QuestBoard status="Failed" />
-                  </TabsContent>
-                </Tabs>
-              </Suspense>
+                <TabsContent value="available">
+                  <QuestBoard status="Available" questType="individual" />
+                </TabsContent>
+                <TabsContent value="groupQuests">
+                  <QuestBoard status="Available" questType="group" />
+                </TabsContent>
+                <TabsContent value="inProgress">
+                  <QuestBoard status="In Progress" />
+                </TabsContent>
+                <TabsContent value="completed">
+                  <QuestBoard status="Completed" />
+                </TabsContent>
+                <TabsContent value="failed">
+                  <QuestBoard status="Failed" />
+                </TabsContent>
+              </Tabs>
             </TabsContent>
 
-            {/* Guilds */}
             <TabsContent value="guilds">
               <GuildBoard />
             </TabsContent>
 
-            {/* Leaderboards */}
             <TabsContent value="leaderboards">
               <LeaderboardSystem />
             </TabsContent>
           </Tabs>
         </div>
 
-        {/* Mini‑Leaderboard */}
+        {/* Mini-Leaderboard */}
         {activeSection !== "leaderboards" && (
           <motion.div
             className="w-full rounded-lg shadow-lg p-4 mt-8"

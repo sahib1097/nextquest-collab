@@ -1,7 +1,7 @@
 import { UserLevel } from "@/types/quest";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Award, TrendingUp, Zap, Star, UserRound } from "lucide-react";
+import { Award, TrendingUp, Zap, Star, UserRound, Trophy } from "lucide-react";
 import { calculateLevelProgress } from "@/utils/questUtils";
 import { Progress } from "@/components/ui/progress"; 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -88,31 +88,33 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
   return (
     <Tabs defaultValue="overview" className="w-full">
       {isMedievalTheme ? (
-        <div className="flex items-stretch justify-center w-full max-w-3xl mx-auto mb-8 gap-0">
+        <div className="flex items-stretch justify-center w-full max-w-3xl mx-auto mb-8">
           {/* Left Banner */}
           <img
             src="/assets/themes/medieval/sprites/F_UI_RedBannerB-Left.png"
             alt="Left Banner"
-            className="h-32 w-auto object-cover"
+            className="h-32 w-auto object-contain"
           />
 
-          {/* Tabs */}
+          {/* Pixel-RPG Tabs */}
           <TabsList className="flex w-full max-w-md bg-[#d6c8a2] border-4 border-[#5c4a2b] rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] overflow-hidden">
-            <TabsTrigger value="overview"
-              className="flex-1 text-s font-bold py-4 bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+            <TabsTrigger
+              value="overview"
+              className="flex-1 text-s font-bold py-4 border-r-2 border-[#5c4a2b] bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
             >
-              Overview
+              <UserRound className="h-3 w-3 mx-1" /> Overview
             </TabsTrigger>
-
-            <TabsTrigger value="achievements"
-              className="flex-1 text-s font-bold py-4 bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+            <TabsTrigger
+              value="achievements"
+              className="flex-1 text-s font-bold py-4 border-r-2 border-[#5c4a2b] bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
             >
-              Achievements
+              <Trophy className="h-3 w-3 mx-1" /> Achievements
             </TabsTrigger>
-            <TabsTrigger value="activity"
+            <TabsTrigger
+              value="activity"
               className="flex-1 text-s font-bold py-4 bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
             >
-              Activity
+              <Star className="h-3 w-3 mx-1" /> Activity
             </TabsTrigger>
           </TabsList>
 
@@ -120,7 +122,7 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
           <img
             src="/assets/themes/medieval/sprites/F_UI_RedBannerB.png"
             alt="Right Banner"
-            className="h-32 w-auto object-cover"
+            className="h-32 w-auto object-contain"
           />
         </div>
       ) : (
