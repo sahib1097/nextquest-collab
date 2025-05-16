@@ -60,7 +60,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   
   const handleLogout = async () => {
     // 1) Tell the server to clear the cookie
-    await fetch(`${API}/api/auth/logout`, {
+    await fetch(`${API}/auth/logout`, {
       method:      'POST',
       credentials: 'include',       // important to send the cookie
     });

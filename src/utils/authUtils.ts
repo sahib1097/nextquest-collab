@@ -74,7 +74,17 @@ export const logoutUser = () => {
   localStorage.removeItem("fluxUser");
   localStorage.removeItem(LAST_ACTIVITY_KEY);
   localStorage.removeItem(AUTH_EXPIRY_KEY);
-  
+  localStorage.removeItem('teamId');
+  localStorage.removeItem('fluxActivities');
+  localStorage.removeItem('fluxAuthExpiry');
+  localStorage.removeItem('fluxBoards');
+  localStorage.removeItem('fluxLastActivity');
+  localStorage.removeItem('fluxSidebarPosition');
+  localStorage.removeItem('fluxTeamMembers');
+  localStorage.removeItem('fluxTheme');
+  localStorage.removeItem('flux_achievements_current-user');
+  localStorage.removeItem('fluxLastActivity');
+
   // Restore preferences and progress data
   if (theme) localStorage.setItem("theme", theme);
   if (sidebarPosition) localStorage.setItem("fluxSidebarPosition", sidebarPosition);

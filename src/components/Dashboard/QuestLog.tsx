@@ -20,6 +20,16 @@ const QuestLog = () => {
       const parsedQuests: Quest[] = JSON.parse(storedQuests);
       setQuests(parsedQuests);
     }
+
+    // const raw = localStorage.getItem("fluxUserLevel");
+    // if (raw) {
+    //   const lvl: UserLevel = JSON.parse(raw);
+    //   if (lvl.username) {
+    //     setUserLevel(lvl);
+    //   } else {
+    //     console.warn("Missing username in saved userLevel:", lvl);
+    //   }
+    // }
     
     // Load user level from localStorage
     const storedUserLevel = localStorage.getItem("fluxUserLevel");
