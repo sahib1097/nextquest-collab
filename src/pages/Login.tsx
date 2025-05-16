@@ -255,6 +255,7 @@ const Login = () => {
       localStorage.setItem(
         'fluxUser',
         JSON.stringify({
+          userId:          user._id,
           email:           user.email,
           isAuthenticated: true,
           name:            user.name,
@@ -267,7 +268,7 @@ const Login = () => {
         localStorage.setItem(
           'fluxUserLevel',
           JSON.stringify({
-            userId:      'current-user',
+            userId:      user._id,
             username:    user.name,
             xp:          0,
             level:       1,
@@ -275,9 +276,9 @@ const Login = () => {
           })
         );
       }
-  
-      // 4) Bump activity
-      updateLastActivity();
+
+        // 4) Bump activity
+        updateLastActivity();
   
       toast.success(`Account created: ${user.name}`);
       navigate('/admin/dashboard');

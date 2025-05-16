@@ -9,17 +9,24 @@ import { Camera } from "lucide-react";
 import { toast } from "sonner";
 import { addActivity } from "@/utils/activityLogger";
 import { ProfilePictureUploader } from "@/components/Settings/ProfilePictureUploader";
+import { API } from '@/config';
 
 const ProfileSettings = () => {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const stored = JSON.parse(localStorage.getItem("fluxUser"));
+      const stored = JSON.parse(localStorage.getItem("fluxUser") || "{}");
       if (!stored?.userId) return;
-  
+
       try {
-        const res = await fetch(`http://localhost:5001/api/userinfo/user-data?userId=${stored.userId}`);
+        const res = await fetch(`${API}/api/userinfo/user-data`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId: stored.userId }),
+        });
         const { data } = await res.json();
         
         // Update the user state with the response data
@@ -32,15 +39,15 @@ const ProfileSettings = () => {
         toast.error('Failed to load profile data');
       }
     };
-  
+
     fetchUserData();
   }, []);
-  
+
   const setUserData = async () => {
     if (!user) return;
     
     try {
-      const res = await fetch("http://localhost:5001/api/userinfo/set-user-data", {
+      const res = await fetch(`${API}/api/userinfo/set-user-data`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -203,7 +210,7 @@ const ProfileSettings = () => {
                 />
               </div>
             </div>
-            <Button type="submit" size="lg" className="px-8">Save changes</Button>
+            <Button type="submit" size="lg" className="px-8" onClick={setUserData}>Save changes</Button>
           </form>
         </div>
       </CardContent>
