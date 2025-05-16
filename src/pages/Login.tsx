@@ -175,9 +175,9 @@ const Login = ({ initialTab }: LoginProps) => {
           })
         );
       }
-  
-      // 6) Bump your last‐activity timestamp
-      updateLastActivity();
+
+        // 4) Bump activity
+        updateLastActivity();
   
       toast.success(`Account created: ${user.name}`);
       navigate("/admin/dashboard");
