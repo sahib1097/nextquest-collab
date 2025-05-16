@@ -182,7 +182,7 @@ const ProfileSettings = () => {
               </div>
               <div className="grid gap-2.5">
                 <Label htmlFor="email">Email</Label>
-                <div className="flex gap-3">
+                <div className="h11">
                   <Input 
                     id="email" 
                     type="email" 
@@ -190,14 +190,14 @@ const ProfileSettings = () => {
                     disabled
                     className="flex-1 h-11 bg-muted/30"
                   />
-                  <Button 
+                  {/* <Button 
                     type="button" 
                     variant="outline" 
                     onClick={() => document.dispatchEvent(new CustomEvent('settings:open-email-dialog'))}
                     className="h-11"
                   >
                     Change
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
               <div className="grid gap-2.5">
