@@ -34,7 +34,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [userAuthenticated, setUserAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Check if user is authenticated with the improved auth utility
     setUserAuthenticated(isAuthenticated());
     setAuthChecked(true);
   }, []);
@@ -42,11 +41,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   if (!authChecked) {
     return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
-
   if (!userAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-
   return <>{children}</>;
 };
 
@@ -55,7 +52,6 @@ const App = () => {
   useEffect(() => {
     initializeAuthTracking();
     const intervalId = setupExpiryChecker();
-    
     return () => {
       clearInterval(intervalId);
     };
@@ -73,6 +69,7 @@ const App = () => {
                 {/* Public routes */}
                 <Route path="/" element={<Index />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/invite" element={<Login initialTab="signup" />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/terms" element={<TermsOfService />} />
                 <Route path="/contact" element={<Contact />} />
@@ -82,87 +79,24 @@ const App = () => {
                 <Route path="/leaderboards" element={<Leaderboards />} />
 
                 {/* Protected admin routes */}
-                <Route 
-                  path="/admin/dashboard" 
-                  element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/projects" 
-                  element={
-                    <ProtectedRoute>
-                      <Projects />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/projects/:projectId" 
-                  element={
-                    <ProtectedRoute>
-                      <ProjectDetail />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/quests" 
-                  element={
-                    <ProtectedRoute>
-                      <Quests />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/roadmaps" 
-                  element={
-                    <ProtectedRoute>
-                      <Roadmaps />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/budgets" 
-                  element={
-                    <ProtectedRoute>
-                      <Budgets />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/team" 
-                  element={
-                    <ProtectedRoute>
-                      <Team />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/leaderboards" 
-                  element={
-                    <ProtectedRoute>
-                      <Leaderboards />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/settings" 
-                  element={
-                    <ProtectedRoute>
-                      <Settings />
-                    </ProtectedRoute>
-                  } 
-                />
-                
+                <Route path="/admin/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/admin/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
+                <Route path="/admin/projects/:projectId" element={<ProtectedRoute><ProjectDetail /></ProtectedRoute>} />
+                <Route path="/admin/quests" element={<ProtectedRoute><Quests /></ProtectedRoute>} />
+                <Route path="/admin/roadmaps" element={<ProtectedRoute><Roadmaps /></ProtectedRoute>} />
+                <Route path="/admin/budgets" element={<ProtectedRoute><Budgets /></ProtectedRoute>} />
+                <Route path="/admin/team" element={<ProtectedRoute><Team /></ProtectedRoute>} />
+                <Route path="/admin/leaderboards" element={<ProtectedRoute><Leaderboards /></ProtectedRoute>} />
+                <Route path="/admin/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+
                 {/* Redirect /admin to dashboard */}
                 <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-                
-                {/* Catch all route */}
-                <Route path="*" element={<NotFound />} />
 
                 {/* Protected profile route */}
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+
+                {/* Catch-all */}
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </div>
           </BrowserRouter>
