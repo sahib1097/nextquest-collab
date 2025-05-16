@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -7,6 +6,7 @@ import { GuildProfilePage } from "./GuildProfilePage";
 import GuildEmptyState from "./GuildEmptyState";
 import GuildCard from "./GuildCard";
 import GuildSearch from "./GuildSearch";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const mockGuilds = [
   {
@@ -59,6 +59,8 @@ const GuildBoard = () => {
   const [filter, setFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGuildId, setSelectedGuildId] = useState<string | null>(null);
+  const { currentTheme } = useTheme();
+  const isMedievalTheme = currentTheme.name === "Medieval";
   
   useEffect(() => {
     const storedGuilds = localStorage.getItem("fluxGuilds");
@@ -103,13 +105,54 @@ const GuildBoard = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold">Guild Hall</h2>
-          <p className="text-gray-500">Join or create a guild to collaborate and earn rewards together</p>
-        </div>
-        <Button onClick={() => setIsDialogOpen(true)}>
-          <Plus className="h-4 w-4 mr-2" /> Create Guild
-        </Button>
+        {isMedievalTheme ? (
+          <>
+            <div className="px-4 py-2 bg-[#006187] text-[#ffe8a3] text-l tracking-wide border-4 border-[#013d54] rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] uppercase">
+              <h2 className="text-3xl font-extrabold">Guild Hall</h2>
+              <p className="text-white font-semibold">Join or create a guild to collaborate and earn rewards together</p>
+            </div>
+            <button 
+              onClick={() => setIsDialogOpen(true)}
+              className="relative flex items-center justify-center h-12 px-10 text-sm font-bold text-[#ffe8a3] group"
+            >
+              {/* Background frame */}
+              <img
+                src="/assets/themes/medieval/sprites/F_UI_MenuButton_C2.png"
+                alt="Button Frame"
+                className="absolute inset-0 w-full h-full object-fill pointer-events-none"
+              />
+              
+              {/* Left handle */}
+              <img
+                src="/assets/themes/medieval/sprites/F_U_Detail4-Left.png"
+                alt="Left Detail"
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 h-8 pointer-events-none"
+              />
+              
+              {/* Button Text */}
+              <span className="relative z-10 flex">
+                <Plus className="h-4 w-4 mr-1 my-auto" /> Create Guild
+              </span>
+              
+              {/* Right handle */}
+              <img
+                src="/assets/themes/medieval/sprites/F_U_Detail4.png"
+                alt="Right Detail"
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 h-8 pointer-events-none"
+              />
+            </button>
+          </>
+        ) : (
+          <>
+            <div>
+              <h2 className="text-2xl font-bold">Guild Hall</h2>
+              <p className="text-gray-500">Join or create a guild to collaborate and earn rewards together</p>
+            </div>
+            <Button onClick={() => setIsDialogOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" /> Create Guild
+            </Button>
+          </>
+        )}
       </div>
       
       <CreateGuildDialog 
