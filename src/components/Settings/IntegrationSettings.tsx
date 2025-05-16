@@ -70,7 +70,10 @@ const IntegrationSettings = () => {
               </div>
               <Button 
                 variant={integration.connected ? "secondary" : "default"}
-                onClick={() => toggleIntegration(integration.id)}
+                onClick={() => {
+                  toggleIntegration(integration.id)
+                  document.dispatchEvent(new CustomEvent('settings:open-jira-dialog'))
+                }}
                 className={`min-w-24 transition-colors ${
                   integration.connected 
                     ? 'hover:bg-destructive hover:text-destructive-foreground' 
