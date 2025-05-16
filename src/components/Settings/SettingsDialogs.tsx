@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { addActivity } from "@/utils/activityLogger";
+import { API } from '@/config';
+import { u } from "node_modules/framer-motion/dist/types.d-B50aGbjN";
 
 const SettingsDialogs = () => {
   const [showEmailDialog, setShowEmailDialog] = useState(false);
@@ -27,12 +29,41 @@ const SettingsDialogs = () => {
       document.removeEventListener('settings:open-password-dialog', handleOpenPasswordDialog);
     };
   }, []);
+
+
+  const updateEmail = async (newEmail0: string) => {
+    const user = JSON.parse(localStorage.getItem("fluxUser") || '{}');
+
+    try {
+      const res = await fetch(`${API}/api/userinfo/update-email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          userId: user.userId,
+          email: newEmail0 }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to update email');
+      }
+
+    } catch (error) {
+      console.error('Error updating email:', error);
+      toast.error("Failed to update email");
+    }
+  };
   
   const handleEmailChange = () => {
     if (!newEmail) {
       toast.error("Please enter a new email address");
       return;
+
     }
+
+    updateEmail(newEmail)
+
     
     if (!currentPassword) {
       toast.error("Please enter your current password");

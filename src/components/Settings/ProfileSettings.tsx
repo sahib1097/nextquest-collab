@@ -73,7 +73,8 @@ const ProfileSettings = () => {
       toast.error("Failed to update profile");
     }
   };
-  
+
+
   const updateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
