@@ -217,13 +217,51 @@ const Quests: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                  <span className="bg-gradient-to-r from-cyan-500 to-purple-500 bg-clip-text text-transparent">
-                    Quest Map
-                  </span>
-                </h2>
+                {/* Map header & selector */}
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-semibold flex items-center gap-2">
+                    <span className="bg-gradient-to-r from-cyan-500 to-purple-500 bg-clip-text text-transparent">
+                      Quest Map
+                    </span>
+                  </h2>
+
+                  <div className="relative">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="bg-gray-900 text-white hover:bg-gray-800"
+                      onClick={() => setShowMapMenu(v => !v)}
+                    >
+                      Change Map ▾
+                    </Button>
+                    {showMapMenu && (
+                      <div className="absolute right-0 mt-1 w-32 bg-white shadow-lg rounded">
+                        {[
+                          ["Town", "town"],
+                          ["Phaser", "phaser"],
+                          ["Hell", "hell"],
+                        ].map(([label, key]) => (
+                          <button
+                            key={key}
+                            onClick={() => {
+                              setSelectedMap(key as "town" | "phaser" | "hell");
+                              setShowMapMenu(false);
+                            }}
+                            className="w-full px-4 py-2 text-left hover:bg-gray-100"
+                          >
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Lazy-loaded map */}
                 <Suspense fallback={<div className="h-64 bg-gray-100 animate-pulse" />}>
-                  <QuestMap quests={JSON.parse(localStorage.getItem("fluxQuests") || "[]")} />
+                  {selectedMap === "town" && <TownMap />}
+                  {selectedMap === "phaser" && <PhaserMap />}
+                  {selectedMap === "hell" && <HellMap />}
                 </Suspense>
               </motion.div>
 
