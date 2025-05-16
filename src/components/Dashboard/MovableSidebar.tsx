@@ -54,52 +54,13 @@ const MovableSidebar = ({ position, onPositionChange }: MovableSidebarProps) => 
     { name: "Budgets", icon: DollarSign, path: "/admin/budgets" },
     { name: "Team", icon: Users, path: "/admin/team" },
     { name: "Settings", icon: Settings, path: "/admin/settings" },
+  //  {name: "Move Sidebar", icon: ClipboardList}
   ];
 
-  const isHorizontal = position === "bottom";
 
-  // Position-specific styles
-  const sidebarPositionStyles = {
-    left: "border-r",
-    right: "border-l",
-    bottom: "border-t"
-  };
 
-  // Layout-specific styles
-  const containerStyles = {
-    left: `bg-background border-border transition-width ease-in-out duration-300 flex flex-col h-screen ${
-      collapsed ? "w-[80px]" : "w-[250px]"
-    } ${sidebarPositionStyles[position]}`,
-    right: `bg-background border-border transition-width ease-in-out duration-300 flex flex-col h-screen ${
-      collapsed ? "w-[80px]" : "w-[250px]"
-    } ${sidebarPositionStyles[position]}`,
-    bottom: `bg-background border-border transition-height ease-in-out duration-300 flex flex-row h-[${
-      collapsed ? "60px" : "120px"
-    }] w-full ${sidebarPositionStyles[position]}`
-  };
 
-  return (
-    <div className={containerStyles[position]}>
-      <div className={`p-4 ${isHorizontal ? "border-r" : "border-b"} border-border flex items-center justify-between`}>
-        <NavLink to="/admin/dashboard" className="flex items-center">
-          {!collapsed && (
-            <img 
-              src="/lovable-uploads/f44da06d-430c-4883-a4c2-fc7c23f90541.png" 
-              alt="Next Quest Logo" 
-              className="h-8 w-auto"
-            />
-          )}
-          {collapsed && (
-            <img 
-              src="/lovable-uploads/f44da06d-430c-4883-a4c2-fc7c23f90541.png" 
-              alt="Next Quest Logo" 
-              className="h-6 w-auto"
-            />
-          )}
-        </NavLink>
-        
-        <div className="flex items-center gap-2">
-          <Popover>
+/* <Popover>
             <PopoverTrigger asChild>
               <Button 
                 variant="outline" 
@@ -136,7 +97,49 @@ const MovableSidebar = ({ position, onPositionChange }: MovableSidebarProps) => 
                 </Button>
               </div>
             </PopoverContent>
-          </Popover>
+          </Popover> */
+
+
+
+
+
+
+  const isHorizontal = position === "bottom";
+
+  // Position-specific styles
+  const sidebarPositionStyles = {
+    left: "border-r",
+    right: "border-l",
+    bottom: "border-t"
+  };
+
+  // Layout-specific styles
+  const containerStyles = {
+    left: `bg-background border-border transition-width ease-in-out duration-300 flex flex-col h-screen ${
+      collapsed ? "w-[80px]" : "w-[250px]"
+    } ${sidebarPositionStyles[position]}`,
+    right: `bg-background border-border transition-width ease-in-out duration-300 flex flex-col h-screen ${
+      collapsed ? "w-[80px]" : "w-[250px]"
+    } ${sidebarPositionStyles[position]}`,
+    bottom: `bg-background border-border transition-height ease-in-out duration-300 flex flex-row h-[${
+      collapsed ? "60px" : "120px"
+    }] w-full ${sidebarPositionStyles[position]}`
+  };
+
+  return (
+    <div className={containerStyles[position]}>
+      <div className={`p-4 ${isHorizontal ? "border-r" : "border-b"} border-border flex items-center justify-between`}>
+        <NavLink to="/admin/dashboard" className="flex items-center">
+          {!collapsed && (
+            <img 
+              src="/lovable-uploads/f44da06d-430c-4883-a4c2-fc7c23f90541.png" 
+              alt="Next Quest Logo" 
+              className="h-8 w-auto"
+            />
+          )}
+        </NavLink>
+        
+        <div className="flex items-center gap-2">
           
           <Button 
             variant="ghost" 
