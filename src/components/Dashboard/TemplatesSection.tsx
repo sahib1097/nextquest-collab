@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { LayoutTemplate, Search, Megaphone, Target, Code, Gamepad, Users } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -74,7 +73,6 @@ export default function TemplatesSection() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   
-  // Extract unique categories from templates for filtering
   const categories = Array.from(new Set(templates.map(template => template.category)));
 
   const filteredTemplates = templates.filter(template => {
@@ -85,29 +83,31 @@ export default function TemplatesSection() {
   });
 
   const handleTemplateSelect = (template: Template) => {
-    // Store the selected template configuration in localStorage
     localStorage.setItem("fluxProjectTemplate", JSON.stringify(template));
-    // Navigate to projects with the template parameter
     navigate(`/admin/projects?template=${template.id}`);
   };
 
   return (
-    <Card className="border border-gray-200 shadow-sm mb-8">
-      <CardHeader className="border-b border-gray-100 pb-3">
+    <Card className="border-border shadow-sm mb-8 bg-card">
+      <CardHeader className="border-b border-border pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-foreground">
             <LayoutTemplate className="h-5 w-5 text-primary" />
             Templates
           </CardTitle>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" size="sm">
+              <Button 
+                variant="outline"
+                size="sm"
+                className="bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
+              >
                 Explore Templates
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-4xl h-[80vh]">
+            <DialogContent className="max-w-4xl h-[80vh] bg-background">
               <DialogHeader>
-                <DialogTitle>Explore Templates</DialogTitle>
+                <DialogTitle className="text-foreground">Explore Templates</DialogTitle>
               </DialogHeader>
               <div className="grid grid-cols-4 gap-6 h-full">
                 <div className="col-span-3">
@@ -116,7 +116,7 @@ export default function TemplatesSection() {
                       placeholder="Search templates..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="max-w-sm"
+                      className="max-w-sm bg-background"
                     />
                   </div>
                   <ScrollArea className="h-[calc(80vh-180px)]">
@@ -124,20 +124,20 @@ export default function TemplatesSection() {
                       {filteredTemplates.map((template) => (
                         <Card
                           key={template.id}
-                          className="cursor-pointer hover:shadow-md transition-shadow"
+                          className="cursor-pointer hover:shadow-md transition-shadow bg-card border-border"
                           onClick={() => setSelectedTemplate(template)}
                         >
                           <CardHeader>
-                            <CardTitle className="text-lg flex items-center gap-2">
-                              {template.icon}
+                            <CardTitle className="text-lg flex items-center gap-2 text-foreground">
+                              <span className="text-primary">{template.icon}</span>
                               {template.name}
                             </CardTitle>
                           </CardHeader>
                           <CardContent>
-                            <p className="text-sm text-gray-600">{template.description}</p>
+                            <p className="text-sm text-muted-foreground">{template.description}</p>
                             <div className="mt-4 space-y-2">
-                              <div className="text-xs text-gray-500">
-                                <strong>Includes:</strong>
+                              <div className="text-xs text-muted-foreground">
+                                <strong className="text-foreground">Includes:</strong>
                                 <ul className="list-disc list-inside mt-1">
                                   <li>{template.config.columns.length} predefined columns</li>
                                   <li>{template.config.labels.length} labels</li>
@@ -145,6 +145,7 @@ export default function TemplatesSection() {
                                 </ul>
                               </div>
                               <Button 
+                                variant="default"
                                 className="w-full"
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -160,13 +161,15 @@ export default function TemplatesSection() {
                     </div>
                   </ScrollArea>
                 </div>
-                <div className="border-l border-gray-200 pl-6">
-                  <h3 className="font-medium mb-4">Categories</h3>
+                <div className="border-l border-border pl-6">
+                  <h3 className="font-medium mb-4 text-foreground">Categories</h3>
                   <div className="space-y-2">
                     <button
                       onClick={() => setSelectedCategory(null)}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm ${
-                        !selectedCategory ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100'
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+                        !selectedCategory 
+                          ? 'bg-primary/10 text-primary' 
+                          : 'hover:bg-muted text-foreground'
                       }`}
                     >
                       All Templates
@@ -175,8 +178,10 @@ export default function TemplatesSection() {
                       <button
                         key={category}
                         onClick={() => setSelectedCategory(category)}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-sm ${
-                          selectedCategory === category ? 'bg-primary/10 text-primary' : 'hover:bg-gray-100'
+                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+                          selectedCategory === category 
+                            ? 'bg-primary/10 text-primary' 
+                            : 'hover:bg-muted text-foreground'
                         }`}
                       >
                         {category}
@@ -194,17 +199,17 @@ export default function TemplatesSection() {
           {templates.slice(0, 3).map((template) => (
             <Card
               key={template.id}
-              className="cursor-pointer hover:shadow-md transition-shadow"
+              className="cursor-pointer hover:shadow-md transition-shadow bg-card border-border"
               onClick={() => handleTemplateSelect(template)}
             >
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  {template.icon}
+                <CardTitle className="text-lg flex items-center gap-2 text-foreground">
+                  <span className="text-primary">{template.icon}</span>
                   {template.name}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-gray-600">{template.description}</p>
+                <p className="text-sm text-muted-foreground">{template.description}</p>
                 <div className="mt-4">
                   <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
                     {template.category}

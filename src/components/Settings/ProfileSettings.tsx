@@ -74,7 +74,6 @@ const ProfileSettings = () => {
     }
   };
 
-
   const updateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -117,9 +116,9 @@ const ProfileSettings = () => {
 
   if (!user) {
     return (
-      <Card>
+      <Card className="bg-card text-card-foreground">
         <CardContent className="pt-6">
-          <div className="flex items-center justify-center h-[400px]">
+          <div className="flex items-center justify-center h-[400px] text-muted-foreground">
             Loading profile information...
           </div>
         </CardContent>
@@ -128,10 +127,10 @@ const ProfileSettings = () => {
   }
 
   return (
-    <Card>
-      <CardHeader className="border-b pb-3">
+    <Card className="bg-card text-card-foreground">
+      <CardHeader className="border-b border-border pb-3">
         <CardTitle>Profile Information</CardTitle>
-        <CardDescription>
+        <CardDescription className="text-muted-foreground">
           Update your profile details and personal information
         </CardDescription>
       </CardHeader>
@@ -139,7 +138,7 @@ const ProfileSettings = () => {
         <div className="flex flex-col md:flex-row gap-8">
           <div className="flex flex-col items-center gap-4 md:w-1/3">
             <div className="relative group">
-              <Avatar className="w-36 h-36 border-2 border-primary/20 shadow">
+              <Avatar className="w-36 h-36 border-2 border-primary/20 shadow bg-background">
                 {user?.avatar ? (
                   <AvatarImage src={user.avatar} alt={user.name} />
                 ) : (
@@ -167,7 +166,7 @@ const ProfileSettings = () => {
                   id="name" 
                   value={user.name || ""} 
                   onChange={(e) => setUser({ ...user, name: e.target.value })}
-                  className="h-11"
+                  className="h-11 bg-background"
                 />
               </div>
               <div className="grid gap-2.5">
@@ -177,7 +176,7 @@ const ProfileSettings = () => {
                   placeholder="e.g. Product Manager"
                   value={user.position || ""} 
                   onChange={(e) => setUser({ ...user, position: e.target.value })}
-                  className="h-11"
+                  className="h-11 bg-background"
                 />
               </div>
               <div className="grid gap-2.5">
@@ -190,14 +189,6 @@ const ProfileSettings = () => {
                     disabled
                     className="flex-1 h-11 bg-muted/30"
                   />
-                  {/* <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={() => document.dispatchEvent(new CustomEvent('settings:open-email-dialog'))}
-                    className="h-11"
-                  >
-                    Change
-                  </Button> */}
                 </div>
               </div>
               <div className="grid gap-2.5">
@@ -207,7 +198,7 @@ const ProfileSettings = () => {
                   placeholder="Tell us about yourself" 
                   value={user.bio || ""}
                   onChange={(e) => setUser({ ...user, bio: e.target.value })}
-                  className="min-h-[120px] resize-none"
+                  className="min-h-[120px] resize-none bg-background"
                 />
               </div>
             </div>

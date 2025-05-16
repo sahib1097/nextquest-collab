@@ -67,20 +67,20 @@ const MovableSidebar = ({ position, onPositionChange }: MovableSidebarProps) => 
 
   // Layout-specific styles
   const containerStyles = {
-    left: `bg-white border-gray-200 transition-width ease-in-out duration-300 flex flex-col h-screen ${
+    left: `bg-background border-border transition-width ease-in-out duration-300 flex flex-col h-screen ${
       collapsed ? "w-[80px]" : "w-[250px]"
     } ${sidebarPositionStyles[position]}`,
-    right: `bg-white border-gray-200 transition-width ease-in-out duration-300 flex flex-col h-screen ${
+    right: `bg-background border-border transition-width ease-in-out duration-300 flex flex-col h-screen ${
       collapsed ? "w-[80px]" : "w-[250px]"
     } ${sidebarPositionStyles[position]}`,
-    bottom: `bg-white border-gray-200 transition-height ease-in-out duration-300 flex flex-row h-[${
+    bottom: `bg-background border-border transition-height ease-in-out duration-300 flex flex-row h-[${
       collapsed ? "60px" : "120px"
     }] w-full ${sidebarPositionStyles[position]}`
   };
 
   return (
     <div className={containerStyles[position]}>
-      <div className={`p-4 ${isHorizontal ? "border-r" : "border-b"} border-gray-200 flex items-center justify-between`}>
+      <div className={`p-4 ${isHorizontal ? "border-r" : "border-b"} border-border flex items-center justify-between`}>
         <NavLink to="/admin/dashboard" className="flex items-center">
           {!collapsed && (
             <img 
@@ -103,8 +103,7 @@ const MovableSidebar = ({ position, onPositionChange }: MovableSidebarProps) => 
             <PopoverTrigger asChild>
               <Button 
                 variant="outline" 
-                size="icon" 
-                className="text-gray-500 hover:bg-gray-100"
+                size="icon"
               >
                 <RotateCcw size={14} />
               </Button>
@@ -115,7 +114,7 @@ const MovableSidebar = ({ position, onPositionChange }: MovableSidebarProps) => 
                   variant="outline"
                   size="icon"
                   onClick={() => onPositionChange("left")}
-                  className={position === "left" ? "bg-primary/10 text-primary-foreground" : ""}
+                  className={position === "left" ? "bg-primary/10" : ""}
                 >
                   <ArrowLeft size={14} />
                 </Button>
@@ -123,7 +122,7 @@ const MovableSidebar = ({ position, onPositionChange }: MovableSidebarProps) => 
                   variant="outline"
                   size="icon"
                   onClick={() => onPositionChange("bottom")}
-                  className={position === "bottom" ? "bg-primary/10 text-primary-foreground" : ""}
+                  className={position === "bottom" ? "bg-primary/10" : ""}
                 >
                   <ArrowDown size={14} />
                 </Button>
@@ -131,7 +130,7 @@ const MovableSidebar = ({ position, onPositionChange }: MovableSidebarProps) => 
                   variant="outline"
                   size="icon"
                   onClick={() => onPositionChange("right")}
-                  className={position === "right" ? "bg-primary/10 text-primary-foreground" : ""}
+                  className={position === "right" ? "bg-primary/10" : ""}
                 >
                   <ArrowRight size={14} />
                 </Button>
@@ -141,8 +140,7 @@ const MovableSidebar = ({ position, onPositionChange }: MovableSidebarProps) => 
           
           <Button 
             variant="ghost" 
-            size="icon" 
-            className="text-gray-500 hover:bg-gray-100"
+            size="icon"
             onClick={() => setCollapsed(!collapsed)}
           >
             {collapsed ? <Menu size={20} /> : <X size={20} />}
@@ -160,7 +158,7 @@ const MovableSidebar = ({ position, onPositionChange }: MovableSidebarProps) => 
                 `flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                   isActive
                     ? "bg-primary/10 text-primary"
-                    : "text-gray-600 hover:bg-gray-100"
+                    : "text-muted-foreground hover:bg-accent"
                 } ${collapsed ? "justify-center" : ""}`
               }
             >
@@ -171,10 +169,10 @@ const MovableSidebar = ({ position, onPositionChange }: MovableSidebarProps) => 
         </nav>
       </div>
       
-      <div className={`p-4 ${isHorizontal ? "border-l" : "border-t"} border-gray-200`}>
+      <div className={`p-4 ${isHorizontal ? "border-l" : "border-t"} border-border`}>
         <Button
           variant="ghost"
-          className={`w-full flex items-center text-red-500 hover:bg-red-50 ${
+          className={`w-full flex items-center text-destructive hover:bg-destructive/10 ${
             collapsed ? "justify-center px-2" : ""
           }`}
           onClick={handleLogout}

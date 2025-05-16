@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Check, Moon, MonitorSmartphone, Sun } from "lucide-react";
@@ -31,7 +30,7 @@ const AppearanceSettings = () => {
   };
 
   return (
-    <Card>
+    <Card className="bg-card text-card-foreground">
       <CardHeader className="border-b pb-3">
         <CardTitle>Appearance</CardTitle>
         <CardDescription>
@@ -49,12 +48,16 @@ const AppearanceSettings = () => {
             
             <div className="grid grid-cols-3 gap-4">
               <div 
-                className={`relative rounded-lg overflow-hidden border-2 transition-all ${theme === 'light' ? 'border-primary ring-1 ring-primary/30' : 'border-border hover:border-primary/50'}`}
+                className={`relative rounded-lg overflow-hidden border-2 transition-all ${
+                  theme === 'light' 
+                    ? 'border-primary ring-1 ring-primary/30' 
+                    : 'border-border hover:border-primary/50'
+                }`}
                 onClick={() => handleThemeChange('light')}
               >
-                <div className="cursor-pointer h-24 bg-gradient-to-b from-blue-50 to-white flex flex-col items-center justify-center gap-2">
+                <div className="cursor-pointer h-24 bg-background flex flex-col items-center justify-center gap-2">
                   <Sun className="h-8 w-8 text-amber-500" />
-                  <span className="font-medium text-gray-800">Light</span>
+                  <span className="font-medium text-foreground">Light</span>
                 </div>
                 {theme === 'light' && (
                   <div className="absolute bottom-2 right-2 bg-primary text-primary-foreground h-6 w-6 rounded-full flex items-center justify-center">
@@ -64,12 +67,16 @@ const AppearanceSettings = () => {
               </div>
               
               <div 
-                className={`relative rounded-lg overflow-hidden border-2 transition-all ${theme === 'dark' ? 'border-primary ring-1 ring-primary/30' : 'border-border hover:border-primary/50'}`}
+                className={`relative rounded-lg overflow-hidden border-2 transition-all ${
+                  theme === 'dark' 
+                    ? 'border-primary ring-1 ring-primary/30' 
+                    : 'border-border hover:border-primary/50'
+                }`}
                 onClick={() => handleThemeChange('dark')}
               >
-                <div className="cursor-pointer h-24 bg-gradient-to-b from-gray-800 to-gray-950 flex flex-col items-center justify-center gap-2">
+                <div className="cursor-pointer h-24 bg-background flex flex-col items-center justify-center gap-2">
                   <Moon className="h-8 w-8 text-blue-400" />
-                  <span className="font-medium text-gray-100">Dark</span>
+                  <span className="font-medium text-foreground">Dark</span>
                 </div>
                 {theme === 'dark' && (
                   <div className="absolute bottom-2 right-2 bg-primary text-primary-foreground h-6 w-6 rounded-full flex items-center justify-center">
@@ -79,12 +86,16 @@ const AppearanceSettings = () => {
               </div>
               
               <div 
-                className={`relative rounded-lg overflow-hidden border-2 transition-all ${theme === 'system' ? 'border-primary ring-1 ring-primary/30' : 'border-border hover:border-primary/50'}`}
+                className={`relative rounded-lg overflow-hidden border-2 transition-all ${
+                  theme === 'system' 
+                    ? 'border-primary ring-1 ring-primary/30' 
+                    : 'border-border hover:border-primary/50'
+                }`}
                 onClick={() => handleThemeChange('system')}
               >
-                <div className="cursor-pointer h-24 bg-gradient-to-b from-gray-50 via-white to-gray-800 flex flex-col items-center justify-center gap-2">
+                <div className="cursor-pointer h-24 bg-background flex flex-col items-center justify-center gap-2">
                   <MonitorSmartphone className="h-8 w-8 text-purple-500" />
-                  <span className="font-medium text-gray-600">System</span>
+                  <span className="font-medium text-foreground">System</span>
                 </div>
                 {theme === 'system' && (
                   <div className="absolute bottom-2 right-2 bg-primary text-primary-foreground h-6 w-6 rounded-full flex items-center justify-center">

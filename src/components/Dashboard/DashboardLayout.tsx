@@ -1,4 +1,3 @@
-
 import { ReactNode, useState, useEffect } from "react";
 import MovableSidebar, { SidebarPosition } from "./MovableSidebar";
 import { Bell, Search, Plus } from "lucide-react";
@@ -16,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import { updateLastActivity, logoutUser } from "@/utils/authUtils";
 import { API } from "@/config";
+import { useTheme } from "@/hooks/use-theme";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -26,6 +26,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     return (localStorage.getItem("fluxSidebarPosition") as SidebarPosition) || "left";
   });
   const navigate = useNavigate();
+  const { theme, resolvedTheme } = useTheme();
   
   const [user, setUser] = useState(() => {
     return JSON.parse(localStorage.getItem("fluxUser") || '{"name":"User"}');
@@ -69,7 +70,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
   
   return (
-    <div className="flex h-screen bg-white">
+    <div className="flex h-screen bg-background">
       {sidebarPosition === "left" && (
         <MovableSidebar 
           position={sidebarPosition}
@@ -78,7 +79,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       )}
       
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white border-b border-[#E5E5EA] px-6 py-3 shadow-sm">
+        <header className="bg-background border-b border-border px-6 py-3 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <img 
@@ -87,37 +88,37 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 className="h-8 w-auto mr-4"
               />
               <div className="max-w-md w-full relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#86868B]" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input 
                   type="search" 
                   placeholder="Search projects, roadmaps, tasks..."
-                  className="pl-10 bg-[#F5F5F7] border-[#E5E5EA] text-[#1D1D1F] focus-visible:ring-[#007AFF]"
+                  className="pl-10"
                 />
               </div>
             </div>
             
             <div className="flex items-center space-x-3">
-              <Button variant="outline" size="sm" className="flex items-center gap-1 border-[#E5E5EA] text-[#1D1D1F]">
+              <Button variant="outline" size="sm" className="flex items-center gap-1">
                 <Plus className="h-4 w-4" /> New
               </Button>
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative text-[#1D1D1F] hover:bg-[#F5F5F7]">
+                  <Button variant="ghost" size="icon" className="relative hover:bg-accent">
                     <Bell className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-80 bg-white border border-[#E5E5EA] shadow-lg rounded-lg">
+                <DropdownMenuContent align="end" className="w-80">
                   <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-[#E5E5EA]" />
+                  <DropdownMenuSeparator />
                   <div className="max-h-80 overflow-y-auto p-2">
-                    <div className="text-center text-sm text-[#86868B] py-4">
+                    <div className="text-center text-sm text-muted-foreground py-4">
                       No notifications yet
                     </div>
                   </div>
-                  <DropdownMenuSeparator className="bg-[#E5E5EA]" />
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem 
-                    className="justify-center cursor-pointer hover:text-[#007AFF] hover:bg-[#F5F5F7]" 
+                    className="justify-center cursor-pointer" 
                     onClick={() => navigate("/admin/settings")}
                   >
                     Manage notifications
@@ -127,28 +128,28 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Avatar className="h-8 w-8 bg-[#007AFF] cursor-pointer">
+                  <Avatar className="h-8 w-8 bg-primary cursor-pointer">
                     {user.avatar ? (
                       <AvatarImage src={user.avatar} alt={user.name} />
                     ) : (
-                      <AvatarFallback className="text-white">{userInitial}</AvatarFallback>
+                      <AvatarFallback className="text-primary-foreground">{userInitial}</AvatarFallback>
                     )}
                   </Avatar>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-white border border-[#E5E5EA] shadow-lg rounded-lg">
+                <DropdownMenuContent align="end">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-[#E5E5EA]" />
-                  <DropdownMenuItem onClick={() => navigate("/profile")} className="hover:text-[#007AFF] hover:bg-[#F5F5F7]">
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/profile")}>
                     My Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/admin/settings")} className="hover:text-[#007AFF] hover:bg-[#F5F5F7]">
+                  <DropdownMenuItem onClick={() => navigate("/admin/settings")}>
                     Profile Settings
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/admin/settings")} className="hover:text-[#007AFF] hover:bg-[#F5F5F7]">
+                  <DropdownMenuItem onClick={() => navigate("/admin/settings")}>
                     Preferences
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-[#E5E5EA]" />
-                  <DropdownMenuItem onClick={handleLogout} className="text-red-500 hover:text-red-600 hover:bg-[#F5F5F7]">
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
                     Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -157,7 +158,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           </div>
         </header>
         
-        <main className="flex-1 overflow-y-auto p-6 text-[#1D1D1F]">
+        <main className="flex-1 overflow-y-auto p-6 bg-background text-foreground">
           {children}
         </main>
       </div>
