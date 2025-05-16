@@ -111,8 +111,8 @@ const IntegrationsDialogs = () => {
 
 
 
-  return (
-    <>
+    return (
+        <>
         {/* Add Jira Dialog */}
         <Dialog open={showJiraDialog} onOpenChange={setShowJiraDialog}>
             <DialogContent className="sm:max-w-[400px]">
