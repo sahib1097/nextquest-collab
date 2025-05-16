@@ -72,7 +72,7 @@ const IntegrationSettings = () => {
                 variant={integration.connected ? "secondary" : "default"}
                 onClick={() => {
                   toggleIntegration(integration.id)
-                  document.dispatchEvent(new CustomEvent('settings:open-jira-dialog'))
+                  document.dispatchEvent(new CustomEvent(`settings:open-${integration.id}-dialog`))
                 }}
                 className={`min-w-24 transition-colors ${
                   integration.connected 

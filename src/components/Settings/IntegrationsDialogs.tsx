@@ -32,49 +32,49 @@ const IntegrationsDialogs = () => {
 
   return (
     <>
-      {/* Add Jira Dialog */}
-      <Dialog open={showJiraDialog} onOpenChange={setShowJiraDialog}>
-        <DialogContent className="sm:max-w-[400px]">
-          <DialogHeader>
-            <DialogTitle>Add Your Jira</DialogTitle>
-            <DialogDescription>
-              Enter your Jira credentials to integrate with our system.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="jiraEmail">Jira Email Address</Label>
-              <Input
-                id="jiraEmail"
-                type="email"
-                value={jiraEmail}
-                onChange={(e) => setJiraEmail(e.target.value)}
-                placeholder="yourjiraemail@example.com"
-                className="h-11"
-              />
+        {/* Add Jira Dialog */}
+        <Dialog open={showJiraDialog} onOpenChange={setShowJiraDialog}>
+            <DialogContent className="sm:max-w-[400px]">
+            <DialogHeader>
+                <DialogTitle>Add Your Jira</DialogTitle>
+                <DialogDescription>
+                Enter your Jira credentials to integrate with our system.
+                </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                <Label htmlFor="jiraEmail">Jira Email Address</Label>
+                <Input
+                    id="jiraEmail"
+                    type="email"
+                    value={jiraEmail}
+                    onChange={(e) => setJiraEmail(e.target.value)}
+                    placeholder="yourjiraemail@example.com"
+                    className="h-11"
+                />
+                </div>
+                <div className="grid gap-2">
+                <Label htmlFor="apiKey">Jira API Key</Label>
+                <Input
+                    id="jiraApiKey"
+                    type="apiKey"
+                    value={jiraApiKey}
+                    onChange={(e) => setJiraApiKey(e.target.value)}
+                    placeholder="Enter your Jira API Key"
+                    className="h-11"
+                />
+                </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="apiKey">Jira API Key</Label>
-              <Input
-                id="jiraApiKey"
-                type="apiKey"
-                value={jiraApiKey}
-                onChange={(e) => setJiraApiKey(e.target.value)}
-                placeholder="Enter your Jira API Key"
-                className="h-11"
-              />
-            </div>
-        </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowJiraDialog(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleJiraUpdate}>
-              Add Jira
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            <DialogFooter>
+                <Button variant="outline" onClick={() => setShowJiraDialog(false)}>
+                Cancel
+                </Button>
+                <Button onClick={handleJiraUpdate}>
+                Add Jira
+                </Button>
+            </DialogFooter>
+            </DialogContent>
+        </Dialog>
     </>
   );
 };
