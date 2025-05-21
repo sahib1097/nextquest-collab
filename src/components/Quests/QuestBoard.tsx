@@ -81,6 +81,8 @@ const QuestBoard = ({ status, questType }: QuestBoardProps) => {
     let medievalBg = "";
     let medievalBorder = "";
     let Icon = null;
+    const isCyberpunkTheme = currentTheme.name === "Cyberpunk";
+
     if (currentTheme.name === "Medieval") {
       switch (status) {
         case "Available":
@@ -104,44 +106,52 @@ const QuestBoard = ({ status, questType }: QuestBoardProps) => {
       }
       medievalSpanClass = `px-4 py-2 ${medievalBg} text-[#ffe8a3] font-extrabold text-2xl tracking-wide border-4 ${medievalBorder} rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] uppercase flex items-center`;
     }
+
+    const getCyberpunkHeader = (icon: React.ReactNode, title: string) => {
+      if (!isCyberpunkTheme) return null;
+      
+      return (
+        <div className="flex items-center gap-3 mb-6">
+          <div className="text-[#2DE2E6]">{icon}</div>
+          <h2 className="font-mono font-bold text-2xl tracking-wider uppercase text-[#2DE2E6]">
+            {title}
+          </h2>
+        </div>
+      );
+    };
+
     switch(status) {
       case "Available":
-        return (
+        return currentTheme.name === "Medieval" ? (
+          <span className={medievalSpanClass}>{Icon}Available Quests</span>
+        ) : isCyberpunkTheme ? (
+          getCyberpunkHeader(<Scroll className="h-6 w-6" />, "Available Quests")
+        ) : (
           <div className="flex items-center gap-2 mb-6 text-xl font-bold text-amber-600">
-            {currentTheme.name === "Medieval" ? (
-              <span className={medievalSpanClass}>{Icon}Available Quests</span>
-            ) : (
-              <>
-                <Scroll className="h-6 w-6" />
-                <span>Available Quests</span>
-              </>
-            )}
+            <Scroll className="h-6 w-6" />
+            <span>Available Quests</span>
           </div>
         );
       case "In Progress":
-        return (
+        return currentTheme.name === "Medieval" ? (
+          <span className={medievalSpanClass}>{Icon}Active Quests</span>
+        ) : isCyberpunkTheme ? (
+          getCyberpunkHeader(<Swords className="h-6 w-6" />, "Active Quests")
+        ) : (
           <div className="flex items-center gap-2 mb-6 text-xl font-bold text-blue-600">
-            {currentTheme.name === "Medieval" ? (
-              <span className={medievalSpanClass}>{Icon}Active Quests</span>
-            ) : (
-              <>
-                <Swords className="h-6 w-6" />
-                <span>Active Quests</span>
-              </>
-            )}
+            <Swords className="h-6 w-6" />
+            <span>Active Quests</span>
           </div>
         );
       case "Completed":
-        return (
+        return currentTheme.name === "Medieval" ? (
+          <span className={medievalSpanClass}>{Icon}Completed Quests</span>
+        ) : isCyberpunkTheme ? (
+          getCyberpunkHeader(<Sparkles className="h-6 w-6" />, "Completed Quests")
+        ) : (
           <div className="flex items-center gap-2 mb-6 text-xl font-bold text-emerald-600">
-            {currentTheme.name === "Medieval" ? (
-              <span className={medievalSpanClass}>{Icon}Completed Quests</span>
-            ) : (
-              <>
-                <Sparkles className="h-6 w-6" />
-                <span>Completed Quests</span>
-              </>
-            )}
+            <Sparkles className="h-6 w-6" />
+            <span>Completed Quests</span>
           </div>
         );
       default:

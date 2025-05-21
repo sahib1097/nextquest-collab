@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Quest, QuestStatus } from "@/types/quest";
-import { Award, Calendar, Clock, MapPin, Users, User, GripVertical, MessageSquare, Crown, Check, Trash } from "lucide-react";
+import { Award, Calendar, Clock, MapPin, Users, User, GripVertical, MessageSquare, Crown, Check, Trash, Zap } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import confetti from "canvas-confetti";
 import { motion, Variants } from "framer-motion";
@@ -26,6 +26,7 @@ const QuestCard = forwardRef<HTMLDivElement, QuestCardProps>(({ quest, isDraggin
   const [isChatOpen, setIsChatOpen] = useState(false);
   const { currentTheme } = useTheme();
   const isMedievalTheme = currentTheme.name === "Medieval";
+  const isCyberpunkTheme = currentTheme.name === "Cyberpunk";
 
   const triggerConfetti = () => {
     confetti({
@@ -291,6 +292,39 @@ const QuestCard = forwardRef<HTMLDivElement, QuestCardProps>(({ quest, isDraggin
         default:
           return null;
       }
+    } else if (isCyberpunkTheme) {
+      switch (quest.status) {
+        case QuestStatus.AVAILABLE:
+          return (
+            <Button 
+              className="w-full bg-black border-2 border-cyan-500 text-cyan-400 hover:bg-cyan-950 hover:text-cyan-300 transition-all duration-300 font-mono tracking-wider"
+              onClick={handleAcceptQuest}
+              disabled={isAccepting}
+            >
+              {isAccepting ? "INITIALIZING..." : "ACCEPT MISSION"}
+            </Button>
+          );
+        case QuestStatus.IN_PROGRESS:
+          return (
+            <div className="flex gap-2">
+              <Button 
+                className={`flex-1 bg-black border-2 ${isCompleting ? "border-green-500 text-green-400" : "border-cyan-500 text-cyan-400 hover:bg-cyan-950"} transition-all duration-300 font-mono tracking-wider`}
+                onClick={handleCompleteQuest}
+                disabled={isCompleting}
+              >
+                {isCompleting ? "PROCESSING..." : "COMPLETE"}
+              </Button>
+              <Button 
+                className="flex-1 bg-black border-2 border-pink-500 text-pink-400 hover:bg-pink-950 transition-all duration-300 font-mono tracking-wider"
+                onClick={handleFailQuest}
+              >
+                ABORT
+              </Button>
+            </div>
+          );
+        default:
+          return null;
+      }
     } else {
       switch (quest.status) {
         case QuestStatus.AVAILABLE:
@@ -474,6 +508,103 @@ const QuestCard = forwardRef<HTMLDivElement, QuestCardProps>(({ quest, isDraggin
             <div className="ml-auto">
               {getStatusActions()}
             </div>
+          </CardFooter>
+        </Card>
+      ) : isCyberpunkTheme ? (
+        <Card className={`overflow-hidden transition-all duration-300 hover:shadow-lg ${
+          glowing ? "ring-2 ring-cyan-500 ring-opacity-60" : ""
+        } bg-black border-2 border-cyan-500 shadow-[0_0_15px_rgba(0,255,255,0.1)]`}>
+          <CardHeader className="p-4 pb-2 border-b border-cyan-500/30">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <div {...dragHandleProps} className="cursor-move opacity-0 group-hover:opacity-100 transition-opacity">
+                    <GripVertical className="h-4 w-4 text-cyan-400" />
+                  </div>
+                  <h3 className="text-lg font-mono font-bold text-cyan-400 tracking-wider leading-tight">{quest.title}</h3>
+                </div>
+                <p className="text-sm text-cyan-300/80 mt-1 font-mono">
+                  {quest.isGroupQuest ? (
+                    <span className="flex items-center">
+                      <Users className="h-3 w-3 mr-1" />
+                      GROUP MISSION • {Array.isArray(quest.groupMembers) ? quest.groupMembers.length : 0} AGENTS
+                    </span>
+                  ) : (
+                    <span className="flex items-center">
+                      <User className="h-3 w-3 mr-1" />
+                      AGENT: {typeof quest.assignedTo === 'string' ? quest.assignedTo : 'MULTIPLE'}
+                    </span>
+                  )}
+                </p>
+              </div>
+              <div className="flex items-start gap-2">
+                <QuestProgressRing
+                  xpReward={quest.xpReward}
+                  dueDate={quest.dueDate}
+                  difficulty={quest.difficulty}
+                  description={quest.description}
+                />
+                <Badge className="bg-black border border-cyan-500 text-cyan-400 font-mono">
+                  {quest.difficulty}
+                </Badge>
+              </div>
+            </div>
+          </CardHeader>
+          
+          <CardContent className="p-4 pt-3 pb-3">
+            <p className="mb-3 text-cyan-300/90 font-mono text-sm leading-relaxed">{quest.description}</p>
+            
+            <div className="flex flex-wrap items-center text-xs text-cyan-300/70 mb-2 font-mono">
+              {quest.projectName && (
+                <div className="flex items-center mr-4 mb-1">
+                  <MapPin className="h-3 w-3 mr-1" />
+                  {quest.projectName}
+                </div>
+              )}
+              <div className="flex items-center mr-4 mb-1">
+                <Calendar className="h-3 w-3 mr-1" />
+                DEADLINE: {quest.dueDate}
+              </div>
+              <div className="flex items-center mr-4 mb-1">
+                <Clock className="h-3 w-3 mr-1" />
+                POSTED {timeAgo.toUpperCase()}
+              </div>
+            </div>
+            
+            {quest.isGroupQuest && Array.isArray(quest.groupMembers) && quest.groupMembers.length > 0 && (
+              <div className="mt-3 pt-2 border-t border-cyan-500/30">
+                <p className="text-xs text-cyan-300/70 mb-1 flex items-center justify-between font-mono">
+                  <span>ACTIVE AGENTS:</span>
+                  {quest.status === QuestStatus.IN_PROGRESS && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 text-xs px-2 text-cyan-400 hover:text-cyan-300 hover:bg-cyan-950/50 font-mono"
+                      onClick={() => setIsChatOpen(!isChatOpen)}
+                    >
+                      <MessageSquare className="h-3 w-3 mr-1" />
+                      COMMS
+                    </Button>
+                  )}
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {quest.groupMembers.map((member, idx) => (
+                    <Badge key={idx} variant="outline" className="bg-black border border-cyan-500/50 text-cyan-400/90 text-xs font-mono">
+                      {member}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+          </CardContent>
+          
+          <CardFooter className="p-4 pt-0 flex items-center justify-between border-t border-cyan-500/30">
+            <div className="flex items-center">
+              <Zap className="h-4 w-4 text-cyan-400 mr-1" />
+              <span className="font-mono text-cyan-400">{quest.xpReward} XP</span>
+            </div>
+            
+            {getStatusActions()}
           </CardFooter>
         </Card>
       ) : (

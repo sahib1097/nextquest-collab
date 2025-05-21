@@ -117,10 +117,34 @@ const Quests: React.FC = () => {
               className={
                 currentTheme.name === "Medieval"
                   ? "px-4 py-2 bg-[#8B0000] text-[#ffe8a3] font-extrabold text-3xl tracking-wide border-4 border-[#5c0000] rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] uppercase"
+                  : isCyberpunkTheme
+                  ? "relative px-6 py-3 font-mono font-bold text-3xl tracking-wider uppercase"
                   : "text-2xl font-bold"
               }
             >
-              Quest Board
+              {isCyberpunkTheme ? (
+                <div className="relative">
+                  {/* Main container with angular shape */}
+                  <div className="relative p-4 ">
+                    {/* Glitch effect container */}
+                    <div className="relative">
+                      {/* Base text */}
+                      <span className="relative z-10 text-transparent">
+                        QUEST BOARD
+                      </span>
+                      
+                      {/* Glitch effect layers */}
+                      <span className="absolute top-0 left-0 text-[#2DE2E6] animate-glitch-1">QUEST BOARD</span>
+                      <span className="absolute top-0 left-0 text-[#FF2E97] animate-glitch-2">QUEST BOARD</span>
+                    </div>
+                    
+                    {/* Neon glow */}
+                    <div className="absolute inset-0 bg-[#2DE2E6]/5 blur-xl" />
+                  </div>
+                </div>
+              ) : (
+                "Quest Board"
+              )}
             </h1>
             <div className="flex items-center gap-2">
               <ThemeSwitcher />

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Achievement, TrophyRarity, AchievementType } from "@/types/social";
@@ -13,6 +12,7 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface AchievementShowcaseProps {
   userId: string;
@@ -26,6 +26,8 @@ const AchievementShowcase = ({ userId, expanded = false }: AchievementShowcasePr
   const [filterType, setFilterType] = useState<AchievementType | "ALL">("ALL");
   const [filterRarity, setFilterRarity] = useState<TrophyRarity | "ALL">("ALL");
   const [activeTab, setActiveTab] = useState<"earned" | "all">("earned");
+  const { currentTheme } = useTheme();
+  const isCyberpunkTheme = currentTheme.name === "Cyberpunk";
 
   useEffect(() => {
     // Load achievements from localStorage or initialize with default achievements
@@ -183,26 +185,34 @@ const AchievementShowcase = ({ userId, expanded = false }: AchievementShowcasePr
   if (achievements.length === 0 && activeTab === "earned") return null;
 
   return (
-    <div className="mb-6 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4 border border-gray-200 shadow-sm">
+    <div className={`mb-6 rounded-lg p-4 ${
+      isCyberpunkTheme 
+        ? "bg-[#141622] border-2 border-[#2DE2E6] shadow-[0_0_20px_rgba(45,226,230,0.2)]"
+        : "bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 shadow-sm"
+    }`}>
       <div 
         className="flex items-center justify-between mb-3 cursor-pointer"
         onClick={toggleExpanded}
       >
         <div className="flex items-center gap-2">
-          <Trophy className="h-5 w-5 text-purple-600" />
-          <h3 className="text-base font-medium">Trophies</h3>
+          <Trophy className={`h-5 w-5 ${isCyberpunkTheme ? "text-[#2DE2E6]" : "text-purple-600"}`} />
+          <h3 className={`text-base font-medium ${isCyberpunkTheme ? "text-[#E0F2FF] font-mono" : ""}`}>Trophies</h3>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex gap-1 items-center text-xs bg-gray-100 px-2 py-1 rounded-full">
-            <span className="text-amber-600">{bronzeTrophies}</span>
-            <span className="text-gray-500">{silverTrophies}</span>
-            <span className="text-yellow-600">{goldTrophies}</span>
-            <span className="text-blue-600">{platinumTrophies}</span>
+          <div className={`flex gap-1 items-center text-xs px-2 py-1 rounded-full ${
+            isCyberpunkTheme 
+              ? "bg-[#1a1f2e] border border-[#2DE2E6]/20"
+              : "bg-gray-100"
+          }`}>
+            <span className={isCyberpunkTheme ? "text-[#FF2E97]" : "text-amber-600"}>{bronzeTrophies}</span>
+            <span className={isCyberpunkTheme ? "text-[#2DE2E6]" : "text-gray-500"}>{silverTrophies}</span>
+            <span className={isCyberpunkTheme ? "text-[#FF2E97]" : "text-yellow-600"}>{goldTrophies}</span>
+            <span className={isCyberpunkTheme ? "text-[#2DE2E6]" : "text-blue-600"}>{platinumTrophies}</span>
           </div>
           {isExpanded ? (
-            <ChevronUp className="h-4 w-4 text-gray-400" />
+            <ChevronUp className={`h-4 w-4 ${isCyberpunkTheme ? "text-[#2DE2E6]" : "text-gray-400"}`} />
           ) : (
-            <ChevronDown className="h-4 w-4 text-gray-400" />
+            <ChevronDown className={`h-4 w-4 ${isCyberpunkTheme ? "text-[#2DE2E6]" : "text-gray-400"}`} />
           )}
         </div>
       </div>
@@ -218,20 +228,45 @@ const AchievementShowcase = ({ userId, expanded = false }: AchievementShowcasePr
           >
             <Tabs defaultValue="earned" className="w-full" onValueChange={(value) => setActiveTab(value as "earned" | "all")}>
               <div className="flex justify-between items-center mb-3">
-                <TabsList>
-                  <TabsTrigger value="earned" className="text-xs">Earned ({earnedAchievements.length})</TabsTrigger>
-                  <TabsTrigger value="all" className="text-xs">All ({DEFAULT_ACHIEVEMENTS.length})</TabsTrigger>
+                <TabsList className={isCyberpunkTheme ? "bg-[#1a1f2e] border border-[#2DE2E6]/20" : ""}>
+                  <TabsTrigger 
+                    value="earned" 
+                    className={`text-xs ${isCyberpunkTheme ? "data-[state=active]:bg-[#2DE2E6] data-[state=active]:text-[#141622]" : ""}`}
+                  >
+                    Earned ({earnedAchievements.length})
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="all" 
+                    className={`text-xs ${isCyberpunkTheme ? "data-[state=active]:bg-[#2DE2E6] data-[state=active]:text-[#141622]" : ""}`}
+                  >
+                    All ({DEFAULT_ACHIEVEMENTS.length})
+                  </TabsTrigger>
                 </TabsList>
                 
                 <div className="flex gap-2">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="h-7 gap-1 text-xs">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className={`h-7 gap-1 text-xs ${
+                          isCyberpunkTheme 
+                            ? "bg-[#1a1f2e] text-[#2DE2E6] border-[#2DE2E6]/20 hover:bg-[#261D54] hover:border-[#2DE2E6]"
+                            : ""
+                        }`}
+                      >
                         <Filter className="h-3 w-3" /> Filter
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48">
-                      <div className="p-2 text-xs font-medium">Trophy Type</div>
+                    <DropdownMenuContent 
+                      align="end" 
+                      className={`w-48 ${
+                        isCyberpunkTheme 
+                          ? "bg-[#141622] border-[#2DE2E6] text-[#E0F2FF]"
+                          : ""
+                      }`}
+                    >
+                      <div className={`p-2 text-xs font-medium ${isCyberpunkTheme ? "text-[#2DE2E6]" : ""}`}>Trophy Type</div>
                       <DropdownMenuCheckboxItem
                         checked={filterType === "ALL"}
                         onCheckedChange={() => setFilterType("ALL")}
@@ -263,7 +298,7 @@ const AchievementShowcase = ({ userId, expanded = false }: AchievementShowcasePr
                         Platinum
                       </DropdownMenuCheckboxItem>
                       
-                      <div className="p-2 text-xs font-medium pt-3 border-t mt-1">Rarity</div>
+                      <div className={`p-2 text-xs font-medium pt-3 border-t mt-1 ${isCyberpunkTheme ? "text-[#2DE2E6]" : ""}`}>Rarity</div>
                       <DropdownMenuCheckboxItem
                         checked={filterRarity === "ALL"}
                         onCheckedChange={() => setFilterRarity("ALL")}
@@ -316,7 +351,9 @@ const AchievementShowcase = ({ userId, expanded = false }: AchievementShowcasePr
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center text-sm text-gray-500 py-4">
+                  <div className={`text-center text-sm py-4 ${
+                    isCyberpunkTheme ? "text-[#2DE2E6]/60" : "text-gray-500"
+                  }`}>
                     No trophies match the selected filters
                   </div>
                 )}
@@ -333,7 +370,9 @@ const AchievementShowcase = ({ userId, expanded = false }: AchievementShowcasePr
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center text-sm text-gray-500 py-4">
+                  <div className={`text-center text-sm py-4 ${
+                    isCyberpunkTheme ? "text-[#2DE2E6]/60" : "text-gray-500"
+                  }`}>
                     No trophies match the selected filters
                   </div>
                 )}
@@ -352,14 +391,22 @@ const AchievementShowcase = ({ userId, expanded = false }: AchievementShowcasePr
           exit={{ x: 300, opacity: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
-          <div className="bg-black bg-opacity-80 p-4 rounded-lg shadow-lg border border-purple-500 text-white">
-            <h4 className="text-sm font-bold mb-2 text-purple-300">New Trophy Unlocked!</h4>
+          <div className={`p-4 rounded-lg shadow-lg ${
+            isCyberpunkTheme 
+              ? "bg-[#141622] border-2 border-[#2DE2E6] shadow-[0_0_30px_rgba(45,226,230,0.3)]"
+              : "bg-black bg-opacity-80 border border-purple-500"
+          }`}>
+            <h4 className={`text-sm font-bold mb-2 ${
+              isCyberpunkTheme ? "text-[#2DE2E6] font-mono" : "text-purple-300"
+            }`}>New Trophy Unlocked!</h4>
             <AchievementBadge 
               achievement={showNewAchievement} 
               animate={true}
               size="lg"
             />
-            <p className="text-xs mt-2 text-gray-300">{showNewAchievement.description}</p>
+            <p className={`text-xs mt-2 ${
+              isCyberpunkTheme ? "text-[#E0F2FF]/80" : "text-gray-300"
+            }`}>{showNewAchievement.description}</p>
           </div>
         </motion.div>
       )}

@@ -61,6 +61,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
   const [liveUpdates, setLiveUpdates] = useState<{userId: string, change: number}[]>([]);
   const { currentTheme } = useTheme();
   const isMedievalTheme = currentTheme.name === "Medieval";
+  const isCyberpunkTheme = currentTheme.name === "Cyberpunk";
 
   useEffect(() => {
     // In a real app, this would fetch data from an API
@@ -168,14 +169,32 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
               placeholder="Search by name or guild..."
               value={searchQuery}
               onChange={handleSearchChange}
-              className={`max-w-sm ${isMedievalTheme ? "bg-[#5c4b2a] placeholder:text-[#fcefb4]" : ""}`}
-              startIcon={<Search className={`h-4 w-4 ${isMedievalTheme ? "text-[#fcefb4]" : ""}`} />}
+              className={`max-w-sm ${
+                isMedievalTheme 
+                  ? "bg-[#5c4b2a] placeholder:text-[#fcefb4]"
+                  : isCyberpunkTheme
+                  ? "bg-[#141622] border-[#2DE2E6] text-[#E0F2FF] placeholder:text-[#2DE2E6]/50 focus:border-[#FF2E97] focus:ring-[#FF2E97]"
+                  : ""
+              }`}
+              startIcon={<Search className={`h-4 w-4 ${
+                isMedievalTheme 
+                  ? "text-[#fcefb4]"
+                  : isCyberpunkTheme
+                  ? "text-[#2DE2E6]"
+                  : ""
+              }`} />}
             />
             <Button 
               variant="outline" 
               size="sm"
               onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-1 ${isMedievalTheme ? "bg-[#5c4b2a]" : ""}`}
+              className={`flex items-center gap-1 ${
+                isMedievalTheme 
+                  ? "bg-[#5c4b2a]"
+                  : isCyberpunkTheme
+                  ? "bg-[#141622] text-[#2DE2E6] border-[#2DE2E6] hover:bg-[#261D54] transition-all duration-300"
+                  : ""
+              }`}
             >
               {showFilters ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               Filters
@@ -196,7 +215,17 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                     variant={roleFilter === role ? "default" : "outline"} 
                     size="sm"
                     onClick={() => toggleRoleFilter(role)}
-                    className={isMedievalTheme ? "bg-[#5c4b2a] text-[#fcefb4] border-[#d4af37]" : ""}
+                    className={`${
+                      isMedievalTheme 
+                        ? "bg-[#5c4b2a] text-[#fcefb4] border-[#d4af37]"
+                        : isCyberpunkTheme
+                        ? `${
+                            roleFilter === role
+                              ? "bg-gradient-to-r from-[#FF2E97] to-[#2DE2E6] text-white border-none"
+                              : "bg-[#141622] text-[#2DE2E6] border-[#2DE2E6] hover:bg-[#261D54]"
+                          } transition-all duration-300`
+                        : ""
+                    }`}
                   >
                     {role}
                   </Button>
@@ -207,8 +236,20 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
         </div>
       )}
 
-      <div className={`rounded-md ${isMedievalTheme ? "border-[#d4af37]" : "border"}`}>
-        <div className={`grid grid-cols-12 gap-2 p-3 ${isMedievalTheme ? "bg-[#5c4b2a]" : "bg-muted/50"} font-medium text-sm`}>
+      <div className={`rounded-md ${
+        isMedievalTheme 
+          ? "border-[#d4af37]"
+          : isCyberpunkTheme
+          ? "border-2 border-[#2DE2E6] shadow-[0_0_20px_rgba(45,226,230,0.2)]"
+          : "border"
+      }`}>
+        <div className={`grid grid-cols-12 gap-2 p-3 ${
+          isMedievalTheme 
+            ? "bg-[#5c4b2a]"
+            : isCyberpunkTheme
+            ? "bg-[#141622] text-[#E0F2FF]"
+            : "bg-muted/50"
+        } font-medium text-sm`}>
           <div className="col-span-1 text-center">#</div>
           <div className="col-span-5 md:col-span-3">Hero</div>
           <div className="col-span-3 md:col-span-2 text-right">XP</div>
@@ -227,17 +268,36 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
                 className={`grid grid-cols-12 gap-2 justify-between items-center px-4 py-2 rounded-lg ${
-                  isMedievalTheme ? `
-                    text-[#7c1c1c]
-                    ${entry.isCurrentUser ? "bg-[#d4af37]/20 border-[#d4af37]/50" : ""}
-                    ${index % 2 === 0 && !entry.isCurrentUser ? "bg-[#d4c07c]/60" : ""}
-                    hover:bg-[#bfa171]/40
-                  ` : `
-                    ${entry.isCurrentUser ? "bg-primary/5 border-primary/20" : ""}
-                    ${index % 2 === 0 && !entry.isCurrentUser ? "bg-muted/20" : ""}
-                    hover:bg-gray-50
-                  `}
-                `}
+                  isMedievalTheme 
+                    ? `text-[#7c1c1c] ${
+                        entry.isCurrentUser 
+                          ? "bg-[#d4af37]/20 border-[#d4af37]/50" 
+                          : ""
+                      } ${
+                        index % 2 === 0 && !entry.isCurrentUser 
+                          ? "bg-[#d4c07c]/60" 
+                          : ""
+                      } hover:bg-[#bfa171]/40`
+                    : isCyberpunkTheme
+                    ? `${
+                        entry.isCurrentUser 
+                          ? "bg-[#2DE2E6]/10 border-[#2DE2E6]/20" 
+                          : ""
+                      } ${
+                        index % 2 === 0 && !entry.isCurrentUser 
+                          ? "bg-[#141622]" 
+                          : "bg-[#1a1f2e]"
+                      } hover:bg-[#261D54] transition-all duration-300`
+                    : `${
+                        entry.isCurrentUser 
+                          ? "bg-primary/5 border-primary/20" 
+                          : ""
+                      } ${
+                        index % 2 === 0 && !entry.isCurrentUser 
+                          ? "bg-muted/20" 
+                          : ""
+                      } hover:bg-gray-50`
+                }`}
                 onClick={() => handleUserClick(entry)}
               >
                 <div className="col-span-1 text-center font-semibold">
@@ -301,7 +361,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                           )}
                         </Avatar>
                       </TooltipTrigger>
-                      <TooltipContent side="top">
+                      <TooltipContent side="top" className={isCyberpunkTheme ? "bg-[#141622] text-[#E0F2FF] border-[#2DE2E6]" : ""}>
                         {entry.role || "Hero"} • Level {entry.level}
                       </TooltipContent>
                     </Tooltip>
@@ -309,22 +369,48 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                   
                   <div>
                     <div className={`font-medium text-sm flex justify-between items-center px-4 py-2 rounded-lg ${
-                      isMedievalTheme ? "text-black" : ""
+                      isMedievalTheme 
+                        ? "text-black"
+                        : isCyberpunkTheme
+                        ? "text-[#E0F2FF]"
+                        : ""
                     }`}>
                       {entry.name}
                       {entry.isCurrentUser && (
                         <Badge variant="outline" className={`ml-2 text-[10px] py-0 ${
-                          isMedievalTheme ? "bg-[#7c1c1c] text-[#d4af37]" : ""
+                          isMedievalTheme 
+                            ? "bg-[#7c1c1c] text-[#d4af37]"
+                            : isCyberpunkTheme
+                            ? "bg-[#2DE2E6]/20 text-[#2DE2E6] border-[#2DE2E6]"
+                            : ""
                         }`}>
                           You
                         </Badge>
                       )}
                     </div>
-                    <div className="text-xs text-muted-foreground flex items-center">
-                      <Star className="h-3 w-3 mr-1 text-amber-500" />
+                    <div className={`text-xs flex items-center ${
+                      isMedievalTheme 
+                        ? "text-[#d4af37]"
+                        : isCyberpunkTheme
+                        ? "text-[#2DE2E6]"
+                        : "text-muted-foreground"
+                    }`}>
+                      <Star className={`h-3 w-3 mr-1 ${
+                        isMedievalTheme 
+                          ? "text-amber-500"
+                          : isCyberpunkTheme
+                          ? "text-[#FF2E97]"
+                          : "text-amber-500"
+                      }`} />
                       Lvl {entry.level}
                       {entry.role && (
-                        <span className={`ml-1 ${isMedievalTheme ? "text-[#d4af37]" : "text-gray-400"}`}>
+                        <span className={`ml-1 ${
+                          isMedievalTheme 
+                            ? "text-[#d4af37]"
+                            : isCyberpunkTheme
+                            ? "text-[#2DE2E6]/80"
+                            : "text-gray-400"
+                        }`}>
                           • {entry.role}
                         </span>
                       )}
@@ -333,25 +419,47 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                 </div>
                 
                 <div className={`col-span-3 md:col-span-2 text-right font-mono font-medium flex justify-between items-center px-4 py-2 rounded-lg ${
-                  isMedievalTheme ? "text-[#2e4a2c]" : ""
+                  isMedievalTheme 
+                    ? "text-[#2e4a2c]"
+                    : isCyberpunkTheme
+                    ? "text-[#2DE2E6]"
+                    : ""
                 }`}>
                   {entry.xp.toLocaleString()} XP
                 </div>
                 
                 <div className="hidden md:block md:col-span-3 truncate">
                   {entry.guildName ? (
-                    <div className="flex items-center text-sm">
+                    <div className={`flex items-center text-sm ${
+                      isMedievalTheme 
+                        ? "text-black"
+                        : isCyberpunkTheme
+                        ? "text-[#E0F2FF]"
+                        : ""
+                    }`}>
                       {entry.guildLogo ? (
                         <div className="w-4 h-4 rounded-full mr-1 overflow-hidden">
                           <img src={entry.guildLogo} alt={entry.guildName} className="w-full h-full object-cover" />
                         </div>
                       ) : (
-                        <Castle className={`h-3 w-3 mr-1 ${isMedievalTheme ? "text-black" : "text-primary"}`} />
+                        <Castle className={`h-3 w-3 mr-1 ${
+                          isMedievalTheme 
+                            ? "text-black"
+                            : isCyberpunkTheme
+                            ? "text-[#2DE2E6]"
+                            : "text-primary"
+                        }`} />
                       )}
                       {entry.guildName}
                     </div>
                   ) : (
-                    <span className={`text-sm ${isMedievalTheme ? "text-[#7c1c1c]" : "text-muted-foreground"}`}>
+                    <span className={`text-sm ${
+                      isMedievalTheme 
+                        ? "text-[#7c1c1c]"
+                        : isCyberpunkTheme
+                        ? "text-[#2DE2E6]/60"
+                        : "text-muted-foreground"
+                    }`}>
                       No Guild
                     </span>
                   )}
@@ -387,13 +495,19 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
       
       {compact && leaderboardData.length >= 5 && (
         <div className="text-center mt-2">
-          <a href="/leaderboards" className={`text-sm ${isMedievalTheme ? "text-[#7c1c1c]" : "text-primary"} hover:underline`}>
+          <a href="/leaderboards" className={`text-sm ${
+            isMedievalTheme 
+              ? "text-[#7c1c1c]"
+              : isCyberpunkTheme
+              ? "text-[#2DE2E6] hover:text-[#FF2E97] transition-colors duration-300"
+              : "text-primary"
+          } hover:underline`}>
             View full leaderboard →
           </a>
         </div>
       )}
       
-      {/* Medieval themed dialog */}
+      {/* Dialog for user details */}
       <Dialog open={userDetailsOpen} onOpenChange={setUserDetailsOpen}>
         {isMedievalTheme ? (
           <>
@@ -546,6 +660,140 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
               </div>
             </DialogContent>
           </>
+        ) : isCyberpunkTheme ? (
+          <DialogContent className="sm:max-w-lg bg-[#141622] border-2 border-[#2DE2E6] shadow-[0_0_30px_rgba(45,226,230,0.2)] overflow-hidden">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            >
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-[#E0F2FF]">
+                  <Avatar className={`h-6 w-6 ${getAvatarBorderClass(selectedUser)}`}>
+                    {selectedUser?.avatar ? (
+                      <AvatarImage src={selectedUser.avatar} alt={selectedUser.name} />
+                    ) : (
+                      <AvatarFallback className={getAvatarFallbackClass(selectedUser)}>
+                        {selectedUser?.name.charAt(0)}
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
+                  <motion.span
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2, duration: 0.3 }}
+                  >
+                    {selectedUser?.name}'s Profile
+                  </motion.span>
+                </DialogTitle>
+              </DialogHeader>
+              
+              <div className="space-y-4">
+                <motion.div 
+                  className="flex items-center justify-between"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.3 }}
+                >
+                  <div>
+                    <h3 className="text-lg font-semibold text-[#E0F2FF]">{selectedUser?.name}</h3>
+                    <p className="text-sm text-[#2DE2E6]">
+                      Level {selectedUser?.level} {selectedUser?.role}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-[#2DE2E6]">{selectedUser?.xp.toLocaleString()} XP</div>
+                    <p className="text-xs text-[#2DE2E6]/60">Rank #{selectedUser?.rank}</p>
+                  </div>
+                </motion.div>
+                
+                {/* Guild information */}
+                {selectedUser?.guildName && (
+                  <motion.div 
+                    className="bg-[#1a1f2e] p-3 rounded-md border border-[#2DE2E6]/20"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4, duration: 0.3 }}
+                  >
+                    <div className="flex items-center gap-2">
+                      {selectedUser.guildLogo ? (
+                        <div className="w-5 h-5 rounded-full overflow-hidden">
+                          <img src={selectedUser.guildLogo} alt={selectedUser.guildName} className="w-full h-full object-cover" />
+                        </div>
+                      ) : (
+                        <Castle className="h-4 w-4 text-[#2DE2E6]" />
+                      )}
+                      <span className="font-medium text-[#E0F2FF]">{selectedUser.guildName}</span>
+                    </div>
+                  </motion.div>
+                )}
+                
+                {/* Achievements */}
+                {selectedUser?.achievements && selectedUser.achievements.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5, duration: 0.3 }}
+                  >
+                    <h4 className="font-medium mb-2 text-[#E0F2FF]">Achievements</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedUser.achievements.map((achievement, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.6 + (i * 0.1), duration: 0.2 }}
+                        >
+                          <Badge 
+                            variant="outline" 
+                            className="px-2 py-1 bg-[#1a1f2e] text-[#2DE2E6] border-[#2DE2E6]/40 hover:bg-[#261D54] transition-all duration-300"
+                          >
+                            {achievement}
+                          </Badge>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+                
+                {/* Quest History */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7, duration: 0.3 }}
+                >
+                  <h4 className="font-medium mb-2 text-[#E0F2FF]">Recent Quests</h4>
+                  {selectedUser?.questHistory ? (
+                    <div className="space-y-2 max-h-48 overflow-y-auto custom-scroll">
+                      {selectedUser.questHistory.map((quest, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.8 + (i * 0.1), duration: 0.2 }}
+                          className="bg-[#1a1f2e] p-2 rounded-md border border-[#2DE2E6]/20"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-[#E0F2FF]">{quest.name}</span>
+                            <span className="font-mono font-semibold text-[#2DE2E6]">+{quest.xp} XP</span>
+                          </div>
+                          <div className="text-xs text-[#2DE2E6]/60 flex items-center justify-between mt-1">
+                            <span>Completed {new Date(quest.completedDate).toLocaleDateString()}</span>
+                            {quest.completedEarly && (
+                              <span className="text-[#FF2E97]">{quest.daysEarly} days early!</span>
+                            )}
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-[#2DE2E6]/60">No recent quests</p>
+                  )}
+                </motion.div>
+              </div>
+            </motion.div>
+          </DialogContent>
         ) : (
           <DialogContent className="sm:max-w-lg">
             <DialogHeader>
