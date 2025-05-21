@@ -24,8 +24,14 @@ const Dashboard = () => {
     const storedProjects = JSON.parse(localStorage.getItem("fluxProjects") || "[]");
     setProjects(storedProjects);
     
-    const storedActivities = getActivities();
-    setActivities(storedActivities);
+    const fetchActivities = async () => {
+      const activities = await getActivities();
+      console.log("Activities:", activities);
+      setActivities(activities);
+
+    }
+    fetchActivities();
+
     
     const storedUsers = JSON.parse(localStorage.getItem("fluxUsers") || "[]");
     setUserCount(Math.max(1, storedUsers.length));
@@ -217,7 +223,7 @@ const Dashboard = () => {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
               {activities.slice(0, 6).map((activity) => (
                 <div 
-                  key={activity.id} 
+                  key={activity._id} 
                   className="p-4 hover:bg-muted cursor-pointer transition-colors"
                   onClick={() => handleActivityClick(activity)}
                 >
