@@ -10,8 +10,33 @@ export interface Activity {
 }
 
 // Add a new activity
-export const addActivity = (activity: Omit<Activity, 'id'>) => {
-  // const activities = getActivities();
+export const addActivity = async (activity: Omit<Activity, '_id'>) => {
+
+  const user = JSON.parse(localStorage.getItem('fluxUser')|| '{}');
+  const userId = user?.userId;
+
+  try {
+    const res = await fetch(`${API}/api/userinfo/update-activity-log`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId,
+        activityLog: [{
+          type: activity.type,
+          details: activity.details          
+      }]
+      })
+    });
+
+    if (!res.ok) {
+      console.error("Failed to update activity log.");
+      return;
+    }
+  } catch (error) {
+    console.error('Error updating activity log:', error);
+  }
   
   // const newActivity = {
   //   ...activity,
