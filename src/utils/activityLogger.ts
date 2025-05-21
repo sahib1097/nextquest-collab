@@ -33,7 +33,7 @@ export const addActivity = (activity: Omit<Activity, 'id'>) => {
 
 // Get all activities
 export const getActivities = async (): Promise<Activity[]> => {
-  const user = JSON.parse(localStorage.getItem('fluxUser'));
+  const user = JSON.parse(localStorage.getItem('fluxUser')|| '{}');
   const userId = user?.userId;
 
   try {
@@ -54,7 +54,8 @@ export const getActivities = async (): Promise<Activity[]> => {
     }
 
     const data = await res.json();
-    const activityLog = data.activityLog || '[]';
+    const activityLog = Array.isArray(data.activityLog) ? data.activityLog : [];
+
     return activityLog;
 
 

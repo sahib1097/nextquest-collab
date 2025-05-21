@@ -27,7 +27,7 @@ const Dashboard = () => {
     const fetchActivities = async () => {
       const activities = await getActivities();
       console.log("Activities:", activities);
-      setActivities(activities);
+      setActivities(activities? activities : []);
 
     }
     fetchActivities();
