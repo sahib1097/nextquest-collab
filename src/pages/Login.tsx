@@ -250,12 +250,14 @@ const Login = () => {
   
       // 1) Get newly created user
       const user = await res.json(); // { name, email }
+
+
   
       // 2) Persist fluxUser in localStorage
       localStorage.setItem(
         'fluxUser',
         JSON.stringify({
-          userId:          user._id,
+          userId:          user.userId,
           email:           user.email,
           isAuthenticated: true,
           name:            user.name,
@@ -268,7 +270,7 @@ const Login = () => {
         localStorage.setItem(
           'fluxUserLevel',
           JSON.stringify({
-            userId:      user._id,
+            userId:      user.userId,
             username:    user.name,
             xp:          0,
             level:       1,
