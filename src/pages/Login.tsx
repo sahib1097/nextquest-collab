@@ -150,7 +150,6 @@ const Login = ({ initialTab }: LoginProps) => {
 
 
   
-      // 3) Persist fluxUser just like login
       localStorage.setItem(
         "fluxUser",
         JSON.stringify({
