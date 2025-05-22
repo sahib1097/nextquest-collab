@@ -188,6 +188,8 @@ const Login = ({ initialTab }: LoginProps) => {
     }
   };
 
+  
+
   const handleGoogleAuth = () => {
     localStorage.setItem("fluxUser", JSON.stringify({ email:"google@example.com", name:"Google User", isAuthenticated:true, lastLogin:new Date().toISOString() }));
     if (!localStorage.getItem("fluxUserLevel")) localStorage.setItem("fluxUserLevel", JSON.stringify({ userId:'current-user',username:'Google User',xp:0,level:1,nextLevelXp:100 }));
