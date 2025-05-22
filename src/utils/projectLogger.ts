@@ -50,3 +50,27 @@ export const retrieveProjects = async (userId: string) => {
         console.error('Error retrieving projects:', error);
     }
 }
+
+export const updateProjectStatus = async (projectId: string, newStatus: string) => {
+    try {
+        const response = await fetch(`${API}/api/projectinfo/update-status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                projectId,
+                newStatus
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update project status');
+        }
+
+        const data = await response.json();
+        console.log("Updated project status: ", data);
+    } catch (error) {
+        console.error('Error updating project status:', error);
+    }
+}

@@ -16,7 +16,7 @@ import GanttView from "@/components/Projects/GanttView";
 import { JiraSync } from "@/components/Projects/JiraSync";
 import { useToast } from "@/hooks/use-toast";
 import { ProjectBoard } from "@/types/quest";
-import { createProject, retrieveProjects } from "@/utils/projectLogger";
+import { createProject, retrieveProjects, updateProjectStatus } from "@/utils/projectLogger";
 
 const Projects = () => {
   const navigate = useNavigate();
@@ -134,10 +134,18 @@ const Projects = () => {
   };
 
   const updateProject = (projectId: string, updates: any) => {
+    // If this is a status update, call the dedicated status update function
+    if (updates.status) {
+      updateProjectStatus(projectId, updates.status);
+      console.log("Updated project status: ", updates.status);
+    }
+
+    // Update other project fields
     const updatedProjects = projects.map(project => 
       project.id === projectId ? { ...project, ...updates } : project
     );
     setProjects(updatedProjects);
+    
     // Refresh projects from backend
     void populateProjects();
   };
