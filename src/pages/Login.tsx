@@ -249,7 +249,8 @@ const Login = () => {
       }
   
       // 1) Get newly created user
-      const user = await res.json(); // { name, email }
+      const data = await res.json(); // { name, email }
+      const { user } = data;
 
 
   
@@ -257,7 +258,7 @@ const Login = () => {
       localStorage.setItem(
         'fluxUser',
         JSON.stringify({
-          userId:          user.userId,
+          userId:          data.userId,
           email:           user.email,
           isAuthenticated: true,
           name:            user.name,
@@ -291,11 +292,6 @@ const Login = () => {
       setIsSignupLoading(false);
     }
   };
-
-
-
-
-
 
   
   const handleGoogleAuth = () => {
