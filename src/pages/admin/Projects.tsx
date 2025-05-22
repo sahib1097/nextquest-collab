@@ -16,6 +16,7 @@ import GanttView from "@/components/Projects/GanttView";
 import { JiraSync } from "@/components/Projects/JiraSync";
 import { useToast } from "@/hooks/use-toast";
 import { ProjectBoard } from "@/types/quest";
+import { createProject, retrieveProjects } from "@/utils/projectLogger";
 
 const Projects = () => {
   const navigate = useNavigate();
@@ -33,42 +34,57 @@ const Projects = () => {
   const templateId = searchParams.get('template');
 
   useEffect(() => {
-    const storedBoards = localStorage.getItem("fluxBoards");
-    const initialBoards = storedBoards ? JSON.parse(storedBoards) : [];
-    
-    if (initialBoards.length === 0) {
-      const defaultBoard: ProjectBoard = {
-        id: "default",
-        name: "Main Board",
-        projects: [],
-        categories: [
-          { id: "all", name: "All Projects" },
-          { id: "development", name: "Development" },
-          { id: "sales", name: "Sales" },
-          { id: "marketing", name: "Marketing" },
-        ],
-        createdAt: new Date().toISOString(),
-      };
-      initialBoards.push(defaultBoard);
-      localStorage.setItem("fluxBoards", JSON.stringify(initialBoards));
-    }
-    
-    setBoards(initialBoards);
-    setCurrentBoard(initialBoards[0]);
+    const initializeData = async () => {
+      try {
+        const storedBoards = localStorage.getItem("fluxBoards");
+        const initialBoards = storedBoards ? JSON.parse(storedBoards) : [];
+        
+        if (initialBoards.length === 0) {
+          const defaultBoard: ProjectBoard = {
+            id: "default",
+            name: "Main Board",
+            projects: [],
+            categories: [
+              { id: "all", name: "All Projects" },
+              { id: "development", name: "Development" },
+              { id: "sales", name: "Sales" },
+              { id: "marketing", name: "Marketing" },
+            ],
+            createdAt: new Date().toISOString(),
+          };
+          initialBoards.push(defaultBoard);
+          localStorage.setItem("fluxBoards", JSON.stringify(initialBoards));
+        }
+        
+        setBoards(initialBoards);
+        setCurrentBoard(initialBoards[0]);
 
-    const storedProjects = localStorage.getItem("fluxProjects");
-    if (storedProjects) {
-      setProjects(JSON.parse(storedProjects));
-    }
+        // Load projects from backend
+        const user = JSON.parse(localStorage.getItem("fluxUser") || "{}");
+        const fetchedProjects = await retrieveProjects(user.userId);
+        if (Array.isArray(fetchedProjects)) {
+          setProjects(fetchedProjects);
+        }
 
-    if (templateId) {
-      const templateConfig = localStorage.getItem("fluxProjectTemplate");
-      if (templateConfig) {
-        const template = JSON.parse(templateConfig);
-        setActiveView(template.config.defaultView);
-        localStorage.removeItem("fluxProjectTemplate");
+        if (templateId) {
+          const templateConfig = localStorage.getItem("fluxProjectTemplate");
+          if (templateConfig) {
+            const template = JSON.parse(templateConfig);
+            setActiveView(template.config.defaultView);
+            localStorage.removeItem("fluxProjectTemplate");
+          }
+        }
+      } catch (error) {
+        console.error("Error initializing data:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load projects. Please try again.",
+          variant: "destructive",
+        });
       }
-    }
+    };
+
+    void initializeData();
   }, [templateId]);
 
   const handleBoardChange = (boardId: string) => {
@@ -90,24 +106,47 @@ const Projects = () => {
     });
   };
 
+  //Works
   const addProject = (newProject: any) => {
-    const updatedProjects = [...projects, newProject];
-    setProjects(updatedProjects);
-    localStorage.setItem("fluxProjects", JSON.stringify(updatedProjects));
+    const user = JSON.parse(localStorage.getItem("fluxUser") || "{}");
+    console.log(newProject);
+    console.log(user.userId);
+    createProject(newProject, user.userId);
   };
   
+  const populateProjects = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("fluxUser") || "{}");
+      const fetchedProjects = await retrieveProjects(user.userId);
+      console.log("Populated projects: ", fetchedProjects);
+      if (Array.isArray(fetchedProjects)) {
+        setProjects(fetchedProjects);
+      }
+      
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load projects. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const updateProject = (projectId: string, updates: any) => {
     const updatedProjects = projects.map(project => 
       project.id === projectId ? { ...project, ...updates } : project
     );
     setProjects(updatedProjects);
-    localStorage.setItem("fluxProjects", JSON.stringify(updatedProjects));
+    // Refresh projects from backend
+    void populateProjects();
   };
   
   const deleteProject = (projectId: string) => {
     const updatedProjects = projects.filter(project => project.id !== projectId);
     setProjects(updatedProjects);
-    localStorage.setItem("fluxProjects", JSON.stringify(updatedProjects));
+    // Refresh projects from backend
+    void populateProjects();
   };
 
   const addCategory = () => {
