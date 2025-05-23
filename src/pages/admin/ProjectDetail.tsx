@@ -20,6 +20,8 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { getProjectDetails } from "@/utils/projectLogger";
+import { get } from "http";
 
 // Get team members
 const getTeamMembers = () => {
@@ -52,18 +54,27 @@ const ProjectDetail = () => {
   
   useEffect(() => {
     // In a real app, fetch project details from API
-    const storedProjects = JSON.parse(localStorage.getItem("fluxProjects") || "[]");
-    const foundProject = storedProjects.find((p: any) => p.id === projectId);
-    
-    if (foundProject) {
-      setProject(foundProject);
-      setTasks(foundProject.tasks || []);
-      
-      // Calculate initial progress
-      if (foundProject.tasks && foundProject.tasks.length > 0) {
-        const completedTasks = foundProject.tasks.filter((t: Task) => t.completed).length;
-        setProgress((completedTasks / foundProject.tasks.length) * 100);
+    // const storedProjects = JSON.parse(localStorage.getItem("fluxProjects") || "[]");
+    // const foundProject = storedProjects.find((p: any) => p.id === projectId);
+
+    const fetchProjectDetails = async () => {
+      const ProjectData = await getProjectDetails(projectId)
+      const foundProject = ProjectData
+
+      if (foundProject) {
+        setProject(foundProject);
+        setTasks(foundProject.tasks || []);
+        
+        // Calculate initial progress
+        if (foundProject.tasks && foundProject.tasks.length > 0) {
+          const completedTasks = foundProject.tasks.filter((t: Task) => t.completed).length;
+          setProgress((completedTasks / foundProject.tasks.length) * 100);
+        }
       }
+    }
+    
+    if (projectId) {
+      fetchProjectDetails();
     }
     
     setLoading(false);

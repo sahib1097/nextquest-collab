@@ -52,7 +52,6 @@ export const retrieveProjects = async (teamId: string) => {
 
 export const updateProjectStatus = async (projectId: string, newStatus: string) => {
     try {
-        console.log("Updating project status: ", projectId, newStatus);
         const response = await fetch(`${API}/projectinfo/update-status`, {
             method: 'POST',
             headers: {
@@ -72,5 +71,28 @@ export const updateProjectStatus = async (projectId: string, newStatus: string) 
         console.log("Updated project status: ", data);
     } catch (error) {
         console.error('Error updating project status:', error);
+    }
+}
+
+export const getProjectDetails = async (projectId: string) => {
+    try {
+        const response = await fetch(`${API}/projectinfo/get-project-details`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                projectId
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to retrieve project details');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error retrieving project details:', error);
     }
 }
