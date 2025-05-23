@@ -4,7 +4,7 @@ export const createProject = async (newProject: any, userId: string) => {
 
     try {
         // Make API call to create project in database
-        const response = await fetch(`${API}/api/projectinfo/create-project`, {
+        const response = await fetch(`${API}/projectinfo/create-project`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -26,7 +26,7 @@ export const createProject = async (newProject: any, userId: string) => {
 
 export const retrieveProjects = async (userId: string) => {
     try {
-        const response = await fetch(`${API}/api/projectinfo/get-projects/`,
+        const response = await fetch(`${API}/projectinfo/get-projects/`,
             {
                 method: 'POST',
                 headers: {
@@ -54,7 +54,7 @@ export const retrieveProjects = async (userId: string) => {
 export const updateProjectStatus = async (projectId: string, newStatus: string) => {
     try {
         console.log("Updating project status: ", projectId, newStatus);
-        const response = await fetch(`${API}/api/projectinfo/update-status`, {
+        const response = await fetch(`${API}/projectinfo/update-status`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

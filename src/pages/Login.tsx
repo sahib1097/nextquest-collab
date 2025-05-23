@@ -50,7 +50,7 @@ const Login = ({ initialTab }: LoginProps) => {
     e.preventDefault();
     setIsLoginLoading(true);
     try {
-      const res = await fetch(`${API}/api/auth/login`, {
+      const res = await fetch(`${API}/auth/login`, {
         method:      'POST',
         headers:     { 'Content-Type': 'application/json' },
         credentials: 'include',
