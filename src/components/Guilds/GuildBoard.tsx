@@ -61,6 +61,7 @@ const GuildBoard = () => {
   const [selectedGuildId, setSelectedGuildId] = useState<string | null>(null);
   const { currentTheme } = useTheme();
   const isMedievalTheme = currentTheme.name === "Medieval";
+  const isCyberpunkTheme = currentTheme.name === "Cyberpunk";
   
   useEffect(() => {
     const storedGuilds = localStorage.getItem("fluxGuilds");
@@ -142,15 +143,29 @@ const GuildBoard = () => {
               />
             </button>
           </>
-        ) : (
+        ) : isCyberpunkTheme ? (
           <>
             <div>
-              <h2 className="text-2xl font-bold">Guild Hall</h2>
-              <p className="text-gray-500">Join or create a guild to collaborate and earn rewards together</p>
+              <h2 className="text-2xl font-bold text-[#2DE2E6] font-mono tracking-wider">Guild Hall</h2>
+              <p className="text-[#E0F2FF] font-mono">Join or create a guild to collaborate and earn rewards together</p>
             </div>
-            <Button onClick={() => setIsDialogOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" /> Create Guild
-            </Button>
+            <button
+              onClick={() => setIsDialogOpen(true)}
+              className="relative flex items-center justify-center h-12 px-10 text-sm font-bold uppercase bg-gradient-to-r from-[#FF2E97] to-[#2DE2E6] text-white border-2 border-[#2DE2E6] rounded-lg shadow-[0_0_20px_rgba(45,226,230,0.5)] transition-all duration-300 hover:from-[#2DE2E6] hover:to-[#FF2E97] hover:shadow-[0_0_40px_rgba(45,226,230,0.7)] focus:outline-none focus:ring-2 focus:ring-[#2DE2E6]"
+            >
+              <Plus className="h-4 w-4 mr-2 text-white drop-shadow-[0_0_6px_rgba(45,226,230,0.7)]" />
+              Create Guild
+            </button>
+          </>
+        ) : (
+          <>
+        <div>
+          <h2 className="text-2xl font-bold">Guild Hall</h2>
+          <p className="text-gray-500">Join or create a guild to collaborate and earn rewards together</p>
+        </div>
+        <Button onClick={() => setIsDialogOpen(true)}>
+          <Plus className="h-4 w-4 mr-2" /> Create Guild
+        </Button>
           </>
         )}
       </div>

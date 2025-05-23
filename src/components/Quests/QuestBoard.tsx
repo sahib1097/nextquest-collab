@@ -104,7 +104,7 @@ const QuestBoard = ({ status, questType }: QuestBoardProps) => {
           medievalBg = "";
           medievalBorder = "";
       }
-      medievalSpanClass = `px-4 py-2 ${medievalBg} text-[#ffe8a3] font-extrabold text-2xl tracking-wide border-4 ${medievalBorder} rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] uppercase flex items-center`;
+      medievalSpanClass = `inline-flex items-center px-4 py-2 ${medievalBg} text-[#ffe8a3] font-extrabold text-2xl tracking-wide border-4 ${medievalBorder} rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] uppercase`;
     }
 
     const getCyberpunkHeader = (icon: React.ReactNode, title: string) => {

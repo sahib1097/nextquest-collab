@@ -101,19 +101,19 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
           <TabsList className="flex w-full max-w-md bg-[#d6c8a2] border-4 border-[#5c4a2b] rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,0.7)] overflow-hidden">
             <TabsTrigger
               value="overview"
-              className="flex-1 text-s font-bold py-4 border-r-2 border-[#5c4a2b] bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+              className="relative z-10 flex-1 text-s font-bold py-4 border-r-2 border-[#5c4a2b] bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none data-[state=active]:border-r-0 data-[state=active]:border-l-0 data-[state=active]:rounded-none"
             >
               <UserRound className="h-3 w-3 mx-1" /> Overview
             </TabsTrigger>
             <TabsTrigger
               value="achievements"
-              className="flex-1 text-s font-bold py-4 border-r-2 border-[#5c4a2b] bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+              className="relative z-10 flex-1 text-s font-bold py-4 border-r-2 border-[#5c4a2b] bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none data-[state=active]:border-r-0 data-[state=active]:rounded-none"
             >
               <Trophy className="h-3 w-3 mx-1" /> Achievements
             </TabsTrigger>
             <TabsTrigger
               value="activity"
-              className="flex-1 text-s font-bold py-4 bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none"
+              className="relative z-10 flex-1 text-s font-bold py-4 bg-[#d6c8a2] hover:bg-[#b8a778] active:translate-y-[2px] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-none data-[state=active]:border-l-0 data-[state=active]:rounded-none"
             >
               <Star className="h-3 w-3 mx-1" /> Activity
             </TabsTrigger>
@@ -131,19 +131,19 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
           <TabsList className="flex w-full max-w-md bg-[#141622] border-2 border-[#2DE2E6] rounded-lg shadow-[0_0_20px_rgba(45,226,230,0.2)] overflow-hidden backdrop-blur-sm">
             <TabsTrigger
               value="overview"
-              className="flex-1 text-sm font-bold py-4 border-r border-[#2DE2E6] bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF2E97] data-[state=active]:to-[#2DE2E6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(45,226,230,0.3)] hover:bg-[#261D54] transition-all duration-300"
+              className="relative z-10 flex-1 text-sm font-bold py-4 border-r border-[#2DE2E6] bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF2E97] data-[state=active]:to-[#2DE2E6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(45,226,230,0.3)] hover:bg-[#261D54] transition-all duration-300 data-[state=active]:border-r-0 data-[state=active]:border-l-0 data-[state=active]:rounded-l-lg data-[state=active]:-ml-1"
             >
               <UserRound className="h-4 w-4 mr-2" /> Overview
             </TabsTrigger>
             <TabsTrigger
               value="achievements"
-              className="flex-1 text-sm font-bold py-4 border-r border-[#2DE2E6] bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF2E97] data-[state=active]:to-[#2DE2E6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(45,226,230,0.3)] hover:bg-[#261D54] transition-all duration-300"
+              className="relative z-10 flex-1 text-sm font-bold py-4 border-r border-[#2DE2E6] bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF2E97] data-[state=active]:to-[#2DE2E6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(45,226,230,0.3)] hover:bg-[#261D54] transition-all duration-300 data-[state=active]:border-r-0"
             >
               <Trophy className="h-4 w-4 mr-2" /> Achievements
             </TabsTrigger>
             <TabsTrigger
               value="activity"
-              className="flex-1 text-sm font-bold py-4 bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF2E97] data-[state=active]:to-[#2DE2E6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(45,226,230,0.3)] hover:bg-[#261D54] transition-all duration-300"
+              className="relative z-10 flex-1 text-sm font-bold py-4 bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF2E97] data-[state=active]:to-[#2DE2E6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(45,226,230,0.3)] hover:bg-[#261D54] transition-all duration-300 data-[state=active]:border-l-0 data-[state=active]:rounded-r-lg data-[state=active]:-mr-1 data-[state=active]:border-r-0"
             >
               <Star className="h-4 w-4 mr-2" /> Activity
             </TabsTrigger>
@@ -169,9 +169,22 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
                   <Award className="h-6 w-6 mr-2 text-yellow-700" />
                   {safeUserLevel.username}
                 </CardTitle>
-                <Badge className="bg-[#8b7b5b] text-white text-xs px-3 py-1 border-2 border-[#4b3f2b]">
-                  <Star className="h-3 w-3 mr-1 inline" /> Level {safeUserLevel.level}
-                </Badge>
+                {isCyberpunkTheme ? (
+                  <Badge
+                    className="px-3 py-1 text-white shadow-[0_0_10px_rgba(45,226,230,0.3)]"
+                    style={{ background: "linear-gradient(90deg, #FF2E97 0%, #2DE2E6 100%)", backgroundSize: "100% 100%", border: "2px solid #2DE2E6" }}
+                  >
+                    <Star className="h-3 w-3 mr-1 inline animate-pulse" /> Level {safeUserLevel.level}
+                  </Badge>
+                ) : isMedievalTheme ? (
+                  <Badge className="bg-[#8b7b5b] text-white text-xs px-3 py-1 border-2 border-[#4b3f2b]">
+                    <Star className="h-3 w-3 mr-1 inline" /> Level {safeUserLevel.level}
+                  </Badge>
+                ) : (
+                  <Badge className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 px-3 py-1">
+                    <Star className="h-3 w-3 mr-1 inline" /> Level {safeUserLevel.level}
+                  </Badge>
+                )}
               </div>
             </CardHeader>
             <CardContent className="px-4 py-6 bg-[#fcf9f0] text-[#4b3f2b] relative z-10">
@@ -266,9 +279,22 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
                   <Award className="h-6 w-6 mr-2 text-[#FF2E97] filter drop-shadow-[0_0_8px_rgba(255,46,151,0.5)]" /> 
                   {safeUserLevel.username}
                 </CardTitle>
-                <Badge className="bg-gradient-to-r from-[#FF2E97] to-[#2DE2E6] text-white px-3 py-1 shadow-[0_0_10px_rgba(45,226,230,0.3)]">
-                  <Star className="h-3 w-3 mr-1 inline animate-pulse" /> Level {safeUserLevel.level}
-                </Badge>
+                {isCyberpunkTheme ? (
+                  <Badge
+                    className="px-3 py-1 text-white shadow-[0_0_10px_rgba(45,226,230,0.3)]"
+                    style={{ background: "linear-gradient(90deg, #FF2E97 0%, #2DE2E6 100%)", backgroundSize: "100% 100%", border: "2px solid #2DE2E6" }}
+                  >
+                    <Star className="h-3 w-3 mr-1 inline animate-pulse" /> Level {safeUserLevel.level}
+                  </Badge>
+                ) : isMedievalTheme ? (
+                  <Badge className="bg-[#8b7b5b] text-white text-xs px-3 py-1 border-2 border-[#4b3f2b]">
+                    <Star className="h-3 w-3 mr-1 inline" /> Level {safeUserLevel.level}
+                  </Badge>
+                ) : (
+                  <Badge className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 px-3 py-1">
+                    <Star className="h-3 w-3 mr-1 inline" /> Level {safeUserLevel.level}
+                  </Badge>
+                )}
               </div>
             </CardHeader>
             <CardContent className="pt-4">
@@ -339,9 +365,22 @@ const UserProfile = ({ userLevel, publicProfile = false }: UserProfileProps) => 
                   <Award className="h-6 w-6 mr-2 text-yellow-500" /> 
                   {safeUserLevel.username}
                 </CardTitle>
-                <Badge className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 px-3 py-1">
-                  <Star className="h-3 w-3 mr-1 inline" /> Level {safeUserLevel.level}
-                </Badge>
+                {isCyberpunkTheme ? (
+                  <Badge
+                    className="px-3 py-1 text-white shadow-[0_0_10px_rgba(45,226,230,0.3)]"
+                    style={{ background: "linear-gradient(90deg, #FF2E97 0%, #2DE2E6 100%)", backgroundSize: "100% 100%", border: "2px solid #2DE2E6" }}
+                  >
+                    <Star className="h-3 w-3 mr-1 inline animate-pulse" /> Level {safeUserLevel.level}
+                  </Badge>
+                ) : isMedievalTheme ? (
+                  <Badge className="bg-[#8b7b5b] text-white text-xs px-3 py-1 border-2 border-[#4b3f2b]">
+                    <Star className="h-3 w-3 mr-1 inline" /> Level {safeUserLevel.level}
+                  </Badge>
+                ) : (
+                  <Badge className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 px-3 py-1">
+                    <Star className="h-3 w-3 mr-1 inline" /> Level {safeUserLevel.level}
+                  </Badge>
+                )}
               </div>
             </CardHeader>
             <CardContent className="pt-4">

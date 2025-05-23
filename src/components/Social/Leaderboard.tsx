@@ -250,11 +250,11 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
             ? "bg-[#141622] text-[#E0F2FF]"
             : "bg-muted/50"
         } font-medium text-sm`}>
-          <div className="col-span-1 text-center">#</div>
-          <div className="col-span-5 md:col-span-3">Hero</div>
-          <div className="col-span-3 md:col-span-2 text-right">XP</div>
-          <div className="hidden md:block md:col-span-3">Guild</div>
-          <div className="col-span-3 text-right">Badges</div>
+          <div className="col-span-1 flex justify-center">#</div>
+          <div className="col-span-5 md:col-span-3 flex items-center">Hero</div>
+          <div className="col-span-2 md:col-span-2 flex justify-center">XP</div>
+          <div className="hidden md:flex md:col-span-3 justify-start">Guild</div>
+          <div className="col-span-3 flex justify-end">Badges</div>
         </div>
         
         <div>
@@ -301,7 +301,11 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                 onClick={() => handleUserClick(entry)}
               >
                 <div className="col-span-1 text-center font-semibold">
-                  <div className={`flex flex-col items-center ${isMedievalTheme ? "text-black" : ""}`}>
+                  <div className={`flex flex-col items-center ${
+                    isMedievalTheme ? "text-black" :
+                    isCyberpunkTheme && entry.rank > 3 ? "text-white" :
+                    ""
+                  }`}>
                     {entry.rank <= 3 ? (
                       <div className={`inline-flex items-center justify-center w-6 h-6 rounded-full ${
                         isMedievalTheme 

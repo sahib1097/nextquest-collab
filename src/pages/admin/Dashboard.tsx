@@ -23,7 +23,7 @@ const Dashboard = () => {
   
   // Always use the default theme for Dashboard
   const defaultTheme = themes.default;
-
+  
   useEffect(() => {
     const storedProjects = JSON.parse(localStorage.getItem("fluxProjects") || "[]");
     setProjects(storedProjects);
