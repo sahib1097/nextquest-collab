@@ -43,7 +43,6 @@ export const retrieveProjects = async (userId: string) => {
         }
 
         const data = await response.json();
-        console.log("Retrieved projects: ", data);
         return data;
         
     } catch (error) {
