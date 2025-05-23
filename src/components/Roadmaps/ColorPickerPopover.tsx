@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { SwatchBook, Paintbrush } from 'lucide-react';
+import { useTheme } from "@/contexts/ThemeContext";
 
 const PRESET_COLORS = [
   '#9b87f5', '#7E69AB', '#F97316', '#0EA5E9', 
@@ -17,23 +17,49 @@ interface ColorPickerPopoverProps {
 }
 
 const ColorPickerPopover = ({ currentColor, onColorChange }: ColorPickerPopoverProps) => {
+  const { currentTheme } = useTheme();
+
   return (
     <Popover>
       <PopoverTrigger asChild>
         <div 
           className="w-10 h-10 rounded-md border cursor-pointer transition-all hover:scale-105"
-          style={{ background: currentColor }}
+          style={{ 
+            background: currentColor,
+            borderColor: currentTheme.colors.border
+          }}
           title="Click to change color"
         />
       </PopoverTrigger>
-      <PopoverContent className="w-64" align="start">
+      <PopoverContent 
+        className="w-64"
+        align="start"
+        style={{
+          backgroundColor: currentTheme.colors.background,
+          borderColor: currentTheme.colors.border
+        }}
+      >
         <Tabs defaultValue="presets">
-          <TabsList className="w-full mb-4">
-            <TabsTrigger value="presets" className="flex items-center gap-2 w-full">
+          <TabsList 
+            className="w-full mb-4"
+            style={{
+              backgroundColor: currentTheme.colors.secondary,
+              borderColor: currentTheme.colors.border
+            }}
+          >
+            <TabsTrigger 
+              value="presets" 
+              className="flex items-center gap-2 w-full"
+              style={{ color: currentTheme.colors.text }}
+            >
               <SwatchBook className="h-4 w-4" />
               Presets
             </TabsTrigger>
-            <TabsTrigger value="hex" className="flex items-center gap-2 w-full">
+            <TabsTrigger 
+              value="hex" 
+              className="flex items-center gap-2 w-full"
+              style={{ color: currentTheme.colors.text }}
+            >
               <Paintbrush className="h-4 w-4" />
               Custom
             </TabsTrigger>
@@ -45,43 +71,40 @@ const ColorPickerPopover = ({ currentColor, onColorChange }: ColorPickerPopoverP
                 <button
                   key={color}
                   onClick={() => onColorChange(color)}
-                  className="w-10 h-10 rounded-md transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-ring"
-                  style={{ background: color }}
+                  className="w-10 h-10 rounded-md transition-all hover:scale-105 focus:outline-none focus:ring-2"
+                  style={{ 
+                    background: color,
+                    borderColor: currentTheme.colors.border
+                  }}
                 />
               ))}
             </div>
           </TabsContent>
           
           <TabsContent value="hex" className="mt-0">
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  HEX Color
-                </label>
-                <Input
-                  type="text"
-                  placeholder="#000000"
-                  value={currentColor}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (value.match(/^#[0-9A-Fa-f]{0,6}$/)) {
-                      onColorChange(value);
-                    }
-                  }}
-                  className="font-mono"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Color Picker
-                </label>
-                <Input
-                  type="color"
-                  value={currentColor}
-                  onChange={(e) => onColorChange(e.target.value)}
-                  className="h-10 w-full cursor-pointer p-0 border-0"
-                />
-              </div>
+            <div className="space-y-2">
+              <Input
+                type="color"
+                value={currentColor}
+                onChange={(e) => onColorChange(e.target.value)}
+                className="w-full h-10"
+                style={{
+                  backgroundColor: currentTheme.colors.secondary,
+                  borderColor: currentTheme.colors.border
+                }}
+              />
+              <Input
+                type="text"
+                value={currentColor}
+                onChange={(e) => onColorChange(e.target.value)}
+                placeholder="#000000"
+                className="w-full"
+                style={{
+                  backgroundColor: currentTheme.colors.secondary,
+                  borderColor: currentTheme.colors.border,
+                  color: currentTheme.colors.text
+                }}
+              />
             </div>
           </TabsContent>
         </Tabs>

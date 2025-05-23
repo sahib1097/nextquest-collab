@@ -56,7 +56,7 @@ const Login = ({ initialTab }: LoginProps) => {
         method:      'POST',
         headers:     { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body:        JSON.stringify({ email: loginEmail, password: loginPassword }),
+        body: JSON.stringify({ email: loginEmail, password: loginPassword }),
       });
   
       if (!res.ok) {
@@ -84,21 +84,19 @@ const Login = ({ initialTab }: LoginProps) => {
       
       localStorage.setItem('fluxUser', JSON.stringify(userData));
   
-      // Set up user level data if it doesn't exist
-      if (!localStorage.getItem('fluxUserLevel')) {
-        localStorage.setItem(
-          'fluxUserLevel',
-          JSON.stringify({
-            userId: user.id,
-            username: user.name,
-            xp: 0,
-            level: 1,
-            nextLevelXp: 100,
-            profilePicture: user.avatarUrl || ''
-          })
-        );
-      }
+      // 3) Ensure fluxUserLevel exists
+      const defaultUserLevel = {
+        userId: user.id,
+        username: user.name,
+        xp: user.xp || 0,
+        level: user.level || 1,
+        nextLevelXp: user.nextLevelXp || 100,
+        profilePicture: user.profilePicture
+      };
+      
+      localStorage.setItem('fluxUserLevel', JSON.stringify(defaultUserLevel));
   
+      // 4) Update last activity timestamp
       updateLastActivity();
       toast.success(`Welcome back, ${user.name}!`);
       navigate('/admin/dashboard');

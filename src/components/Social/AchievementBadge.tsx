@@ -5,6 +5,7 @@ import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/h
 import { Award, Share2, Trophy, Lock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface AchievementBadgeProps {
   achievement: Achievement;
@@ -14,6 +15,7 @@ interface AchievementBadgeProps {
 
 const AchievementBadge = ({ achievement, animate = false, size = "md" }: AchievementBadgeProps) => {
   const [isSharing, setIsSharing] = useState(false);
+  const { currentTheme } = useTheme();
 
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -44,33 +46,57 @@ const AchievementBadge = ({ achievement, animate = false, size = "md" }: Achieve
 
   const getTrophyColor = () => {
     if (achievement.hidden && !achievement.earnedAt) {
-      return "text-gray-400";
+      return currentTheme.colors.accent;
     }
     switch (achievement.type) {
-      case "Bronze": return "text-amber-600";
-      case "Silver": return "text-slate-400";
-      case "Gold": return "text-yellow-500";
-      case "Platinum": return "text-blue-500";
-      default: return "text-purple-500";
+      case "Bronze": return currentTheme.colors.accent;
+      case "Silver": return currentTheme.colors.secondary;
+      case "Gold": return currentTheme.colors.primary;
+      case "Platinum": return currentTheme.colors.accent;
+      default: return currentTheme.colors.primary;
     }
   };
 
   const getBadgeStyle = () => {
     if (achievement.hidden && !achievement.earnedAt) {
-      return "bg-gray-100 text-gray-500 hover:bg-gray-200 border-gray-200";
+      return {
+        background: currentTheme.colors.secondary,
+        text: currentTheme.colors.accent,
+        border: currentTheme.colors.border
+      };
     }
 
     switch (achievement.type) {
       case "Bronze":
-        return "bg-gradient-to-r from-amber-100 to-amber-200 text-amber-800 hover:from-amber-200 hover:to-amber-300 border-amber-300";
+        return {
+          background: `linear-gradient(to right, ${currentTheme.colors.accent}20, ${currentTheme.colors.accent}30)`,
+          text: currentTheme.colors.accent,
+          border: currentTheme.colors.accent
+        };
       case "Silver":
-        return "bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700 hover:from-slate-200 hover:to-slate-300 border-slate-300";
+        return {
+          background: `linear-gradient(to right, ${currentTheme.colors.secondary}20, ${currentTheme.colors.secondary}30)`,
+          text: currentTheme.colors.secondary,
+          border: currentTheme.colors.secondary
+        };
       case "Gold":
-        return "bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 hover:from-yellow-200 hover:to-yellow-300 border-yellow-300";
+        return {
+          background: `linear-gradient(to right, ${currentTheme.colors.primary}20, ${currentTheme.colors.primary}30)`,
+          text: currentTheme.colors.primary,
+          border: currentTheme.colors.primary
+        };
       case "Platinum":
-        return "bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 hover:from-blue-200 hover:to-blue-300 border-blue-300";
+        return {
+          background: `linear-gradient(to right, ${currentTheme.colors.accent}20, ${currentTheme.colors.accent}30)`,
+          text: currentTheme.colors.accent,
+          border: currentTheme.colors.accent
+        };
       default:
-        return "bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800 hover:from-purple-200 hover:to-purple-300 border-purple-300";
+        return {
+          background: `linear-gradient(to right, ${currentTheme.colors.primary}20, ${currentTheme.colors.primary}30)`,
+          text: currentTheme.colors.primary,
+          border: currentTheme.colors.primary
+        };
     }
   };
 
@@ -79,21 +105,26 @@ const AchievementBadge = ({ achievement, animate = false, size = "md" }: Achieve
 
     const dotColor = () => {
       switch(achievement.rarity) {
-        case TrophyRarity.COMMON: return "bg-gray-400";
-        case TrophyRarity.UNCOMMON: return "bg-green-500";
-        case TrophyRarity.RARE: return "bg-blue-500"; 
-        case TrophyRarity.VERY_RARE: return "bg-purple-500";
-        case TrophyRarity.ULTRA_RARE: return "bg-yellow-500";
-        default: return "bg-gray-400";
+        case TrophyRarity.COMMON: return currentTheme.colors.accent;
+        case TrophyRarity.UNCOMMON: return currentTheme.colors.secondary;
+        case TrophyRarity.RARE: return currentTheme.colors.primary;
+        case TrophyRarity.VERY_RARE: return currentTheme.colors.accent;
+        case TrophyRarity.ULTRA_RARE: return currentTheme.colors.primary;
+        default: return currentTheme.colors.accent;
       }
     };
 
     return (
       <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2">
-        <div className={`${dotColor()} h-1.5 w-1.5 rounded-full shadow-sm`}></div>
+        <div 
+          className="h-1.5 w-1.5 rounded-full shadow-sm"
+          style={{ backgroundColor: dotColor() }}
+        />
       </div>
     );
   };
+
+  const badgeStyle = getBadgeStyle();
 
   return (
     <HoverCard>
@@ -108,12 +139,17 @@ const AchievementBadge = ({ achievement, animate = false, size = "md" }: Achieve
           className="relative cursor-pointer"
         >
           <Badge 
-            className={`flex items-center gap-1.5 ${getBadgeSize()} ${getBadgeStyle()} relative shadow-sm transition-all duration-300`}
+            className={`flex items-center gap-1.5 ${getBadgeSize()} relative shadow-sm transition-all duration-300`}
+            style={{
+              background: badgeStyle.background,
+              color: badgeStyle.text,
+              borderColor: badgeStyle.border
+            }}
           >
             {achievement.hidden && !achievement.earnedAt ? (
-              <Lock className={`${size === "sm" ? "h-3 w-3" : "h-4 w-4"} ${getTrophyColor()}`} />
+              <Lock className={`${size === "sm" ? "h-3 w-3" : "h-4 w-4"}`} style={{ color: badgeStyle.text }} />
             ) : (
-              <Trophy className={`${size === "sm" ? "h-3 w-3" : "h-4 w-4"} ${getTrophyColor()}`} />
+              <Trophy className={`${size === "sm" ? "h-3 w-3" : "h-4 w-4"}`} style={{ color: badgeStyle.text }} />
             )}
             <span className="font-medium">
               {achievement.hidden && !achievement.earnedAt ? "???" : achievement.name}
@@ -123,7 +159,11 @@ const AchievementBadge = ({ achievement, animate = false, size = "md" }: Achieve
           
           {achievement.earnedAt && (
             <motion.button
-              className="absolute -top-1 -right-1 bg-white text-gray-600 rounded-full p-0.5 shadow-sm hover:text-purple-600"
+              className="absolute -top-1 -right-1 rounded-full p-0.5 shadow-sm"
+              style={{
+                backgroundColor: currentTheme.colors.background,
+                color: currentTheme.colors.text
+              }}
               onClick={handleShare}
               whileHover={{ scale: 1.2 }}
               whileTap={{ scale: 0.9 }}
@@ -133,10 +173,16 @@ const AchievementBadge = ({ achievement, animate = false, size = "md" }: Achieve
           )}
           
           {achievement.progress !== undefined && !achievement.earnedAt && (
-            <div className="mt-1 w-full bg-gray-200 rounded-full h-1">
+            <div 
+              className="mt-1 w-full rounded-full h-1"
+              style={{ backgroundColor: currentTheme.colors.secondary }}
+            >
               <div 
-                className="bg-purple-600 h-1 rounded-full transition-all duration-500"
-                style={{ width: `${achievement.progress}%` }}
+                className="h-1 rounded-full transition-all duration-500"
+                style={{ 
+                  width: `${achievement.progress}%`,
+                  backgroundColor: currentTheme.colors.primary
+                }}
               />
             </div>
           )}
@@ -144,33 +190,63 @@ const AchievementBadge = ({ achievement, animate = false, size = "md" }: Achieve
       </HoverCardTrigger>
       <HoverCardContent 
         side="top"
-        className="w-80 p-4 shadow-lg backdrop-blur-sm bg-white/95 border border-gray-200"
+        className="w-80 p-4 shadow-lg backdrop-blur-sm border"
+        style={{
+          backgroundColor: currentTheme.colors.background,
+          borderColor: currentTheme.colors.border
+        }}
       >
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <h4 className="font-semibold text-sm">{achievement.name}</h4>
+            <h4 
+              className="font-semibold text-sm"
+              style={{ color: currentTheme.colors.text }}
+            >
+              {achievement.name}
+            </h4>
             <Badge 
               variant="outline" 
-              className={`text-xs ${getTrophyColor()} border-current`}
+              className="text-xs border-current"
+              style={{ color: getTrophyColor() }}
             >
               {achievement.type}
             </Badge>
           </div>
           
-          <p className="text-sm text-gray-600">{achievement.description}</p>
+          <p 
+            className="text-sm"
+            style={{ color: currentTheme.colors.accent }}
+          >
+            {achievement.description}
+          </p>
           
           {achievement.earnedAt ? (
-            <div className="text-xs text-gray-500 pt-2 border-t">
+            <div 
+              className="text-xs pt-2 border-t"
+              style={{ 
+                color: currentTheme.colors.accent,
+                borderColor: currentTheme.colors.border
+              }}
+            >
               <span>Earned: {new Date(achievement.earnedAt).toLocaleDateString()}</span>
             </div>
           ) : achievement.progress !== undefined ? (
-            <div className="text-xs text-gray-500 pt-2 border-t">
+            <div 
+              className="text-xs pt-2 border-t"
+              style={{ 
+                color: currentTheme.colors.accent,
+                borderColor: currentTheme.colors.border
+              }}
+            >
               <span>Progress: {achievement.progress}%</span>
             </div>
           ) : null}
           
-          <div className="text-xs text-gray-500 flex items-center gap-1">
-            <Trophy className="h-3 w-3" />
+          <div 
+            className="text-xs flex items-center gap-1"
+            style={{ color: currentTheme.colors.accent }}
+          >
+            <Trophy className="h-3 w-3" style={{ color: getTrophyColor() }} />
             <span>{achievement.rarity} ({getRarityPercentage(achievement.rarity)})</span>
           </div>
         </div>

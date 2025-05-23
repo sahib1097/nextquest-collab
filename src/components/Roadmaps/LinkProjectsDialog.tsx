@@ -16,6 +16,7 @@ import { Progress } from "@/components/ui/progress";
 import { getAvailableProjects, getLinkedProjectsForItem, linkProjectsToRoadmapItem } from "@/services/roadmapService";
 import { ProjectLinkOption } from "@/types/roadmap";
 import { toast } from "sonner";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface LinkProjectsDialogProps {
   open: boolean;
@@ -32,6 +33,7 @@ const LinkProjectsDialog = ({
   itemId,
   itemTitle,
 }: LinkProjectsDialogProps) => {
+  const { currentTheme } = useTheme();
   const [availableProjects, setAvailableProjects] = useState<ProjectLinkOption[]>([]);
   const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -87,28 +89,55 @@ const LinkProjectsDialog = ({
   const getStatusBadgeColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "planning":
-        return "bg-blue-100 text-blue-800";
+        return {
+          background: `${currentTheme.colors.primary}20`,
+          text: currentTheme.colors.primary
+        };
       case "in progress":
       case "in-progress":
-        return "bg-amber-100 text-amber-800";
+        return {
+          background: `${currentTheme.colors.accent}20`,
+          text: currentTheme.colors.accent
+        };
       case "review":
-        return "bg-purple-100 text-purple-800";
+        return {
+          background: `${currentTheme.colors.secondary}20`,
+          text: currentTheme.colors.secondary
+        };
       case "completed":
-        return "bg-green-100 text-green-800";
+        return {
+          background: "#ECFDF5",
+          text: "#10B981"
+        };
       default:
-        return "bg-gray-100 text-gray-800";
+        return {
+          background: `${currentTheme.colors.secondary}20`,
+          text: currentTheme.colors.secondary
+        };
     }
   };
   
   return (
     <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent 
+        className="sm:max-w-md"
+        style={{
+          backgroundColor: currentTheme.colors.background,
+          borderColor: currentTheme.colors.border
+        }}
+      >
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle 
+            className="flex items-center gap-2"
+            style={{ color: currentTheme.colors.text }}
+          >
             <Link className="h-5 w-5" />
             Link Projects to Roadmap Item
           </DialogTitle>
-          <DialogDescription className="text-sm text-gray-500">
+          <DialogDescription 
+            className="text-sm"
+            style={{ color: currentTheme.colors.accent }}
+          >
             Link existing projects to track progress on this roadmap item.
           </DialogDescription>
         </DialogHeader>
@@ -163,21 +192,49 @@ const LinkProjectsDialog = ({
             ) : (
               <div className="space-y-2">
                 {filteredProjects.map(project => (
-                  <div key={project.id} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded">
-                    <Checkbox
-                      id={`project-${project.id}`}
-                      checked={selectedProjects.includes(project.id)}
-                      onCheckedChange={() => handleToggleProject(project.id)}
-                    />
-                    <label
-                      htmlFor={`project-${project.id}`}
-                      className="flex flex-1 items-center justify-between text-sm font-medium cursor-pointer"
+                  <div 
+                    key={project.id}
+                    className="flex items-center justify-between p-3 rounded-lg border"
+                    style={{ 
+                      backgroundColor: currentTheme.colors.background,
+                      borderColor: currentTheme.colors.border
+                    }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        checked={selectedProjects.includes(project.id)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setSelectedProjects([...selectedProjects, project.id]);
+                          } else {
+                            setSelectedProjects(selectedProjects.filter(id => id !== project.id));
+                          }
+                        }}
+                      />
+                      <div>
+                        <h4 
+                          className="font-medium"
+                          style={{ color: currentTheme.colors.text }}
+                        >
+                          {project.name}
+                        </h4>
+                        <div 
+                          className="text-xs mt-1 px-2 py-0.5 rounded-full inline-block"
+                          style={{
+                            backgroundColor: getStatusBadgeColor(project.status).background,
+                            color: getStatusBadgeColor(project.status).text
+                          }}
+                        >
+                          {project.status}
+                        </div>
+                      </div>
+                    </div>
+                    <div 
+                      className="text-sm"
+                      style={{ color: currentTheme.colors.accent }}
                     >
-                      <span>{project.name}</span>
-                      <Badge className={getStatusBadgeColor(project.status)}>
-                        {project.status}
-                      </Badge>
-                    </label>
+                      {Math.round(project.progress)}%
+                    </div>
                   </div>
                 ))}
               </div>
@@ -186,8 +243,23 @@ const LinkProjectsDialog = ({
         </div>
         
         <DialogFooter>
-          <Button variant="outline" onClick={onClose} disabled={isSubmitting}>Cancel</Button>
-          <Button onClick={handleSave} disabled={isSubmitting}>
+          <Button
+            variant="outline"
+            onClick={onClose}
+            style={{
+              borderColor: currentTheme.colors.border,
+              color: currentTheme.colors.text
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSave}
+            style={{
+              backgroundColor: currentTheme.colors.primary,
+              color: currentTheme.colors.text
+            }}
+          >
             {isSubmitting ? "Linking..." : "Link Projects"}
           </Button>
         </DialogFooter>

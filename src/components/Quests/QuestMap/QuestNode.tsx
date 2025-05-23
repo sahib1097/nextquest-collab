@@ -1,9 +1,9 @@
-
 import { motion } from "framer-motion";
 import { Scroll, Lock, Check, Star, AlertTriangle, Clock, Zap, Users } from "lucide-react";
 import { Quest, QuestStatus } from "@/types/quest";
 import { calculateQuestUrgency } from "@/utils/mapGenerationUtils";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface QuestNodeProps {
   quest: Quest;
@@ -15,6 +15,15 @@ interface QuestNodeProps {
   mapStyle: "parchment" | "woodland" | "dungeon" | "tavern";
 }
 
+interface NodeStyles {
+  className: string;
+  style: {
+    backgroundColor: string;
+    borderColor: string;
+    boxShadow: string;
+  };
+}
+
 const QuestNode = ({ 
   quest, 
   position, 
@@ -24,6 +33,7 @@ const QuestNode = ({
   onHoverEnd,
   mapStyle
 }: QuestNodeProps) => {
+  const { currentTheme } = useTheme();
   const isCompleted = quest.status === QuestStatus.COMPLETED;
   const isFailed = quest.status === QuestStatus.FAILED;
   const isInProgress = quest.status === QuestStatus.IN_PROGRESS;
@@ -48,45 +58,141 @@ const QuestNode = ({
   };
   
   // Get appropriate colors based on quest status and map style
-  const getNodeStyles = () => {
+  const getNodeStyles = (): NodeStyles => {
     // Base styles for all nodes
     const baseStyles = "rounded-full flex items-center justify-center cursor-pointer shadow-lg relative";
     
     // Color schemes based on map style
     const parchmentScheme = {
-      locked: "bg-stone-300 border-2 border-stone-400 shadow-stone-500/30",
-      completed: "bg-emerald-100 border-2 border-emerald-700 shadow-emerald-700/30",
-      failed: "bg-red-100 border-2 border-red-800 shadow-red-800/30",
-      inProgress: "bg-amber-100 border-2 border-amber-700 shadow-amber-700/30",
-      urgent: "bg-red-100 border-2 border-red-800 shadow-red-800/30",
-      available: "bg-amber-50 border-2 border-amber-800 shadow-amber-800/30"
+      locked: {
+        background: currentTheme.colors.secondary,
+        border: currentTheme.colors.border,
+        shadow: `${currentTheme.colors.border}30`
+      },
+      completed: {
+        background: "#ECFDF5",
+        border: "#10B981",
+        shadow: "#10B98130"
+      },
+      failed: {
+        background: "#FEF2F2",
+        border: "#EF4444",
+        shadow: "#EF444430"
+      },
+      inProgress: {
+        background: "#FFFBEB",
+        border: currentTheme.colors.accent,
+        shadow: `${currentTheme.colors.accent}30`
+      },
+      urgent: {
+        background: "#FEF2F2",
+        border: "#EF4444",
+        shadow: "#EF444430"
+      },
+      available: {
+        background: "#FFFBEB",
+        border: currentTheme.colors.accent,
+        shadow: `${currentTheme.colors.accent}30`
+      }
     };
     
     const woodlandScheme = {
-      locked: "bg-slate-700 border-2 border-slate-500 shadow-slate-900/50",
-      completed: "bg-emerald-700 border-2 border-emerald-400 shadow-emerald-400/50",
-      failed: "bg-red-900 border-2 border-red-600 shadow-red-600/50",
-      inProgress: "bg-blue-800 border-2 border-blue-500 shadow-blue-500/50",
-      urgent: "bg-amber-800 border-2 border-amber-500 shadow-amber-500/50",
-      available: "bg-teal-800 border-2 border-teal-400 shadow-teal-400/50"
+      locked: {
+        background: currentTheme.colors.secondary,
+        border: currentTheme.colors.border,
+        shadow: `${currentTheme.colors.border}50`
+      },
+      completed: {
+        background: "#064E3B",
+        border: "#34D399",
+        shadow: "#34D39950"
+      },
+      failed: {
+        background: "#7F1D1D",
+        border: "#F87171",
+        shadow: "#F8717150"
+      },
+      inProgress: {
+        background: "#1E40AF",
+        border: currentTheme.colors.primary,
+        shadow: `${currentTheme.colors.primary}50`
+      },
+      urgent: {
+        background: "#92400E",
+        border: currentTheme.colors.accent,
+        shadow: `${currentTheme.colors.accent}50`
+      },
+      available: {
+        background: "#134E4A",
+        border: currentTheme.colors.primary,
+        shadow: `${currentTheme.colors.primary}50`
+      }
     };
     
     const dungeonScheme = {
-      locked: "bg-stone-700 border-2 border-stone-500 shadow-stone-800/50",
-      completed: "bg-emerald-900 border-2 border-emerald-600 shadow-emerald-600/50",
-      failed: "bg-red-900 border-2 border-red-600 shadow-red-600/50",
-      inProgress: "bg-amber-800 border-2 border-amber-600 shadow-amber-600/50",
-      urgent: "bg-red-800 border-2 border-red-500 shadow-red-500/50",
-      available: "bg-stone-800 border-2 border-stone-400 shadow-stone-600/50"
+      locked: {
+        background: currentTheme.colors.secondary,
+        border: currentTheme.colors.border,
+        shadow: `${currentTheme.colors.border}50`
+      },
+      completed: {
+        background: "#064E3B",
+        border: "#059669",
+        shadow: "#05966950"
+      },
+      failed: {
+        background: "#7F1D1D",
+        border: "#DC2626",
+        shadow: "#DC262650"
+      },
+      inProgress: {
+        background: "#92400E",
+        border: currentTheme.colors.accent,
+        shadow: `${currentTheme.colors.accent}50`
+      },
+      urgent: {
+        background: "#7F1D1D",
+        border: "#DC2626",
+        shadow: "#DC262650"
+      },
+      available: {
+        background: currentTheme.colors.secondary,
+        border: currentTheme.colors.border,
+        shadow: `${currentTheme.colors.border}50`
+      }
     };
     
     const tavernScheme = {
-      locked: "bg-stone-400 border-2 border-stone-600 shadow-stone-700/50",
-      completed: "bg-emerald-300 border-2 border-emerald-700 shadow-emerald-700/50",
-      failed: "bg-red-300 border-2 border-red-800 shadow-red-800/50",
-      inProgress: "bg-amber-300 border-2 border-amber-700 shadow-amber-700/50",
-      urgent: "bg-red-300 border-2 border-red-700 shadow-red-700/50",
-      available: "bg-amber-200 border-2 border-amber-800 shadow-amber-800/50"
+      locked: {
+        background: currentTheme.colors.secondary,
+        border: currentTheme.colors.border,
+        shadow: `${currentTheme.colors.border}50`
+      },
+      completed: {
+        background: "#A7F3D0",
+        border: "#059669",
+        shadow: "#05966950"
+      },
+      failed: {
+        background: "#FECACA",
+        border: "#DC2626",
+        shadow: "#DC262650"
+      },
+      inProgress: {
+        background: "#FDE68A",
+        border: currentTheme.colors.accent,
+        shadow: `${currentTheme.colors.accent}50`
+      },
+      urgent: {
+        background: "#FECACA",
+        border: "#DC2626",
+        shadow: "#DC262650"
+      },
+      available: {
+        background: "#FEF3C7",
+        border: currentTheme.colors.accent,
+        shadow: `${currentTheme.colors.accent}50`
+      }
     };
     
     // Select color scheme based on map style
@@ -95,36 +201,32 @@ const QuestNode = ({
                   mapStyle === "dungeon" ? dungeonScheme : 
                   tavernScheme;
     
-    if (isLocked) {
-      return cn(baseStyles, scheme.locked);
-    }
+    let status;
+    if (isLocked) status = "locked";
+    else if (isCompleted) status = "completed";
+    else if (isFailed) status = "failed";
+    else if (isInProgress) status = "inProgress";
+    else if (urgencyLevel > 0.6) status = "urgent";
+    else status = "available";
     
-    if (isCompleted) {
-      return cn(baseStyles, scheme.completed);
-    }
+    const colors = scheme[status];
     
-    if (isFailed) {
-      return cn(baseStyles, scheme.failed);
-    }
-    
-    if (isInProgress) {
-      return cn(baseStyles, scheme.inProgress);
-    }
-    
-    // Default "available" state with urgency influence
-    if (urgencyLevel > 0.6) {
-      return cn(baseStyles, scheme.urgent);
-    }
-    
-    return cn(baseStyles, scheme.available);
+    return {
+      className: baseStyles,
+      style: {
+        backgroundColor: colors.background,
+        borderColor: colors.border,
+        boxShadow: `0 4px 6px -1px ${colors.shadow}`
+      }
+    };
   };
   
   // Get appropriate text color based on map style
   const getTextColor = () => {
     if (mapStyle === "woodland" || mapStyle === "dungeon") {
-      return "text-white";
+      return currentTheme.colors.text;
     }
-    return "text-gray-900";
+    return currentTheme.colors.text;
   };
   
   // Get appropriate icon based on quest status and type
@@ -214,6 +316,8 @@ const QuestNode = ({
     return decorElements;
   };
   
+  const nodeStyles = getNodeStyles();
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -228,7 +332,7 @@ const QuestNode = ({
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={isLocked ? undefined : onClick}
-        className={getNodeStyles()}
+        className={nodeStyles.className}
         style={{ 
           width: getNodeSize(), 
           height: getNodeSize(),

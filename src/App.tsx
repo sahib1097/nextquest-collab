@@ -23,7 +23,7 @@ import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
 import Profile from "./pages/Profile";
 import { useEffect, useState } from "react";
-import { ThemeProvider } from "./hooks/use-theme";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import { initializeAuthTracking, isAuthenticated, setupExpiryChecker } from "./utils/authUtils";
 
 const queryClient = new QueryClient();
@@ -58,8 +58,8 @@ const App = () => {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <Toaster />
           <Sonner />
@@ -101,8 +101,8 @@ const App = () => {
             </div>
           </BrowserRouter>
         </TooltipProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 };
 

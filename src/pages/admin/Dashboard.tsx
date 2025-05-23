@@ -9,6 +9,7 @@ import QuestLog from "@/components/Dashboard/QuestLog";
 import TemplatesSection from "@/components/Dashboard/TemplatesSection";
 import { getActivities, Activity } from "@/utils/activityLogger";
 import { formatDistanceToNow } from "date-fns";
+import { themes } from "@/config/themes";
 import { retrieveProjects} from "@/utils/projectLogger"; 
 
 const Dashboard = () => {
@@ -20,6 +21,9 @@ const Dashboard = () => {
   const [roadmapCount, setRoadmapCount] = useState(0);
   const [remainingBudget, setRemainingBudget] = useState(0);
   const [totalBudget, setTotalBudget] = useState(0);
+  
+  // Always use the default theme for Dashboard
+  const defaultTheme = themes.default;
   
   useEffect(() => {
     
@@ -84,10 +88,10 @@ const Dashboard = () => {
   
   return (
     <DashboardLayout>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-8" style={{ backgroundColor: defaultTheme.colors.background }}>
         <div>
-          <h1 className="text-xl font-semibold text-foreground">Welcome to Next Quest</h1>
-          <p className="text-muted-foreground text-sm mt-0.5">Your workspace overview</p>
+          <h1 className="text-xl font-semibold" style={{ color: defaultTheme.colors.text }}>Welcome to Next Quest</h1>
+          <p className="text-[#86868B] text-sm mt-0.5">Your workspace overview</p>
         </div>
         <Button 
           onClick={() => navigate("/admin/projects/new")} 
@@ -101,7 +105,9 @@ const Dashboard = () => {
       <TemplatesSection />
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-        <Card className="border-border shadow-sm hover:shadow-md transition-shadow cursor-pointer bg-card" onClick={() => navigate("/admin/projects")}>
+        <Card className="border border-[#E5E5EA] shadow-sm hover:shadow-md transition-shadow cursor-pointer" 
+              onClick={() => navigate("/admin/projects")}
+              style={{ backgroundColor: defaultTheme.colors.background }}>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Projects
@@ -111,12 +117,14 @@ const Dashboard = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-semibold text-foreground">{projects.length}</div>
-            <p className="text-xs text-muted-foreground mt-1">Total projects</p>
+            <div className="text-2xl font-semibold" style={{ color: defaultTheme.colors.text }}>{projects.length}</div>
+            <p className="text-xs text-[#86868B] mt-1">Total projects</p>
           </CardContent>
         </Card>
         
-        <Card className="border-border shadow-sm hover:shadow-md transition-shadow cursor-pointer bg-card" onClick={() => navigate("/admin/team")}>
+        <Card className="border border-[#E5E5EA] shadow-sm hover:shadow-md transition-shadow cursor-pointer" 
+              onClick={() => navigate("/admin/team")}
+              style={{ backgroundColor: defaultTheme.colors.background }}>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Team
@@ -126,12 +134,14 @@ const Dashboard = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-semibold text-foreground">{userCount}</div>
-            <p className="text-xs text-muted-foreground mt-1">Team members</p>
+            <div className="text-2xl font-semibold" style={{ color: defaultTheme.colors.text }}>{userCount}</div>
+            <p className="text-xs text-[#86868B] mt-1">Team members</p>
           </CardContent>
         </Card>
         
-        <Card className="border-border shadow-sm hover:shadow-md transition-shadow cursor-pointer bg-card" onClick={() => navigate("/admin/budgets")}>
+        <Card className="border border-[#E5E5EA] shadow-sm hover:shadow-md transition-shadow cursor-pointer" 
+              onClick={() => navigate("/admin/budgets")}
+              style={{ backgroundColor: defaultTheme.colors.background }}>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Budget
@@ -141,12 +151,14 @@ const Dashboard = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-semibold text-foreground">${remainingBudget.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground mt-1">Remaining budget</p>
+            <div className="text-2xl font-semibold" style={{ color: defaultTheme.colors.text }}>${remainingBudget.toLocaleString()}</div>
+            <p className="text-xs text-[#86868B] mt-1">Remaining budget</p>
           </CardContent>
         </Card>
         
-        <Card className="border-border shadow-sm hover:shadow-md transition-shadow cursor-pointer bg-card" onClick={() => navigate("/admin/roadmaps")}>
+        <Card className="border border-[#E5E5EA] shadow-sm hover:shadow-md transition-shadow cursor-pointer" 
+              onClick={() => navigate("/admin/roadmaps")}
+              style={{ backgroundColor: defaultTheme.colors.background }}>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Roadmaps
@@ -156,16 +168,16 @@ const Dashboard = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-semibold text-foreground">{roadmapCount}</div>
-            <p className="text-xs text-muted-foreground mt-1">Active roadmaps</p>
+            <div className="text-2xl font-semibold" style={{ color: defaultTheme.colors.text }}>{roadmapCount}</div>
+            <p className="text-xs text-[#86868B] mt-1">Active roadmaps</p>
           </CardContent>
         </Card>
       </div>
       
       <div className="grid gap-4 md:grid-cols-3 mb-8">
-        <Card className="border-border shadow-sm md:col-span-2 bg-card">
-          <CardHeader className="border-b border-border pb-3">
-            <CardTitle className="text-foreground">Recent Projects</CardTitle>
+        <Card className="border border-[#E5E5EA] shadow-sm md:col-span-2" style={{ backgroundColor: defaultTheme.colors.background }}>
+          <CardHeader className="border-b border-[#E5E5EA] pb-3">
+            <CardTitle className="text-[#1D1D1F]">Recent Projects</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             {projects.length === 0 ? (
@@ -191,18 +203,14 @@ const Dashboard = () => {
                 </TableHeader>
                 <TableBody>
                   {projects.slice(0, 4).map((project, index) => (
-                    <TableRow 
-                      key={project.id || index} 
-                      className="cursor-pointer hover:bg-muted" 
-                      onClick={() => navigate(`/admin/projects/${project.id}`)}
-                    >
-                      <TableCell className="font-medium text-foreground">{project.name}</TableCell>
+                    <TableRow key={project.id || index} className="cursor-pointer hover:bg-[#F5F5F7]" onClick={() => navigate(`/admin/projects/${project.id}`)}>
+                      <TableCell className="font-medium" style={{ color: defaultTheme.colors.text }}>{project.name}</TableCell>
                       <TableCell>
                         <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-500">
                           {project.status || 'Active'}
                         </span>
                       </TableCell>
-                      <TableCell className="text-foreground">{project.tasks?.length || 0}</TableCell>
+                      <TableCell style={{ color: defaultTheme.colors.text }}>{project.tasks?.length || 0}</TableCell>
                       <TableCell>
                         <div className="w-full bg-muted rounded-full h-1.5">
                           <div 
@@ -222,9 +230,9 @@ const Dashboard = () => {
         <QuestLog />
       </div>
       
-      <Card className="border-border shadow-sm mb-8 bg-card">
-        <CardHeader className="border-b border-border pb-3">
-          <CardTitle className="text-foreground">Recent Activity</CardTitle>
+      <Card className="border border-[#E5E5EA] shadow-sm mb-8" style={{ backgroundColor: defaultTheme.colors.background }}>
+        <CardHeader className="border-b border-[#E5E5EA] pb-3">
+          <CardTitle className="text-[#1D1D1F]">Recent Activity</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {activities.length === 0 ? (
@@ -238,14 +246,15 @@ const Dashboard = () => {
                   key={activity._id} 
                   className="p-4 hover:bg-muted cursor-pointer transition-colors"
                   onClick={() => handleActivityClick(activity)}
+                  style={{ color: defaultTheme.colors.text }}
                 >
                   <div className="flex items-start">
                     <div className="p-1.5 rounded-full bg-primary/10 text-primary mr-3">
                       <Clock className="h-3.5 w-3.5" />
                     </div>
                     <div>
-                      <p className="text-sm text-foreground">{activity.details}</p>
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <p className="text-sm">{activity.details}</p>
+                      <p className="text-xs text-[#86868B] mt-1">
                         {formatActivityTime(activity.timestamp)}
                       </p>
                     </div>
