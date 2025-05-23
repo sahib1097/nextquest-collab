@@ -53,6 +53,7 @@ export const retrieveProjects = async (userId: string) => {
 
 export const updateProjectStatus = async (projectId: string, newStatus: string) => {
     try {
+        console.log("Updating project status: ", projectId, newStatus);
         const response = await fetch(`${API}/api/projectinfo/update-status`, {
             method: 'POST',
             headers: {

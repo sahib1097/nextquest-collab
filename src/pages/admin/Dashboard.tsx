@@ -9,6 +9,7 @@ import QuestLog from "@/components/Dashboard/QuestLog";
 import TemplatesSection from "@/components/Dashboard/TemplatesSection";
 import { getActivities, Activity } from "@/utils/activityLogger";
 import { formatDistanceToNow } from "date-fns";
+import { retrieveProjects} from "@/utils/projectLogger"; 
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -21,14 +22,27 @@ const Dashboard = () => {
   const [totalBudget, setTotalBudget] = useState(0);
   
   useEffect(() => {
-    const storedProjects = JSON.parse(localStorage.getItem("fluxProjects") || "[]");
-    setProjects(storedProjects);
     
     const fetchActivities = async () => {
       const activities = await getActivities();
       setActivities(activities? activities : []);
     }
     fetchActivities();
+
+    const populateProjects = async () => {
+      try {
+        const user = JSON.parse(localStorage.getItem("fluxUser") || "{}");
+        const fetchedProjects = await retrieveProjects(user.userId);
+        console.log("Populated projects: ", fetchedProjects);
+        if (Array.isArray(fetchedProjects)) {
+          setProjects(fetchedProjects);
+        }
+        
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    };
+    populateProjects();
 
     
     const storedUsers = JSON.parse(localStorage.getItem("fluxUsers") || "[]");
