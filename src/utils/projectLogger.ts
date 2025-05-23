@@ -1,6 +1,6 @@
 import { API } from "../config";
 
-export const createProject = async (newProject: any, userId: string) => {
+export const createProject = async (newProject: any, teamId: string) => {
 
     try {
         // Make API call to create project in database
@@ -11,7 +11,7 @@ export const createProject = async (newProject: any, userId: string) => {
         },
         body: JSON.stringify({
             newProject,
-            userId
+            teamId
         })
         });
 
@@ -24,7 +24,7 @@ export const createProject = async (newProject: any, userId: string) => {
     }
 }
 
-export const retrieveProjects = async (userId: string) => {
+export const retrieveProjects = async (teamId: string) => {
     try {
         const response = await fetch(`${API}/projectinfo/get-projects/`,
             {
@@ -33,7 +33,7 @@ export const retrieveProjects = async (userId: string) => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    userId: userId
+                    teamId
                 })
             }
         );

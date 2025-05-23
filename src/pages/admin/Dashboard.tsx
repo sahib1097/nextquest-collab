@@ -32,7 +32,7 @@ const Dashboard = () => {
     const populateProjects = async () => {
       try {
         const user = JSON.parse(localStorage.getItem("fluxUser") || "{}");
-        const fetchedProjects = await retrieveProjects(user.userId);
+        const fetchedProjects = await retrieveProjects(user.teamId);
         console.log("Populated projects: ", fetchedProjects);
         if (Array.isArray(fetchedProjects)) {
           setProjects(fetchedProjects);

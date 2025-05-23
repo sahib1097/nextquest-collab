@@ -31,8 +31,10 @@ const Login = ({ initialTab }: LoginProps) => {
   const [signupConfirm, setSignupConfirm] = useState("");
   const [signupPosition, setSignupPosition] = useState("");
   const [signupBio, setSignupBio] = useState("");
+  const [signupCompany, setSignupCompany] = useState("");
   const [signupAvatarUrl, setSignupAvatarUrl] = useState("");
   const [isSignupLoading, setIsSignupLoading] = useState(false);
+  const [isProfileBio, setIsProfileBio] = useState(false);
 
   // Auth check
   const [checkingAuth, setCheckingAuth] = useState(true);
@@ -76,7 +78,8 @@ const Login = ({ initialTab }: LoginProps) => {
         avatar: user.avatarUrl || '',
         isAuthenticated: true,
         lastLogin: new Date().toISOString(),
-        role: user.roleIds?.[0]?.name || 'User'
+        role: user.roleIds?.[0]?.name || 'User',
+        teamId: user.teamId
       };
       
       localStorage.setItem('fluxUser', JSON.stringify(userData));
@@ -107,8 +110,9 @@ const Login = ({ initialTab }: LoginProps) => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inviteToken) {
-      return toast.error("Invalid or expired invite link");
+    if (!inviteToken && !isProfileBio) {
+      setIsProfileBio(true);
+      return (toast.error("You are siging up as a new user"));
     }
     setIsSignupLoading(true);
   
@@ -136,6 +140,7 @@ const Login = ({ initialTab }: LoginProps) => {
           password:   signupPassword,
           position:   signupPosition,
           bio:        signupBio,
+          newUser:    signupPosition? true : false,
           avatarUrl:  signupAvatarUrl,
         }),
       });
@@ -154,6 +159,7 @@ const Login = ({ initialTab }: LoginProps) => {
         "fluxUser",
         JSON.stringify({
           userId:          data.userId,
+          teamId:          user.teamIds,
           email:           user.email,
           isAuthenticated: true,
           lastLogin:       new Date().toISOString(),
@@ -349,6 +355,34 @@ const Login = ({ initialTab }: LoginProps) => {
                       disabled={isSignupLoading}
                     />
                   </div>
+                  
+                  {isProfileBio && (
+                    <>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-role" className="text-gray-200">Your Role</Label>
+                    <Input
+                      id="signup-role"
+                      type="text"
+                      placeholder="Your Role"
+                      className="bg-gray-800 border-gray-700 text-white"
+                      value={signupPosition}
+                      onChange={(e) => setSignupPosition(e.target.value)}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-company" className="text-gray-200">Company</Label>
+                    <Input
+                      id="signup-company"
+                      type="text"
+                      placeholder="Company Name"
+                      className="bg-gray-800 border-gray-700 text-white"
+                      value={signupCompany}
+                      onChange={(e) => setSignupCompany(e.target.value)}
+                    />
+                  </div>
+                  </>
+                  )}
                   
                   <div className="space-y-2">
                     <Label htmlFor="signup-password" className="text-gray-200">Password</Label>

@@ -61,7 +61,7 @@ const Projects = () => {
 
         // Load projects from backend
         const user = JSON.parse(localStorage.getItem("fluxUser") || "{}");
-        const fetchedProjects = await retrieveProjects(user.userId);
+        const fetchedProjects = await retrieveProjects(user.teamId);
         if (Array.isArray(fetchedProjects)) {
           setProjects(fetchedProjects);
         }
@@ -110,14 +110,14 @@ const Projects = () => {
   const addProject = (newProject: any) => {
     const user = JSON.parse(localStorage.getItem("fluxUser") || "{}");
     console.log(newProject);
-    console.log(user.userId);
-    createProject(newProject, user.userId);
+    console.log(user.teamId);
+    createProject(newProject, user.teamId);
   };
   
   const populateProjects = async () => {
     try {
       const user = JSON.parse(localStorage.getItem("fluxUser") || "{}");
-      const fetchedProjects = await retrieveProjects(user.userId);
+      const fetchedProjects = await retrieveProjects(user.teamId);
       console.log("Populated projects: ", fetchedProjects);
       if (Array.isArray(fetchedProjects)) {
         setProjects(fetchedProjects);
