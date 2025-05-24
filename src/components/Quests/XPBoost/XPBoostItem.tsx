@@ -9,7 +9,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Star } from "lucide-react";
+import { Star, Cpu } from "lucide-react";
 
 interface XPBoostItemProps {
   onCollect: (boost: XPBoost) => void;
@@ -278,9 +278,11 @@ const XPBoostItem = ({ onCollect }: XPBoostItemProps) => {
                   }}
                 >
                   <div className="relative">
-                    <div className="relative flex items-center justify-center w-16 h-16 rounded-lg bg-black border-2 border-cyan-500 shadow-[0_0_15px_rgba(0,255,255,0.5)]">
-                      <Star className="h-8 w-8 text-cyan-400" />
-                      <span className="absolute text-cyan-400 font-bold text-sm tracking-wider">XP</span>
+                    <div className="relative flex flex-col items-center justify-center w-16 h-16 rounded-lg bg-black border-2 border-cyan-500 shadow-[0_0_15px_rgba(0,255,255,0.5)]">
+                      <Cpu className="h-12 w-12 mt-3 text-cyan-400 drop-shadow-[0_0_10px_#2DE2E6]" />
+                      <span className="mt-1 text-cyan-300 font-mono font-bold text-base tracking-wider drop-shadow-[0_0_8px_#2DE2E6] pointer-events-none select-none">
+                        XP
+                      </span>
                       
                       <motion.div
                         className="absolute inset-0 rounded-lg"
