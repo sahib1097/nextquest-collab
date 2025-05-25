@@ -20,7 +20,7 @@ const QuestLog = () => {
     const fetchUserData = async () => {
       try {
         // Try to fetch user data from API first
-        const res = await fetch(`${API}/api/auth/me`, {
+        const res = await fetch(`${API}/auth/me`, {
           credentials: 'include'
         });
         

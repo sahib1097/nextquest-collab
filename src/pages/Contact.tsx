@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { API } from '@/config';
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -74,7 +75,7 @@ const ContactPage = () => {
     `;
   
     try {
-      const response = await fetch('http://localhost:5001/api/contact/send-email', {
+      const response = await fetch(`${API}/contact/send-email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -103,7 +104,7 @@ const ContactPage = () => {
     console.log("Checking email:", email);
     
     try {
-      const response = await fetch('http://localhost:5001/api/contact/check-email', {
+      const response = await fetch(`${API}/contact/check-email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

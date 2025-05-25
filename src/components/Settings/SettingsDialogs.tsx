@@ -35,7 +35,7 @@ const SettingsDialogs = () => {
     const user = JSON.parse(localStorage.getItem("fluxUser") || '{}');
 
     try {
-      const res = await fetch(`${API}/api/userinfo/update-email`, {
+      const res = await fetch(`${API}/userinfo/update-email`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -108,7 +108,7 @@ const SettingsDialogs = () => {
       const user = JSON.parse(localStorage.getItem("fluxUser") || '{}');
 
       try {
-        const res = await fetch(`${API}/api/userinfo/update-password`, {
+        const res = await fetch(`${API}/userinfo/update-password`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

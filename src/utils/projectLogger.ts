@@ -120,3 +120,25 @@ export const addTaskToProject = async (projectId: string, task: any) => {
         console.error('Error adding task to project:', error);
     }
 }
+
+export const deleteTask = async (taskId: string, projectId: string) => {
+    try{
+        const response = await fetch(`${API}/projectInfo/delete-task`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                projectId,
+                taskId
+            })
+        })
+
+        const task = response.body;
+
+        return task;
+        
+    } catch(error) {
+        console.error('Error deleting task from project:', error);
+    }
+}

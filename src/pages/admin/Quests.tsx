@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy, Suspense } from "react";
+import React, { useState, useEffect, lazy, Suspense, startTransition } from "react";
 import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import UserProfile from "@/components/Quests/UserProfile";
@@ -315,7 +315,9 @@ const Quests: React.FC = () => {
                           <button
                             key={key}
                             onClick={() => {
-                              setSelectedMap(key as "town" | "phaser" | "hell");
+                                  startTransition(() => {
+                                    setSelectedMap(key as "town" | "phaser" | "hell");
+                                  });
                               setShowMapMenu(false);
                             }}
                             className={

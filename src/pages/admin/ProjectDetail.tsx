@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChevronLeft, Plus, Users } from "lucide-react";
 import { motion } from "framer-motion";
+import { Suspense } from "react";
 import { useToast } from "@/hooks/use-toast";
 import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,8 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getProjectDetails, addTaskToProject } from "@/utils/projectLogger";
 import { get } from "http";
+import { startTransition } from "react";
+import { deleteTask } from "@/utils/projectLogger";
 
 // Get team members
 const getTeamMembers = () => {
@@ -71,13 +74,15 @@ const ProjectDetail = () => {
           setProgress((completedTasks / foundProject.tasks.length) * 100);
         }
       }
+
+      setLoading(false);
     }
     
     if (projectId) {
       fetchProjectDetails();
     }
     
-    setLoading(false);
+    
   }, [projectId]);
   
   useEffect(() => {
@@ -143,6 +148,10 @@ const ProjectDetail = () => {
     const asyncAddTaskToProject = async () => {
       try {
         await addTaskToProject(projectId as string, task);
+
+        startTransition(() => {
+          setTasks(prev => [...prev, task]);
+        });
       } catch (error) {
         console.error("Failed to add task:", error);
         toast({
@@ -199,21 +208,20 @@ const ProjectDetail = () => {
     });
   };
   
-  const handleDeleteTask = (taskId: string) => {
-    const taskToDelete = tasks.find(task => task.id === taskId);
-    
+  const handleDeleteTask = async (taskId: string) => {
+    const task = await deleteTask(taskId, projectId);
+
     setTasks(prev => prev.filter(task => task.id !== taskId));
     
     toast({
       title: "Task deleted",
-      description: taskToDelete?.title,
     });
     
     // Log activity
-    if (taskToDelete) {
+    if (task) {
       addActivity({
         type: "task_deleted",
-        details: `Deleted task "${taskToDelete.title}" from project "${project?.name}"`,
+        details: `Deleted task "${task}" from project "${project?.name}"`,
         timestamp: new Date().toISOString(),
         projectId: projectId as string
       });
@@ -388,23 +396,25 @@ const ProjectDetail = () => {
             </form>
             
             <div className="space-y-3">
-              {tasks.length === 0 ? (
-                <p className="text-center text-gray-500 py-8">
-                  No tasks yet. Add your first task to get started!
-                </p>
-              ) : (
-                tasks.map((task) => (
-                  <TaskItem
-                    key={task.id}
-                    task={task}
-                    onToggleComplete={handleToggleComplete}
-                    onDeleteTask={handleDeleteTask}
-                    onUpdateTask={handleUpdateTask}
-                    projectId={projectId}
-                    projectName={project.name}
-                  />
-                ))
-              )}
+              <Suspense fallback={<p className="text-center text-gray-500 py-8">Loading tasks...</p>}>
+                {tasks.length === 0 ? (
+                  <p className="text-center text-gray-500 py-8">
+                    No tasks yet. Add your first task to get started!
+                  </p>
+                ) : (
+                  tasks.map((task) => (
+                    <TaskItem
+                      key={task.id}
+                      task={task}
+                      onToggleComplete={handleToggleComplete}
+                      onDeleteTask={handleDeleteTask}
+                      onUpdateTask={handleUpdateTask}
+                      projectId={projectId}
+                      projectName={project.name}
+                    />
+                  ))
+                )}
+              </Suspense>
             </div>
           </CardContent>
         </Card>
