@@ -49,13 +49,14 @@ export const AVAILABLE_TAGS = [
 ];
 
 export interface Task {
-  id: string;
+  id?: string;
   title: string;
   completed: boolean;
+  description?: string;
   priority?: string;
   tags?: string[];
+  dueDate?: Date | string;
   assignedTo?: string;
-  questId?: string;
 }
 
 interface TaskItemProps {
@@ -130,39 +131,39 @@ const TaskItem = ({
     const quests = storedQuests ? [...JSON.parse(storedQuests), newQuest] : [newQuest];
     localStorage.setItem("fluxQuests", JSON.stringify(quests));
     
-    onUpdateTask(task.id, { questId });
+    // onUpdateTask(task.id, { questId });
     
     setQuestDialogOpen(false);
     toast.success("Quest created from task!");
   };
   
-  const isLinkedToQuest = () => {
-    if (!task.questId) return false;
+  // const isLinkedToQuest = () => {
+  //   if (!task.questId) return false;
     
-    const storedQuests = localStorage.getItem("fluxQuests");
-    if (!storedQuests) return false;
+  //   const storedQuests = localStorage.getItem("fluxQuests");
+  //   if (!storedQuests) return false;
     
-    const quests = JSON.parse(storedQuests);
-    return quests.some((q: any) => q.id === task.questId);
-  };
+  //   const quests = JSON.parse(storedQuests);
+  //   return quests.some((q: any) => q.id === task.questId);
+  // };
 
-  const updateTaskFromQuests = () => {
-    const storedQuests = localStorage.getItem("fluxQuests");
-    if (!storedQuests || !task.questId) return;
+  // const updateTaskFromQuests = () => {
+  //   const storedQuests = localStorage.getItem("fluxQuests");
+  //   if (!storedQuests || !task.questId) return;
     
-    const quests = JSON.parse(storedQuests);
-    const linkedQuest = quests.find((q: any) => q.id === task.questId);
+  //   const quests = JSON.parse(storedQuests);
+  //   const linkedQuest = quests.find((q: any) => q.id === task.questId);
     
-    if (linkedQuest && linkedQuest.status === QuestStatus.COMPLETED && !task.completed) {
-      onToggleComplete(task.id);
-    }
-  };
+  //   if (linkedQuest && linkedQuest.status === QuestStatus.COMPLETED && !task.completed) {
+  //     onToggleComplete(task.id);
+  //   }
+  // };
   
-  if (task.questId) {
-    updateTaskFromQuests();
-  }
+  // if (task.questId) {
+  //   updateTaskFromQuests();
+  // }
   
-  const questLinked = isLinkedToQuest();
+  // const questLinked = isLinkedToQuest();
   
   return (
     <div 
@@ -255,7 +256,7 @@ const TaskItem = ({
           </PopoverContent>
         </Popover>
         
-        <Button 
+        {/* <Button 
           variant="ghost" 
           size="sm" 
           className={`h-7 w-7 p-0 ${questLinked ? 'text-purple-500' : 'text-gray-500 hover:text-purple-500'}`}
@@ -264,7 +265,7 @@ const TaskItem = ({
           title={questLinked ? "Task linked to quest" : "Create quest from task"}
         >
           <AlertCircle className="h-3.5 w-3.5" />
-        </Button>
+        </Button> */}
         
         <Select 
           value={task.priority || "none"} 
@@ -304,7 +305,7 @@ const TaskItem = ({
       </div>
       
       <Dialog open={questDialogOpen} onOpenChange={setQuestDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        {/* <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>{questLinked ? "Quest Details" : "Create Quest from Task"}</DialogTitle>
           </DialogHeader>
@@ -361,7 +362,7 @@ const TaskItem = ({
               </DialogFooter>
             </div>
           )}
-        </DialogContent>
+        </DialogContent> */}
       </Dialog>
     </div>
   );

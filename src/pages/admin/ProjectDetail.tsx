@@ -20,7 +20,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { getProjectDetails } from "@/utils/projectLogger";
+import { getProjectDetails, addTaskToProject } from "@/utils/projectLogger";
 import { get } from "http";
 
 // Get team members
@@ -119,28 +119,54 @@ const ProjectDetail = () => {
   
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newTask.trim()) {
-      const task: Task = {
-        id: Date.now().toString(),
-        title: newTask,
-        completed: false,
-        priority: "none",
-        tags: []
-      };
-      
-      setTasks([...tasks, task]);
-      setNewTask("");
-      
-      // Log activity
-      addActivity({
-        type: "task_created",
-        details: `Added task "${newTask}" to project "${project?.name}"`,
-        timestamp: new Date().toISOString(),
-        projectId: projectId as string
+    if (newTask.trim() === "") {
+      toast({
+        title: "Task cannot be empty",
+        description: "Please enter a task name.",
+        variant: "destructive"
       });
+      return;
     }
+
+    const task: Task = {
+      // You may want to add a unique id here, e.g. id: crypto.randomUUID(),
+      id: Math.random().toString(36).substr(2, 9),
+      title: newTask.trim(),
+      completed: false,
+      description: "",
+      priority: "None",
+      tags: [],
+      dueDate: null,
+      assignedTo: null,
+    };
+
+    const asyncAddTaskToProject = async () => {
+      try {
+        await addTaskToProject(projectId as string, task);
+      } catch (error) {
+        console.error("Failed to add task:", error);
+        toast({
+          title: "Error adding task",
+          description: "There was an issue adding your task. Please try again.",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+    asyncAddTaskToProject();
+
+    setTasks([...tasks, task]);
+    setNewTask("");
+    
+    // Log activity
+    // addActivity({
+    //   type: "task_created",
+    //   details: `Added task "${newTask}" to project "${project?.name}"`,
+    //   timestamp: new Date().toISOString(),
+    //   projectId: projectId as string
+    // });
   };
-  
+
   const handleToggleComplete = (taskId: string) => {
     setTasks(prev => {
       const updatedTasks = prev.map(task => {

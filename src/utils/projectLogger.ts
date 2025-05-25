@@ -96,3 +96,27 @@ export const getProjectDetails = async (projectId: string) => {
         console.error('Error retrieving project details:', error);
     }
 }
+
+export const addTaskToProject = async (projectId: string, task: any) => {
+    try {
+        const response = await fetch(`${API}/projectinfo/add-task`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                projectId,
+                task
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to add task to project');
+        }
+
+        const data = await response.json();
+        console.log("Task added to project: ", data);
+    } catch (error) {
+        console.error('Error adding task to project:', error);
+    }
+}
