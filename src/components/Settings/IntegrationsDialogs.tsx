@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { addActivity } from "@/utils/activityLogger";
+import { importFromJira } from "@/utils/projectLogger";
 import { API } from '@/config';
 import { u } from "node_modules/framer-motion/dist/types.d-B50aGbjN";
 
@@ -100,11 +101,19 @@ const IntegrationsDialogs = () => {
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log("Response from server:", data);
         if (data.success) {
+            console.log("Jira integration added successfully:", data);
           toast.success("Jira integration added successfully!");
         //   addActivity("Added Jira integration");
+          const jiraData = {
+            baseUrl: jiraSiteURL,
+            email: jiraEmail,
+            token: jiraApiKey
+          }
+          importFromJira(jiraData, user.teamId);
           setShowJiraDialog(false);
-          
+
         } else {
           toast.error(data.message || "Failed to add Jira integration.");
         }
