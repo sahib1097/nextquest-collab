@@ -169,6 +169,29 @@ export const completeTaskInProject = async (projectId: string, taskId: string) =
     }
 }
 
+const checkProjectExists = async (projectId: string) => {
+    try {
+        const response = await fetch(`${API}/projectinfo/check-project-exists`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                projectId
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to check if project exists');
+        }
+
+        const data = await response.json();
+        return data.exists;
+    } catch (error) {
+        console.error('Error checking if project exists:', error);
+    }
+}
+
 export const importFromJira = async (jiraData: any, teamId) => {
 
     console.log("Importing from Jira with data: ", jiraData);
@@ -194,12 +217,7 @@ export const importFromJira = async (jiraData: any, teamId) => {
     for (const project of jiraProjects.projects) {
 
         const tasks = await importTasksFromJira(jiraData, project.key);
-        // if (!tasks) {
-        //     console.error(`No tasks found for project: ${project.key}`);
-        //     continue;
-        // }
-        // console.log("Tasks for project: ", tasks);
-
+        
         const newProject = {
             id: project.id,
             name: project.key,
@@ -216,7 +234,12 @@ export const importFromJira = async (jiraData: any, teamId) => {
         console.log("New project to be created: ", newProject);
 
 
-        await createProject(newProject, teamId[0]);
+        const existingProject = await checkProjectExists(project.id);
+            if (!existingProject) {
+                await createProject(newProject, teamId[0]);
+            } else {
+                console.log(`Project with id ${project.id} already exists, skipping.`);
+            }
     }
 
         
