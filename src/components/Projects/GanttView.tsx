@@ -76,7 +76,7 @@ const GanttView = ({ projects, navigate, emptyMessage, onClearFilters }: GanttVi
           <div 
             key={project.id}
             className="relative group"
-            onClick={() => navigate(`/projects/${project.id}`)}
+            onClick={() => navigate(`/admin/projects/${project.id}`)}
           >
             <div 
               className="h-12 rounded-md cursor-pointer transition-all duration-200 hover:shadow-lg"

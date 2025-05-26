@@ -112,6 +112,7 @@ const Projects = () => {
     console.log(newProject);
     console.log(user.teamId);
     createProject(newProject, user.teamId);
+    setProjects(prevProjects => [...prevProjects, newProject]);
   };
   
   const populateProjects = async () => {
@@ -140,14 +141,11 @@ const Projects = () => {
       console.log("Updated project status: ", updates.status);
     }
 
-    // Update other project fields
     const updatedProjects = projects.map(project => 
-      project.id === projectId ? { ...project, ...updates } : project
-    );
+        project.id === projectId ? { ...project, status: updates.status } : project
+      );
+
     setProjects(updatedProjects);
-    
-    // Refresh projects from backend
-    void populateProjects();
   };
   
   const deleteProject = (projectId: string) => {

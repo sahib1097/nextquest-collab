@@ -96,7 +96,7 @@ const KanbanView = ({ projects, navigate, emptyMessage, onClearFilters }: Kanban
               <Card 
                 key={project.id}
                 className="cursor-pointer hover:shadow-md transition-shadow"
-                onClick={() => navigate(`/projects/${project.id}`)}
+                onClick={() => navigate(`/admin/projects/${project.id}`)}
               >
                 <CardContent className="p-0">
                   <div 
