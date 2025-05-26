@@ -12,6 +12,7 @@ import { u } from "node_modules/framer-motion/dist/types.d-B50aGbjN";
 const IntegrationsDialogs = () => {
   const [showJiraDialog, setShowJiraDialog] = useState(false);
   const [jiraEmail, setJiraEmail] = useState("");
+  const [jiraSiteURL, setJiraEmailURL] = useState("");
   const [jiraApiKey, setJiraApiKey] = useState("");
 
   const [showGitHubDialog, setShowGitHubDialog] = useState(false);
@@ -78,6 +79,36 @@ const IntegrationsDialogs = () => {
   }, []);
   
   const handleJiraUpdate = () => {
+    if (!jiraEmail || !jiraSiteURL || !jiraApiKey) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+
+    fetch(`${API}/integrations/jira`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: jiraEmail,
+        siteURL: jiraSiteURL,
+        apiKey: jiraApiKey,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          toast.success("Jira integration added successfully!");
+        //   addActivity("Added Jira integration");
+          setShowJiraDialog(false);
+        } else {
+          toast.error(data.message || "Failed to add Jira integration.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        toast.error("An error occurred while adding Jira integration.");
+      });
 
   };
 
@@ -131,6 +162,17 @@ const IntegrationsDialogs = () => {
                     value={jiraEmail}
                     onChange={(e) => setJiraEmail(e.target.value)}
                     placeholder="yourjiraemail@example.com"
+                    className="h-11"
+                />
+                </div>
+                <div className="grid gap-2">
+                <Label htmlFor="siteURL">Jira Site URL</Label>
+                <Input
+                    id="jiraSiteURL"
+                    type="siteURL"
+                    value={jiraSiteURL}
+                    onChange={(e) => setJiraEmailURL(e.target.value)}
+                    placeholder="Enter your Jira Site URL"
                     className="h-11"
                 />
                 </div>
