@@ -84,7 +84,9 @@ const IntegrationsDialogs = () => {
       return;
     }
 
-    fetch(`${API}/integrations/jira`, {
+    const user = JSON.parse(localStorage.getItem("fluxUser"));
+
+    fetch(`${API}/jira/link-jira`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -93,6 +95,7 @@ const IntegrationsDialogs = () => {
         email: jiraEmail,
         siteURL: jiraSiteURL,
         apiKey: jiraApiKey,
+        userId: user.userId,
       }),
     })
       .then((response) => response.json())
@@ -101,6 +104,7 @@ const IntegrationsDialogs = () => {
           toast.success("Jira integration added successfully!");
         //   addActivity("Added Jira integration");
           setShowJiraDialog(false);
+          
         } else {
           toast.error(data.message || "Failed to add Jira integration.");
         }
