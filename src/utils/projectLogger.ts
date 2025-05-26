@@ -142,3 +142,28 @@ export const deleteTask = async (taskId: string, projectId: string) => {
         console.error('Error deleting task from project:', error);
     }
 }
+
+export const completeTaskInProject = async (projectId: string, taskId: string) => {
+    try {
+        const response = await fetch(`${API}/projectinfo/complete-task`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                projectId,
+                taskId
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to complete task in project');
+        }
+
+        const data = await response.json();
+        return data.task;
+        console.log("Task completed in project: ", data);
+    } catch (error) {
+        console.error('Error completing task in project:', error);
+    }
+}

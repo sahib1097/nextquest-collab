@@ -24,7 +24,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getProjectDetails, addTaskToProject } from "@/utils/projectLogger";
 import { get } from "http";
 import { startTransition } from "react";
-import { deleteTask } from "@/utils/projectLogger";
+import { deleteTask, completeTaskInProject } from "@/utils/projectLogger";
 
 // Get team members
 const getTeamMembers = () => {
@@ -149,9 +149,9 @@ const ProjectDetail = () => {
       try {
         await addTaskToProject(projectId as string, task);
 
-        startTransition(() => {
-          setTasks(prev => [...prev, task]);
-        });
+        // startTransition(() => {
+        //   setTasks(prev => [...prev, task]);
+        // });
       } catch (error) {
         console.error("Failed to add task:", error);
         toast({
@@ -176,36 +176,56 @@ const ProjectDetail = () => {
     // });
   };
 
-  const handleToggleComplete = (taskId: string) => {
-    setTasks(prev => {
-      const updatedTasks = prev.map(task => {
-        if (task.id === taskId) {
-          const newCompleted = !task.completed;
+  const handleToggleComplete = async (taskId: string) => {
+    try {
+        const updatedTask = await completeTaskInProject(projectId as string, taskId);
+
+        setTasks(prev =>
+          prev.map(task =>
+            task.id === taskId ? { ...task, completed: !task.completed } : task
+          )
+        );
+
+      } catch (error) {
+        console.error("Failed to delete task:", error);
+        toast({
+          title: "Error deleting task",
+          description: "There was an issue deleting your task. Please try again.",
+          variant: "destructive"
+        });
+        return;
+      }
+    
+
+    // setTasks(prev => {
+    //   const updatedTasks = prev.map(task => {
+    //     if (task.id === taskId) {
+    //       const newCompleted = !task.completed;
           
-          // Show toast on completion
-          if (newCompleted) {
-            toast({
-              title: "Task completed! 🎉",
-              description: task.title,
-            });
+    //       // Show toast on completion
+    //       if (newCompleted) {
+    //         toast({
+    //           title: "Task completed! 🎉",
+    //           description: task.title,
+    //         });
             
-            // Log activity
-            addActivity({
-              type: "task_completed",
-              details: `Completed task "${task.title}" in project "${project?.name}"`,
-              timestamp: new Date().toISOString(),
-              projectId: projectId as string
-            });
-          }
+    //         // Log activity
+    //         addActivity({
+    //           type: "task_completed",
+    //           details: `Completed task "${task.title}" in project "${project?.name}"`,
+    //           timestamp: new Date().toISOString(),
+    //           projectId: projectId as string
+    //         });
+    //       }
           
-          return { ...task, completed: newCompleted };
-        }
-        return task;
-      });
+    //       return { ...task, completed: newCompleted };
+    //     }
+    //     return task;
+    //   });
       
-      // Sort tasks - completed tasks at the bottom
-      return sortTasks(updatedTasks);
-    });
+    //   // Sort tasks - completed tasks at the bottom
+    //   return sortTasks(updatedTasks);
+    // });
   };
   
   const handleDeleteTask = async (taskId: string) => {
