@@ -56,9 +56,6 @@ const ProjectDetail = () => {
   const [teamMembers] = useState(getTeamMembers());
   
   useEffect(() => {
-    // In a real app, fetch project details from API
-    // const storedProjects = JSON.parse(localStorage.getItem("fluxProjects") || "[]");
-    // const foundProject = storedProjects.find((p: any) => p.id === projectId);
 
     const fetchProjectDetails = async () => {
       const ProjectData = await getProjectDetails(projectId)
@@ -182,7 +179,7 @@ const ProjectDetail = () => {
 
         setTasks(prev =>
           prev.map(task =>
-            task.id === taskId ? { ...task, completed: !task.completed } : task
+            task.id === taskId ? { ...task, completed: updatedTask.completed } : task
           )
         );
 
