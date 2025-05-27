@@ -87,7 +87,7 @@ const IntegrationsDialogs = () => {
 
     const user = JSON.parse(localStorage.getItem("fluxUser"));
 
-    fetch(`${API}/jira/link-jira`, {
+    fetch(`${API}/api/jira/link-jira`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
