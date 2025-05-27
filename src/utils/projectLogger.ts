@@ -6,7 +6,7 @@ export const createProject = async (newProject: any, teamId: string) => {
     console.log("Team ID: ", teamId);
     try {
         // Make API call to create project in database
-        const response = await fetch(`${API}/projectinfo/create-project`, {
+        const response = await fetch(`${API}/api/projectinfo/create-project`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -147,7 +147,7 @@ export const deleteTask = async (taskId: string, projectId: string) => {
 
 export const completeTaskInProject = async (projectId: string, taskId: string) => {
     try {
-        const response = await fetch(`${API}/projectinfo/complete-task`, {
+        const response = await fetch(`${API}/api/projectinfo/complete-task`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -171,7 +171,7 @@ export const completeTaskInProject = async (projectId: string, taskId: string) =
 
 const checkProjectExists = async (projectId: string, teamId) => {
     try {
-        const response = await fetch(`${API}/projectinfo/check-project-exists`, {
+        const response = await fetch(`${API}/api/projectinfo/check-project-exists`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -195,7 +195,7 @@ const checkProjectExists = async (projectId: string, teamId) => {
 
 export const updateTaskInProject = async (projectId: string, taskId: string, newStatus: any, teamId: any) => {
     try {
-        const response = await fetch(`${API}/projectinfo/update-task-status`, {
+        const response = await fetch(`${API}/api/projectinfo/update-task-status`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -226,7 +226,7 @@ export const importFromJira = async (jiraData: any, teamId) => {
 
     // Function to import projects data from Jira
     try {
-        const response = await fetch(`${API}/jira/projects`, {
+        const response = await fetch(`${API}/api/jira/projects`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -285,7 +285,7 @@ export const importTasksFromJira = async (jiraData: any, projectKey: string) => 
     console.log("Importing tasks from Jira with data: ", completeData);
 
     try {
-        const response = await fetch(`${API}/jira/issues`, {
+        const response = await fetch(`${API}/api/jira/issues`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
