@@ -24,7 +24,7 @@ const Team = () => {
   const fetchMembers = useCallback(async () => {
     if (!teamId) return;
     try {
-      const res = await fetch(`${apiUrl}/teams/${teamId}/members`, {
+      const res = await fetch(`${apiUrl}/api/teams/${teamId}/members`, {
         credentials: "include",
       });
       if (!res.ok) throw new Error();
