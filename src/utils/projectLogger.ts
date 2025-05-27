@@ -169,7 +169,7 @@ export const completeTaskInProject = async (projectId: string, taskId: string) =
     }
 }
 
-const checkProjectExists = async (projectId: string) => {
+const checkProjectExists = async (projectId: string, teamId) => {
     try {
         const response = await fetch(`${API}/projectinfo/check-project-exists`, {
             method: 'POST',
@@ -177,7 +177,8 @@ const checkProjectExists = async (projectId: string) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                projectId
+                projectId,
+                teamId: teamId[0]
             })
         });
 
@@ -260,7 +261,7 @@ export const importFromJira = async (jiraData: any, teamId) => {
         console.log("New project to be created: ", newProject);
 
 
-        const existingProject = await checkProjectExists(project.id);
+        const existingProject = await checkProjectExists(project.id, teamId);
             if (!existingProject) {
                 await createProject(newProject, teamId[0]);
             } else {
