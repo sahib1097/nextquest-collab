@@ -5,7 +5,7 @@ export const updateTheme = async (newTheme) => {
     const userId = user?.userId;
 
     try {
-        const res = await fetch(`${API}/usersettings/update-theme`, {
+        const res = await fetch(`${API}/api/usersettings/update-theme`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -34,7 +34,7 @@ export const fetchUserTheme = async () => {
   }
 
   try {
-    const res = await fetch(`${API}/usersettings/theme/${userId}`);
+    const res = await fetch(`${API}/api/usersettings/theme/${userId}`);
     if (!res.ok) {
       console.error("Failed to fetch theme.");
       return null;
