@@ -301,7 +301,7 @@ export const importTasksFromJira = async (jiraData: any, projectKey: string) => 
 
         const newTasks = jiraTasks.issues.map((task: any) => ({
             id: task.id,
-            title: task.fields.issuetype.name,
+            title: task.fields.summary,
             description: task.fields.issuetype.description,
         }));
 
