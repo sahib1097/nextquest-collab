@@ -5,19 +5,30 @@ import { toast } from "sonner";
 import { addActivity } from "@/utils/activityLogger";
 import { useTheme } from "@/hooks/use-theme";
 import type { Theme } from "@/hooks/use-theme";
+import { updateTheme, fetchUserTheme } from "@/utils/settingsUpdate"
 
 const AppearanceSettings = () => {
   const { theme, setTheme, resolvedTheme } = useTheme();
   
-  // Initialize theme from localStorage or set to 'system' by default
+  // Initialize theme from backend or localStorage as fallback
   useEffect(() => {
-    const savedTheme = localStorage.getItem("fluxTheme") as Theme | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
-    }
+    const initializeTheme = async () => {
+      const backendTheme = await fetchUserTheme();
+      if (backendTheme) {
+        setTheme(backendTheme as Theme);
+      } else {
+        const savedTheme = localStorage.getItem("fluxTheme") as Theme | null;
+        if (savedTheme) {
+          setTheme(savedTheme);
+        }
+      }
+    };
+    
+    initializeTheme();
   }, [setTheme]);
   
   const handleThemeChange = (value: Theme) => {
+    updateTheme(value);
     setTheme(value);
     
     addActivity({

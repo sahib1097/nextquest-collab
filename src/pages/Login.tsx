@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import { isAuthenticated, updateLastActivity } from "@/utils/authUtils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { API } from '@/config';
+import { fetchUserTheme } from "@/utils/settingsUpdate";
+import { useTheme } from "@/hooks/use-theme";
 
 type LoginProps = {
   initialTab?: "login" | "signup";
@@ -18,6 +20,7 @@ const Login = ({ initialTab }: LoginProps) => {
   const [searchParams] = useSearchParams();
   const inviteToken = searchParams.get("token") || "";
   const [activeTab, setActiveTab] = useState(initialTab || "login");
+  const { setTheme } = useTheme();
 
   // Login state
   const [loginEmail, setLoginEmail] = useState("");
@@ -107,6 +110,12 @@ const Login = ({ initialTab }: LoginProps) => {
       
       localStorage.setItem('fluxUserLevel', JSON.stringify(defaultUserLevel));
   
+      // Fetch and set user's theme
+      const userTheme = await fetchUserTheme();
+      if (userTheme) {
+        setTheme(userTheme);
+      }
+
       // 4) Update last activity timestamp
       updateLastActivity();
       toast.success(`Welcome back, ${user.name}!`);
@@ -114,7 +123,9 @@ const Login = ({ initialTab }: LoginProps) => {
   
     } catch (err: any) {
       toast.error(err.message);
-    } finally { setIsLoginLoading(false); }
+    } finally { 
+      setIsLoginLoading(false); 
+    }
   };
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -162,8 +173,6 @@ const Login = ({ initialTab }: LoginProps) => {
       const data = await res.json(); // { name, email }
       const { user } = data;
 
-
-  
       localStorage.setItem(
         "fluxUser",
         JSON.stringify({
@@ -174,7 +183,6 @@ const Login = ({ initialTab }: LoginProps) => {
           lastLogin:       new Date().toISOString(),
         })
       );
-  
   
       // 5) Initialize a default user‐level if it's not already there
       if (!localStorage.getItem("fluxUserLevel")) {
@@ -190,8 +198,14 @@ const Login = ({ initialTab }: LoginProps) => {
         );
       }
 
-        // 4) Bump activity
-        updateLastActivity();
+      // Fetch and set user's theme
+      const userTheme = await fetchUserTheme();
+      if (userTheme) {
+        setTheme(userTheme);
+      }
+
+      // 4) Bump activity
+      updateLastActivity();
   
       toast.success(`Account created: ${user.name}`);
       navigate("/admin/dashboard");
