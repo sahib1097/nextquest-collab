@@ -75,7 +75,7 @@ const ContactPage = () => {
     `;
   
     try {
-      const response = await fetch(`${API}/contact/send-email`, {
+      const response = await fetch(`${API}/api/contact/send-email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ const ContactPage = () => {
     console.log("Checking email:", email);
     
     try {
-      const response = await fetch(`${API}/contact/check-email`, {
+      const response = await fetch(`${API}/api/contact/check-email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

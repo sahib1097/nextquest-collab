@@ -52,7 +52,7 @@ const Login = ({ initialTab }: LoginProps) => {
   }, [navigate]);
 
   useEffect(() => {
-    fetch(`${API}/auth/me`, { credentials: 'include' })
+    fetch(`${API}/api/auth/me`, { credentials: 'include' })
       .then(res => { if (!res.ok) throw new Error(); return res.json(); })
       .then(user => {
         localStorage.setItem("fluxUser", JSON.stringify({ email: user.email, name: user.name, isAuthenticated:true, lastLogin: new Date().toISOString() }));
@@ -66,7 +66,7 @@ const Login = ({ initialTab }: LoginProps) => {
     e.preventDefault();
     setIsLoginLoading(true);
     try {
-      const res = await fetch(`${API}/auth/login`, {
+      const res = await fetch(`${API}/api/auth/login`, {
         method:      'POST',
         headers:     { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -150,7 +150,7 @@ const Login = ({ initialTab }: LoginProps) => {
   
     try {
       // 1) Call signup endpoint
-      const res = await fetch(`${API}/auth/signup`, {
+      const res = await fetch(`${API}/api/auth/signup`, {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify({

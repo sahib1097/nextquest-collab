@@ -16,7 +16,7 @@ export const addActivity = async (activity: Omit<Activity, '_id'>) => {
   const userId = user?.userId;
 
   try {
-    const res = await fetch(`${API}/userinfo/update-activity-log`, {
+    const res = await fetch(`${API}/api/userinfo/update-activity-log`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ export const getActivities = async (): Promise<Activity[]> => {
 
   try {
 
-    const res = await fetch(`${API}/userinfo/get-activity-log`, {
+    const res = await fetch(`${API}/api/userinfo/get-activity-log`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
