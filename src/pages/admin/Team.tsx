@@ -55,7 +55,7 @@ const Team = () => {
       return toast.error("Please enter a valid email");
     }
     try {
-      const res = await fetch(`${apiUrl}/invites`, {
+      const res = await fetch(`${apiUrl}/api/invites`, {
         method:      "POST",
         credentials: "include",
         headers:     { "Content-Type": "application/json" },
