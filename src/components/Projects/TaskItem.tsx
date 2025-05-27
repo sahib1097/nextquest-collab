@@ -32,10 +32,9 @@ import { Label } from "@/components/ui/label";
 
 
 export const PRIORITY_LEVELS = [
-  { value: "low", label: "Low", color: "#0EA5E9" },
-  { value: "medium", label: "Medium", color: "#F97316" },
-  { value: "high", label: "High", color: "#ea384c" },
-  { value: "critical", label: "Critical", color: "#D946EF" },
+  { value: "To Do", label: "To Do", color: "#0EA5E9" },
+  { value: "In Progress", label: "In Progress", color: "#F97316" },
+  { value: "Completed", label: "Completed", color: "#ea384c" },
 ];
 
 export const AVAILABLE_TAGS = [
@@ -54,7 +53,7 @@ export interface Task {
   title: string;
   completed: boolean;
   description?: string;
-  priority?: string;
+  status?: string;
   tags?: string[];
   dueDate?: Date | string;
   assignedTo?: string;
@@ -90,15 +89,15 @@ const TaskItem = ({
     onUpdateTask(task.id, { tags: updatedTags });
   };
   
-  const handlePriorityChange = (value: string) => {
-    onUpdateTask(task.id, { priority: value });
+  const handleStatusChange = (value: string) => {
+    onUpdateTask(task.id, { status: value });
   };
 
   const handleAssigneeChange = (memberId: string | undefined) => {
     onUpdateTask(task.id, { assignedTo: memberId });
   };
   
-  const priorityColor = PRIORITY_LEVELS.find(p => p.value === task.priority)?.color || "#9b87f5";
+  const priorityColor = PRIORITY_LEVELS.find(p => p.value === task.status)?.color || "#9b87f5";
 
   const createQuestFromTask = () => {
     const storedUserLevel = localStorage.getItem("fluxUserLevel");
@@ -269,8 +268,8 @@ const TaskItem = ({
         </Button> */}
         
         <Select 
-          value={task.priority || "none"} 
-          onValueChange={handlePriorityChange}
+          value={task.status || "none"} 
+          onValueChange={handleStatusChange}
         >
           <SelectTrigger className="h-7 w-[90px] border-0 p-0 pl-2 focus:ring-0">
             <div 

@@ -192,6 +192,32 @@ const checkProjectExists = async (projectId: string) => {
     }
 }
 
+export const updateTaskInProject = async (projectId: string, taskId: string, newStatus: any, teamId: any) => {
+    try {
+        const response = await fetch(`${API}/projectinfo/update-task-status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                projectId,
+                teamId,
+                taskId,
+                newStatus
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update task in project');
+        }
+
+        const data = await response.json();
+        console.log("Updated task in project: ", data);
+    } catch (error) {
+        console.error('Error updating task in project:', error);
+    }
+}
+
 export const importFromJira = async (jiraData: any, teamId) => {
 
     console.log("Importing from Jira with data: ", jiraData);

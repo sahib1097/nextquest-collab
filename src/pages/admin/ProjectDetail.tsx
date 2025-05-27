@@ -24,7 +24,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getProjectDetails, addTaskToProject } from "@/utils/projectLogger";
 import { get } from "http";
 import { startTransition } from "react";
-import { deleteTask, completeTaskInProject } from "@/utils/projectLogger";
+import { deleteTask, completeTaskInProject, updateTaskInProject } from "@/utils/projectLogger";
 
 // Get team members
 const getTeamMembers = () => {
@@ -127,6 +127,7 @@ const ProjectDetail = () => {
         description: "Please enter a task name.",
         variant: "destructive"
       });
+
       return;
     }
 
@@ -136,7 +137,7 @@ const ProjectDetail = () => {
       title: newTask.trim(),
       completed: false,
       description: "",
-      priority: "None",
+      status: "None",
       tags: [],
       dueDate: null,
       assignedTo: null,
@@ -246,6 +247,13 @@ const ProjectDetail = () => {
   };
   
   const handleUpdateTask = (taskId: string, updates: Partial<Task>) => {
+
+    const user = JSON.parse(localStorage.getItem("fluxUser"));
+    
+    if (updates.status){
+      updateTaskInProject(projectId as string, taskId, updates.status, user.teamId);
+    }
+
     setTasks(prev => {
       const updatedTasks = prev.map(task => {
         if (task.id === taskId) {
@@ -259,7 +267,7 @@ const ProjectDetail = () => {
     });
     
     // Log activity for priority or tag changes
-    if (updates.priority || updates.tags) {
+    if (updates.status || updates.tags) {
       const task = tasks.find(t => t.id === taskId);
       addActivity({
         type: "task_updated",
