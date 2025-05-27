@@ -12,7 +12,7 @@ import {
 import RoadmapBarView from "@/components/Roadmaps/RoadmapBarView";
 import RoadmapLinearView from "@/components/Roadmaps/RoadmapLinearView";
 import NewRoadmapDialog from "@/components/Roadmaps/NewRoadmapDialog";
-import NewRoadmapItemDialog from "@/components/Roadmaps/NewRoadmapItemDialog";
+import { NewRoadmapItemDialog } from "@/components/Roadmaps/NewRoadmapItemDialog";
 import { Share, BarChart, LineChart, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Roadmap, RoadmapItem } from "@/types/roadmap";
@@ -256,8 +256,8 @@ const Roadmaps = () => {
 
       <NewRoadmapItemDialog
         open={newItemDialogOpen}
-        onClose={() => setNewItemDialogOpen(false)}
-        onAdd={handleAddRoadmapItem}
+        onOpenChange={setNewItemDialogOpen}
+        onSave={handleAddRoadmapItem}
       />
     </DashboardLayout>
   );

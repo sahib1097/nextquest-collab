@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { 
@@ -41,11 +40,11 @@ const AdminSidebar = () => {
 
   return (
     <div 
-      className={`bg-white border-r border-[#E5E5EA] transition-width ease-in-out duration-300 flex flex-col h-screen ${
+      className={`bg-background border-r border-border transition-width ease-in-out duration-300 flex flex-col h-screen ${
         collapsed ? "w-[70px]" : "w-[230px]"
       }`}
     >
-      <div className="p-4 border-b border-[#E5E5EA] flex items-center justify-between">
+      <div className="p-4 border-b border-border flex items-center justify-between">
         <NavLink to="/admin/dashboard" className="flex items-center">
           {!collapsed && (
             <img 
@@ -65,7 +64,7 @@ const AdminSidebar = () => {
         <Button 
           variant="ghost" 
           size="icon" 
-          className="text-[#86868B] hover:bg-[#F5F5F7] hover:text-[#1D1D1F]"
+          className="text-muted-foreground hover:bg-muted hover:text-foreground"
           onClick={() => setCollapsed(!collapsed)}
         >
           {collapsed ? <Menu size={18} /> : <X size={18} />}
@@ -81,8 +80,8 @@ const AdminSidebar = () => {
               className={({ isActive }) =>
                 `flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   isActive
-                    ? "bg-[#F5F5F7] text-[#007AFF] border-l-4 border-[#007AFF] pl-2"
-                    : "text-[#1D1D1F] hover:bg-[#F5F5F7] hover:text-[#007AFF]"
+                    ? "bg-primary/10 text-primary border-l-4 border-primary pl-2"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 } ${collapsed ? "justify-center" : ""}`
               }
             >

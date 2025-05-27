@@ -37,7 +37,8 @@ const Team = () => {
 
   // On mount: read teamId from localStorage
   useEffect(() => {
-    const t = localStorage.getItem("teamId");
+    const user = localStorage.getItem("fluxUser");
+    const t = JSON.parse(user).teamId
     if (!t) {
       toast.error("No team selected. Please sign up or invite first.");
     }

@@ -30,11 +30,11 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 
+
 export const PRIORITY_LEVELS = [
-  { value: "low", label: "Low", color: "#0EA5E9" },
-  { value: "medium", label: "Medium", color: "#F97316" },
-  { value: "high", label: "High", color: "#ea384c" },
-  { value: "critical", label: "Critical", color: "#D946EF" },
+  { value: "To Do", label: "To Do", color: "#0EA5E9" },
+  { value: "In Progress", label: "In Progress", color: "#F97316" },
+  { value: "Completed", label: "Completed", color: "#ea384c" },
 ];
 
 export const AVAILABLE_TAGS = [
@@ -49,13 +49,14 @@ export const AVAILABLE_TAGS = [
 ];
 
 export interface Task {
-  id: string;
+  id?: string;
   title: string;
   completed: boolean;
-  priority?: string;
+  description?: string;
+  status?: string;
   tags?: string[];
+  dueDate?: Date | string;
   assignedTo?: string;
-  questId?: string;
 }
 
 interface TaskItemProps {
@@ -88,15 +89,15 @@ const TaskItem = ({
     onUpdateTask(task.id, { tags: updatedTags });
   };
   
-  const handlePriorityChange = (value: string) => {
-    onUpdateTask(task.id, { priority: value });
+  const handleStatusChange = (value: string) => {
+    onUpdateTask(task.id, { status: value });
   };
 
   const handleAssigneeChange = (memberId: string | undefined) => {
     onUpdateTask(task.id, { assignedTo: memberId });
   };
   
-  const priorityColor = PRIORITY_LEVELS.find(p => p.value === task.priority)?.color || "#9b87f5";
+  const priorityColor = PRIORITY_LEVELS.find(p => p.value === task.status)?.color || "#9b87f5";
 
   const createQuestFromTask = () => {
     const storedUserLevel = localStorage.getItem("fluxUserLevel");
@@ -130,39 +131,39 @@ const TaskItem = ({
     const quests = storedQuests ? [...JSON.parse(storedQuests), newQuest] : [newQuest];
     localStorage.setItem("fluxQuests", JSON.stringify(quests));
     
-    onUpdateTask(task.id, { questId });
+    // onUpdateTask(task.id, { questId });
     
     setQuestDialogOpen(false);
     toast.success("Quest created from task!");
   };
   
-  const isLinkedToQuest = () => {
-    if (!task.questId) return false;
+  // const isLinkedToQuest = () => {
+  //   if (!task.questId) return false;
     
-    const storedQuests = localStorage.getItem("fluxQuests");
-    if (!storedQuests) return false;
+  //   const storedQuests = localStorage.getItem("fluxQuests");
+  //   if (!storedQuests) return false;
     
-    const quests = JSON.parse(storedQuests);
-    return quests.some((q: any) => q.id === task.questId);
-  };
+  //   const quests = JSON.parse(storedQuests);
+  //   return quests.some((q: any) => q.id === task.questId);
+  // };
 
-  const updateTaskFromQuests = () => {
-    const storedQuests = localStorage.getItem("fluxQuests");
-    if (!storedQuests || !task.questId) return;
+  // const updateTaskFromQuests = () => {
+  //   const storedQuests = localStorage.getItem("fluxQuests");
+  //   if (!storedQuests || !task.questId) return;
     
-    const quests = JSON.parse(storedQuests);
-    const linkedQuest = quests.find((q: any) => q.id === task.questId);
+  //   const quests = JSON.parse(storedQuests);
+  //   const linkedQuest = quests.find((q: any) => q.id === task.questId);
     
-    if (linkedQuest && linkedQuest.status === QuestStatus.COMPLETED && !task.completed) {
-      onToggleComplete(task.id);
-    }
-  };
+  //   if (linkedQuest && linkedQuest.status === QuestStatus.COMPLETED && !task.completed) {
+  //     onToggleComplete(task.id);
+  //   }
+  // };
   
-  if (task.questId) {
-    updateTaskFromQuests();
-  }
+  // if (task.questId) {
+  //   updateTaskFromQuests();
+  // }
   
-  const questLinked = isLinkedToQuest();
+  // const questLinked = isLinkedToQuest();
   
   return (
     <div 
@@ -255,7 +256,7 @@ const TaskItem = ({
           </PopoverContent>
         </Popover>
         
-        <Button 
+        {/* <Button 
           variant="ghost" 
           size="sm" 
           className={`h-7 w-7 p-0 ${questLinked ? 'text-purple-500' : 'text-gray-500 hover:text-purple-500'}`}
@@ -264,11 +265,11 @@ const TaskItem = ({
           title={questLinked ? "Task linked to quest" : "Create quest from task"}
         >
           <AlertCircle className="h-3.5 w-3.5" />
-        </Button>
+        </Button> */}
         
         <Select 
-          value={task.priority || "none"} 
-          onValueChange={handlePriorityChange}
+          value={task.status || "none"} 
+          onValueChange={handleStatusChange}
         >
           <SelectTrigger className="h-7 w-[90px] border-0 p-0 pl-2 focus:ring-0">
             <div 
@@ -304,7 +305,7 @@ const TaskItem = ({
       </div>
       
       <Dialog open={questDialogOpen} onOpenChange={setQuestDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        {/* <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>{questLinked ? "Quest Details" : "Create Quest from Task"}</DialogTitle>
           </DialogHeader>
@@ -361,7 +362,7 @@ const TaskItem = ({
               </DialogFooter>
             </div>
           )}
-        </DialogContent>
+        </DialogContent> */}
       </Dialog>
     </div>
   );

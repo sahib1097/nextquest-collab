@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
@@ -10,6 +9,7 @@ import IntegrationSettings from "@/components/Settings/IntegrationSettings";
 import TeamSettings from "@/components/Settings/TeamSettings";
 import SecuritySettings from "@/components/Settings/SecuritySettings";
 import SettingsDialogs from "@/components/Settings/SettingsDialogs";
+import IntegrationsDialogs from "@/components/Settings/IntegrationsDialogs";
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState("profile");
@@ -65,6 +65,7 @@ const Settings = () => {
       
       {/* Dialogs for email and password changes */}
       <SettingsDialogs />
+      <IntegrationsDialogs />
     </DashboardLayout>
   );
 };

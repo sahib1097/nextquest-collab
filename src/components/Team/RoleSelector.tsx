@@ -1,4 +1,3 @@
-
 import { Check, Shield } from "lucide-react";
 import {
   DropdownMenu,
@@ -9,6 +8,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { UserRole } from "@/types/quest";
 import { toast } from "sonner";
+import { useTheme } from "@/contexts/ThemeContext";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface RoleSelectorProps {
   currentRole: UserRole;
@@ -23,6 +30,7 @@ const RoleSelector = ({
   disabled = false,
   currentUserRole = UserRole.USER 
 }: RoleSelectorProps) => {
+  const { currentTheme } = useTheme();
   const roles = Object.values(UserRole);
 
   const handleRoleChange = (newRole: UserRole) => {
@@ -45,43 +53,49 @@ const RoleSelector = ({
   const getRoleColor = (role: UserRole) => {
     switch (role) {
       case UserRole.SUPER_ADMIN:
-        return "text-purple-600";
+        return currentTheme.colors.accent;
       case UserRole.ADMIN:
-        return "text-red-600";
+        return currentTheme.colors.primary;
       case UserRole.TEAM_LEAD:
-        return "text-blue-600";
+        return currentTheme.colors.secondary;
       default:
-        return "text-gray-600";
+        return currentTheme.colors.text;
     }
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild disabled={disabled}>
-        <Button 
-          variant="outline" 
-          className={`gap-2 ${getRoleColor(currentRole)}`}
-        >
-          <Shield className="h-4 w-4" />
-          {currentRole}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[200px]">
+    <Select
+      value={currentRole}
+      onValueChange={handleRoleChange}
+      disabled={disabled}
+    >
+      <SelectTrigger 
+        className="w-[180px]"
+        style={{
+          backgroundColor: currentTheme.colors.background,
+          borderColor: currentTheme.colors.border,
+          color: currentTheme.colors.text
+        }}
+      >
+        <SelectValue placeholder="Select role" />
+      </SelectTrigger>
+      <SelectContent
+        style={{
+          backgroundColor: currentTheme.colors.background,
+          borderColor: currentTheme.colors.border
+        }}
+      >
         {roles.map((role) => (
-          <DropdownMenuItem
-            key={role}
-            className={`gap-2 ${currentRole === role ? 'bg-accent' : ''}`}
-            onClick={() => handleRoleChange(role)}
+          <SelectItem 
+            key={role} 
+            value={role}
+            style={{ color: getRoleColor(role) }}
           >
-            <Shield className={`h-4 w-4 ${getRoleColor(role)}`} />
-            {role}
-            {currentRole === role && (
-              <Check className="h-4 w-4 ml-auto" />
-            )}
-          </DropdownMenuItem>
+            {role.replace(/_/g, ' ')}
+          </SelectItem>
         ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </SelectContent>
+    </Select>
   );
 };
 

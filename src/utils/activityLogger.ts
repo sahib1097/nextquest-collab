@@ -1,6 +1,7 @@
+import { API } from "../config";
 
 export interface Activity {
-  id?: string;
+  _id: string;
   type: string;
   details: string;
   timestamp: string;
@@ -9,38 +10,90 @@ export interface Activity {
 }
 
 // Add a new activity
-export const addActivity = (activity: Omit<Activity, 'id'>) => {
-  const activities = getActivities();
-  
-  const newActivity = {
-    ...activity,
-    id: Date.now().toString()
-  };
-  
-  // Add to the beginning of the array for reverse chronological order
-  activities.unshift(newActivity);
-  
-  // Cap at 50 activities to prevent localStorage from getting too large
-  if (activities.length > 50) {
-    activities.pop();
+export const addActivity = async (activity: Omit<Activity, '_id'>) => {
+
+  const user = JSON.parse(localStorage.getItem('fluxUser')|| '{}');
+  const userId = user?.userId;
+
+  try {
+    const res = await fetch(`${API}/userinfo/update-activity-log`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId,
+        activityLog: [{
+          type: activity.type,
+          details: activity.details          
+      }]
+      })
+    });
+
+    if (!res.ok) {
+      console.error("Failed to update activity log.");
+      return;
+    }
+  } catch (error) {
+    console.error('Error updating activity log:', error);
   }
   
-  localStorage.setItem('fluxActivities', JSON.stringify(activities));
+  // const newActivity = {
+  //   ...activity,
+  //   id: Date.now().toString()
+  // };
   
-  return newActivity;
+  // // Add to the beginning of the array for reverse chronological order
+  // activities.unshift(newActivity);
+  
+  // // Cap at 50 activities to prevent localStorage from getting too large
+  // if (activities.length > 50) {
+  //   activities.pop();
+  // }
+  
+  // localStorage.setItem('fluxActivities', JSON.stringify(activities));
+  
+  // return newActivity;
 };
 
 // Get all activities
-export const getActivities = (): Activity[] => {
-  const activitiesJson = localStorage.getItem('fluxActivities');
-  return activitiesJson ? JSON.parse(activitiesJson) : [];
+export const getActivities = async (): Promise<Activity[]> => {
+  const user = JSON.parse(localStorage.getItem('fluxUser')|| '{}');
+  const userId = user?.userId;
+
+  try {
+
+    const res = await fetch(`${API}/userinfo/get-activity-log`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId,
+      })
+    });
+
+    if (!res.ok) {
+      console.error("Failed to fetch activity log.");
+      return [];
+    }
+
+    const data = await res.json();
+    const activityLog = Array.isArray(data.activityLog) ? data.activityLog : [];
+
+    return activityLog;
+
+
+  } catch (error) {
+    console.error('Error fetching activities:', error);
+  }
 };
 
 // Get activities for a specific project
-export const getProjectActivities = (projectId: string): Activity[] => {
-  const activities = getActivities();
-  return activities.filter(activity => activity.projectId === projectId);
-};
+//export const getProjectActivities = (projectId: string): Activity[] => {
+//   const activities = getActivities();
+//   return activities.filter(activity => activity.projectId === projectId);
+// };
 
 // Clear all activities
 export const clearActivities = () => {

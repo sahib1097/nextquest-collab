@@ -1,5 +1,5 @@
-
 import React, { useState } from "react";
+import { API } from '@/config';
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,6 +32,7 @@ const ContactPage = () => {
   const { toast } = useToast();
   const [formLevel, setFormLevel] = useState(1);
   const [xpGained, setXpGained] = useState(0);
+  const [previousAddedXp, setPreviousAddedXp] = useState(0);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,6 +47,7 @@ const ContactPage = () => {
   const advanceLevel = () => {
     const newXp = Math.floor(Math.random() * 50) + 20;
     setXpGained(prev => prev + newXp);
+    setPreviousAddedXp(newXp);
     
     toast({
       title: `+${newXp} XP Gained!`,
@@ -59,29 +61,105 @@ const ContactPage = () => {
     }
   };
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log("Form submitted:", values);
-    
-    toast({
-      title: "Quest Completed!",
-      description: "Your message has been sent to the Council of Next Quest!",
-      variant: "default",
-      className: "bg-yellow-500 text-black font-semibold",
-    });
+  const demoteLevel = () => {
+    setXpGained(prev => prev - previousAddedXp);
+    setPreviousAddedXp(0);
+  }
 
-    // Show final XP reward
-    const finalXp = Math.floor(Math.random() * 100) + 50;
-    setXpGained(prev => prev + finalXp);
-
-    setTimeout(() => {
-      toast({
-        title: `+${finalXp} XP Reward!`,
-        description: "The council will review your scroll shortly.",
-        variant: "default",
-        className: "bg-purple-600 text-white font-semibold",
+  const sendFinalEmail = async (formValues) => {
+    const { email, name, questType, message } = formValues;
+  
+    const subject = `New Contact Quest: ${questType.toUpperCase()}`;
+    const fullMessage = `
+    ${message}
+    `;
+  
+    try {
+      const response = await fetch(`${API}/contact/send-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          subject,
+          message: fullMessage,
+          replyTo: email,
+          name,
+          questType,
+        }),
       });
-    }, 800);
+  
+      const result = await response.json();
+      if (result.success) {
+        console.log('✅ Email sent!');
+      } else {
+        console.error('❌ Email failed:', result.error);
+      }
+    } catch (err) {
+      console.error('Error calling backend:', err);
+    }
   };
+
+  const checkEmail = async (email: string) => {
+    console.log("Checking email:", email);
+    
+    try {
+      const response = await fetch(`${API}/contact/check-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+  
+      const result = await response.json();
+      if (!result.success) {
+        toast({
+          title: "Warning!",
+          description: result.error || "You can only submit one Contact Quest per day",
+          className: "bg-red-600 text-white font-semibold",
+        });
+        return false;
+      }
+      return true;
+
+    } catch (error) {
+      console.error("Error checking email:", error);
+    }
+  }
+  
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      await sendFinalEmail(values); // move this here
+  
+      toast({
+        title: "Quest Completed!",
+        description: "Your message has been sent to the Council of Next Quest!",
+        className: "bg-yellow-500 text-black font-semibold",
+      });
+  
+      const finalXp = Math.floor(Math.random() * 100) + 50;
+      setXpGained((prev) => prev + finalXp);
+  
+      setTimeout(() => {
+        toast({
+          title: `+${finalXp} XP Reward!`,
+          description: "The council will review your scroll shortly.",
+          className: "bg-purple-600 text-white font-semibold",
+        });
+      }, 800);
+  
+      setFormLevel(1);
+    } catch (error) {
+      toast({
+        title: "Scroll Delivery Failed!",
+        description: "Something went wrong sending your message.",
+        className: "bg-red-600 text-white font-semibold",
+      });
+    }
+  };
+  
 
   const getQuestTypeIcon = (type: string) => {
     switch (type) {
@@ -190,8 +268,10 @@ const ContactPage = () => {
                       <div className="flex justify-end mt-4">
                         <Button
                           type="button"
-                          onClick={() => {
-                            if (form.getValues().name && form.getValues().email) {
+                          onClick={async () => {
+                            const emailCheck = await checkEmail(form.getValues().email);
+                            console.log("Email check result:", emailCheck);
+                            if (form.getValues().name && form.getValues().email && emailCheck) {
                               if (form.formState.errors.name || form.formState.errors.email) {
                                 return;
                               }
@@ -200,6 +280,7 @@ const ContactPage = () => {
                               form.trigger(["name", "email"]);
                             }
                           }}
+                          
                           className="bg-amber-600 hover:bg-amber-700 text-black"
                         >
                           Continue Quest
@@ -251,7 +332,10 @@ const ContactPage = () => {
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={() => setFormLevel(1)}
+                          onClick={() => {
+                            setFormLevel(1)
+                            demoteLevel();
+                          }}
                           className="border-gray-700 text-gray-300 hover:bg-gray-800"
                         >
                           Back
@@ -301,7 +385,10 @@ const ContactPage = () => {
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={() => setFormLevel(2)}
+                          onClick={() => {
+                            setFormLevel(2)
+                            demoteLevel();
+                          }}
                           className="border-gray-700 text-gray-300 hover:bg-gray-800"
                         >
                           Back
@@ -309,6 +396,12 @@ const ContactPage = () => {
                         <Button
                           type="submit"
                           className="bg-yellow-500 hover:bg-yellow-600 text-black flex items-center"
+                          onClick ={() => {
+                            setFormLevel(1)
+                            setXpGained(0)
+                            sendFinalEmail(form.getValues())
+                          }
+                          }
                         >
                           <SendHorizonal className="mr-2 h-4 w-4" />
                           Complete Quest

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -35,7 +34,7 @@ const NotificationSettings = () => {
   };
 
   return (
-    <Card>
+    <Card className="bg-card text-card-foreground">
       <CardHeader className="border-b pb-3">
         <CardTitle>Notification Preferences</CardTitle>
         <CardDescription>
@@ -45,11 +44,11 @@ const NotificationSettings = () => {
       <CardContent className="pt-6">
         <div className="grid gap-6">
           <div>
-            <h3 className="text-lg font-medium mb-4">Notification Channels</h3>
+            <h3 className="text-lg font-medium text-foreground mb-4">Notification Channels</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="emailNotifications" className="text-base font-medium">Email Notifications</Label>
+                  <Label htmlFor="emailNotifications" className="text-base font-medium text-foreground">Email Notifications</Label>
                   <p className="text-sm text-muted-foreground mt-1">
                     Receive email notifications about activity relevant to you
                   </p>
@@ -60,10 +59,10 @@ const NotificationSettings = () => {
                   onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, emailNotifications: checked })}
                 />
               </div>
-              <Separator />
+              <Separator className="bg-border" />
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="pushNotifications" className="text-base font-medium">Push Notifications</Label>
+                  <Label htmlFor="pushNotifications" className="text-base font-medium text-foreground">Push Notifications</Label>
                   <p className="text-sm text-muted-foreground mt-1">
                     Receive push notifications on your mobile devices
                   </p>
@@ -77,14 +76,14 @@ const NotificationSettings = () => {
             </div>
           </div>
           
-          <Separator className="my-4" />
+          <Separator className="my-4 bg-border" />
           
           <div>
-            <h3 className="text-lg font-medium mb-4">Browser Notifications</h3>
+            <h3 className="text-lg font-medium text-foreground mb-4">Browser Notifications</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="browserNotifications" className="text-base font-medium">
+                  <Label htmlFor="browserNotifications" className="text-base font-medium text-foreground">
                     In-Browser Notifications
                   </Label>
                   <p className="text-sm text-muted-foreground mt-1">
@@ -97,10 +96,10 @@ const NotificationSettings = () => {
                   onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, browserNotifications: checked })}
                 />
               </div>
-              <Separator />
+              <Separator className="bg-border" />
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="soundAlerts" className="text-base font-medium">
+                  <Label htmlFor="soundAlerts" className="text-base font-medium text-foreground">
                     Sound Alerts
                   </Label>
                   <p className="text-sm text-muted-foreground mt-1">
@@ -116,14 +115,14 @@ const NotificationSettings = () => {
             </div>
           </div>
           
-          <Separator className="my-4" />
+          <Separator className="my-4 bg-border" />
           
           <div>
-            <h3 className="text-lg font-medium mb-4">Summary Reports</h3>
+            <h3 className="text-lg font-medium text-foreground mb-4">Summary Reports</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="dailySummary" className="text-base font-medium">Daily Summary</Label>
+                  <Label htmlFor="dailySummary" className="text-base font-medium text-foreground">Daily Summary</Label>
                   <p className="text-sm text-muted-foreground mt-1">
                     Receive a daily digest of all activity
                   </p>
@@ -134,10 +133,10 @@ const NotificationSettings = () => {
                   onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, dailySummary: checked })}
                 />
               </div>
-              <Separator />
+              <Separator className="bg-border" />
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="weeklySummary" className="text-base font-medium">Weekly Summary</Label>
+                  <Label htmlFor="weeklySummary" className="text-base font-medium text-foreground">Weekly Summary</Label>
                   <p className="text-sm text-muted-foreground mt-1">
                     Receive a weekly digest with key metrics and activity
                   </p>

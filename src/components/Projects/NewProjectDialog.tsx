@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { CalendarIcon, Plus, Users, User } from "lucide-react";
 import { format } from "date-fns";
@@ -198,7 +197,7 @@ const NewProjectDialog = ({ addProject, categories }: NewProjectDialogProps) => 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-[#9b87f5] hover:bg-[#7E69AB]">
+        <Button variant="default" className="bg-primary hover:bg-primary/90">
           <Plus className="mr-2 h-4 w-4" />
           New Project
         </Button>

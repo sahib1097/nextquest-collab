@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChevronLeft, Plus, Users } from "lucide-react";
 import { motion } from "framer-motion";
+import { Suspense } from "react";
 import { useToast } from "@/hooks/use-toast";
 import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,10 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { getProjectDetails, addTaskToProject } from "@/utils/projectLogger";
+import { get } from "http";
+import { startTransition } from "react";
+import { deleteTask, completeTaskInProject, updateTaskInProject } from "@/utils/projectLogger";
 
 // Get team members
 const getTeamMembers = () => {
@@ -51,22 +56,30 @@ const ProjectDetail = () => {
   const [teamMembers] = useState(getTeamMembers());
   
   useEffect(() => {
-    // In a real app, fetch project details from API
-    const storedProjects = JSON.parse(localStorage.getItem("fluxProjects") || "[]");
-    const foundProject = storedProjects.find((p: any) => p.id === projectId);
-    
-    if (foundProject) {
-      setProject(foundProject);
-      setTasks(foundProject.tasks || []);
-      
-      // Calculate initial progress
-      if (foundProject.tasks && foundProject.tasks.length > 0) {
-        const completedTasks = foundProject.tasks.filter((t: Task) => t.completed).length;
-        setProgress((completedTasks / foundProject.tasks.length) * 100);
+
+    const fetchProjectDetails = async () => {
+      const ProjectData = await getProjectDetails(projectId)
+      const foundProject = ProjectData
+
+      if (foundProject) {
+        setProject(foundProject);
+        setTasks(foundProject.tasks || []);
+        
+        // Calculate initial progress
+        if (foundProject.tasks && foundProject.tasks.length > 0) {
+          const completedTasks = foundProject.tasks.filter((t: Task) => t.completed).length;
+          setProgress((completedTasks / foundProject.tasks.length) * 100);
+        }
       }
+
+      setLoading(false);
     }
     
-    setLoading(false);
+    if (projectId) {
+      fetchProjectDetails();
+    }
+    
+    
   }, [projectId]);
   
   useEffect(() => {
@@ -108,75 +121,125 @@ const ProjectDetail = () => {
   
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newTask.trim()) {
-      const task: Task = {
-        id: Date.now().toString(),
-        title: newTask,
-        completed: false,
-        priority: "none",
-        tags: []
-      };
-      
-      setTasks([...tasks, task]);
-      setNewTask("");
-      
-      // Log activity
-      addActivity({
-        type: "task_created",
-        details: `Added task "${newTask}" to project "${project?.name}"`,
-        timestamp: new Date().toISOString(),
-        projectId: projectId as string
+    if (newTask.trim() === "") {
+      toast({
+        title: "Task cannot be empty",
+        description: "Please enter a task name.",
+        variant: "destructive"
       });
+
+      return;
     }
-  };
-  
-  const handleToggleComplete = (taskId: string) => {
-    setTasks(prev => {
-      const updatedTasks = prev.map(task => {
-        if (task.id === taskId) {
-          const newCompleted = !task.completed;
-          
-          // Show toast on completion
-          if (newCompleted) {
-            toast({
-              title: "Task completed! 🎉",
-              description: task.title,
-            });
-            
-            // Log activity
-            addActivity({
-              type: "task_completed",
-              details: `Completed task "${task.title}" in project "${project?.name}"`,
-              timestamp: new Date().toISOString(),
-              projectId: projectId as string
-            });
-          }
-          
-          return { ...task, completed: newCompleted };
-        }
-        return task;
-      });
-      
-      // Sort tasks - completed tasks at the bottom
-      return sortTasks(updatedTasks);
-    });
-  };
-  
-  const handleDeleteTask = (taskId: string) => {
-    const taskToDelete = tasks.find(task => task.id === taskId);
+
+    const task: Task = {
+      // You may want to add a unique id here, e.g. id: crypto.randomUUID(),
+      id: Math.random().toString(36).substr(2, 9),
+      title: newTask.trim(),
+      completed: false,
+      description: "",
+      status: "None",
+      tags: [],
+      dueDate: null,
+      assignedTo: null,
+    };
+
+    const asyncAddTaskToProject = async () => {
+      try {
+        await addTaskToProject(projectId as string, task);
+
+        // startTransition(() => {
+        //   setTasks(prev => [...prev, task]);
+        // });
+      } catch (error) {
+        console.error("Failed to add task:", error);
+        toast({
+          title: "Error adding task",
+          description: "There was an issue adding your task. Please try again.",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+    asyncAddTaskToProject();
+
+    setTasks([...tasks, task]);
+    setNewTask("");
     
+    // Log activity
+    // addActivity({
+    //   type: "task_created",
+    //   details: `Added task "${newTask}" to project "${project?.name}"`,
+    //   timestamp: new Date().toISOString(),
+    //   projectId: projectId as string
+    // });
+  };
+
+  const handleToggleComplete = async (taskId: string) => {
+    try {
+        const updatedTask = await completeTaskInProject(projectId as string, taskId);
+
+        setTasks(prev =>
+          prev.map(task =>
+            task.id === taskId ? { ...task, completed: updatedTask.completed } : task
+          )
+        );
+
+      } catch (error) {
+        console.error("Failed to delete task:", error);
+        toast({
+          title: "Error deleting task",
+          description: "There was an issue deleting your task. Please try again.",
+          variant: "destructive"
+        });
+        return;
+      }
+    
+
+    // setTasks(prev => {
+    //   const updatedTasks = prev.map(task => {
+    //     if (task.id === taskId) {
+    //       const newCompleted = !task.completed;
+          
+    //       // Show toast on completion
+    //       if (newCompleted) {
+    //         toast({
+    //           title: "Task completed! 🎉",
+    //           description: task.title,
+    //         });
+            
+    //         // Log activity
+    //         addActivity({
+    //           type: "task_completed",
+    //           details: `Completed task "${task.title}" in project "${project?.name}"`,
+    //           timestamp: new Date().toISOString(),
+    //           projectId: projectId as string
+    //         });
+    //       }
+          
+    //       return { ...task, completed: newCompleted };
+    //     }
+    //     return task;
+    //   });
+      
+    //   // Sort tasks - completed tasks at the bottom
+    //   return sortTasks(updatedTasks);
+    // });
+  };
+  
+  const handleDeleteTask = async (taskId: string) => {
+    const task = await deleteTask(taskId, projectId);
+
     setTasks(prev => prev.filter(task => task.id !== taskId));
     
     toast({
       title: "Task deleted",
-      description: taskToDelete?.title,
     });
     
     // Log activity
-    if (taskToDelete) {
+    if (task) {
       addActivity({
         type: "task_deleted",
-        details: `Deleted task "${taskToDelete.title}" from project "${project?.name}"`,
+        details: `Deleted task "${task}" from project "${project?.name}"`,
         timestamp: new Date().toISOString(),
         projectId: projectId as string
       });
@@ -184,6 +247,13 @@ const ProjectDetail = () => {
   };
   
   const handleUpdateTask = (taskId: string, updates: Partial<Task>) => {
+
+    const user = JSON.parse(localStorage.getItem("fluxUser"));
+    
+    if (updates.status){
+      updateTaskInProject(projectId as string, taskId, updates.status, user.teamId);
+    }
+
     setTasks(prev => {
       const updatedTasks = prev.map(task => {
         if (task.id === taskId) {
@@ -197,7 +267,7 @@ const ProjectDetail = () => {
     });
     
     // Log activity for priority or tag changes
-    if (updates.priority || updates.tags) {
+    if (updates.status || updates.tags) {
       const task = tasks.find(t => t.id === taskId);
       addActivity({
         type: "task_updated",
@@ -351,23 +421,25 @@ const ProjectDetail = () => {
             </form>
             
             <div className="space-y-3">
-              {tasks.length === 0 ? (
-                <p className="text-center text-gray-500 py-8">
-                  No tasks yet. Add your first task to get started!
-                </p>
-              ) : (
-                tasks.map((task) => (
-                  <TaskItem
-                    key={task.id}
-                    task={task}
-                    onToggleComplete={handleToggleComplete}
-                    onDeleteTask={handleDeleteTask}
-                    onUpdateTask={handleUpdateTask}
-                    projectId={projectId}
-                    projectName={project.name}
-                  />
-                ))
-              )}
+              <Suspense fallback={<p className="text-center text-gray-500 py-8">Loading tasks...</p>}>
+                {tasks.length === 0 ? (
+                  <p className="text-center text-gray-500 py-8">
+                    No tasks yet. Add your first task to get started!
+                  </p>
+                ) : (
+                  tasks.map((task) => (
+                    <TaskItem
+                      key={task.id}
+                      task={task}
+                      onToggleComplete={handleToggleComplete}
+                      onDeleteTask={handleDeleteTask}
+                      onUpdateTask={handleUpdateTask}
+                      projectId={projectId}
+                      projectName={project.name}
+                    />
+                  ))
+                )}
+              </Suspense>
             </div>
           </CardContent>
         </Card>

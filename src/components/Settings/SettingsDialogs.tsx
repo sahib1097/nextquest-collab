@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { addActivity } from "@/utils/activityLogger";
+import { API } from '@/config';
+import { u } from "node_modules/framer-motion/dist/types.d-B50aGbjN";
 
 const SettingsDialogs = () => {
   const [showEmailDialog, setShowEmailDialog] = useState(false);
@@ -27,12 +29,41 @@ const SettingsDialogs = () => {
       document.removeEventListener('settings:open-password-dialog', handleOpenPasswordDialog);
     };
   }, []);
+
+
+  const updateEmail = async (newEmail0: string) => {
+    const user = JSON.parse(localStorage.getItem("fluxUser") || '{}');
+
+    try {
+      const res = await fetch(`${API}/userinfo/update-email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          userId: user.userId,
+          email: newEmail0 }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to update email');
+      }
+
+    } catch (error) {
+      console.error('Error updating email:', error);
+      toast.error("Failed to update email");
+    }
+  };
   
   const handleEmailChange = () => {
     if (!newEmail) {
       toast.error("Please enter a new email address");
       return;
+
     }
+
+    updateEmail(newEmail)
+
     
     if (!currentPassword) {
       toast.error("Please enter your current password");
@@ -72,6 +103,33 @@ const SettingsDialogs = () => {
       toast.error("New passwords do not match");
       return;
     }
+
+    const updatePassword = async () => {
+      const user = JSON.parse(localStorage.getItem("fluxUser") || '{}');
+
+      try {
+        const res = await fetch(`${API}/userinfo/update-password`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ 
+            userId: user.userId,
+            newPassword: newPassword,
+            currentPassword: currentPassword }),
+        });
+
+        if (!res.ok) {
+          throw new Error('Failed to update password');
+        }
+
+      } catch (error) {
+        console.error('Error updating password:', error);
+        toast.error("Failed to update password");
+      }
+    }
+
+    updatePassword();
     
     // Here you would verify the current password and update with an API call
     // For now, we'll just simulate success
@@ -127,7 +185,7 @@ const SettingsDialogs = () => {
             <Button variant="outline" onClick={() => setShowEmailDialog(false)}>
               Cancel
             </Button>
-            <Button onClick={handleEmailChange}>
+            <Button>
               Update Email
             </Button>
           </DialogFooter>

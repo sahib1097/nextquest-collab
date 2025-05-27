@@ -1,8 +1,8 @@
-
 import { motion } from "framer-motion";
 import { CityDistrict, CyberBuilding, DistrictType } from "@/types/mapTypes"; // Added DistrictType import
 import { useEffect, useState } from "react";
 import { generateDistrictBuildings } from "@/utils/mapGenerationUtils";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface CityDistrictsProps {
   districts: CityDistrict[];
@@ -12,6 +12,7 @@ interface CityDistrictsProps {
 const CityDistricts = ({ districts, timeOfDay }: CityDistrictsProps) => {
   const [animatedDistricts, setAnimatedDistricts] = useState<CityDistrict[]>([]);
   const [districtBuildings, setDistrictBuildings] = useState<Map<string, CyberBuilding[]>>(new Map());
+  const { currentTheme } = useTheme();
   
   // Stagger the appearance of districts for a nice animation effect
   useEffect(() => {
@@ -139,9 +140,10 @@ const CityDistricts = ({ districts, timeOfDay }: CityDistrictsProps) => {
   };
   
   const renderHolographicDistrictName = (district: CityDistrict) => {
-    const color = district.type === "corporate" ? "cyan" : 
-                 district.type === "creative" ? "fuchsia" : 
-                 district.type === "guild" ? "amber" : "blue";
+    const color = district.type === "corporate" ? currentTheme.colors.primary : 
+                 district.type === "creative" ? currentTheme.colors.accent : 
+                 district.type === "guild" ? currentTheme.colors.secondary : 
+                 currentTheme.colors.text;
                  
     return (
       <motion.div
@@ -150,14 +152,21 @@ const CityDistricts = ({ districts, timeOfDay }: CityDistrictsProps) => {
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 0.5 }}
       >
-        <div className={`text-${color}-400 font-bold text-sm mb-1`}>
+        <div 
+          className="font-bold text-sm mb-1"
+          style={{ color }}
+        >
           {district.name}
         </div>
-        <div className={`text-${color}-500/70 text-xs`}>
+        <div 
+          className="text-xs"
+          style={{ color: `${color}70` }}
+        >
           {district.detail}
         </div>
         <motion.div 
-          className={`h-8 w-0.5 mx-auto bg-${color}-500/50`}
+          className="h-8 w-0.5 mx-auto"
+          style={{ backgroundColor: `${color}50` }}
           initial={{ height: 0 }}
           animate={{ height: 8 }}
           transition={{ delay: 1.2, duration: 0.3 }}
@@ -167,9 +176,9 @@ const CityDistricts = ({ districts, timeOfDay }: CityDistrictsProps) => {
   };
   
   const renderDistrictFloor = (district: CityDistrict) => {
-    let gridColor = "rgba(0, 200, 255, 0.15)";
-    if (district.type === "creative") gridColor = "rgba(255, 0, 255, 0.15)";
-    if (district.type === "guild") gridColor = "rgba(255, 200, 0, 0.15)";
+    let gridColor = `${currentTheme.colors.primary}15`;
+    if (district.type === "creative") gridColor = `${currentTheme.colors.accent}15`;
+    if (district.type === "guild") gridColor = `${currentTheme.colors.secondary}15`;
     
     return (
       <div 

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -32,8 +31,10 @@ const Login = ({ initialTab }: LoginProps) => {
   const [signupConfirm, setSignupConfirm] = useState("");
   const [signupPosition, setSignupPosition] = useState("");
   const [signupBio, setSignupBio] = useState("");
+  const [signupCompany, setSignupCompany] = useState("");
   const [signupAvatarUrl, setSignupAvatarUrl] = useState("");
   const [isSignupLoading, setIsSignupLoading] = useState(false);
+  const [isProfileBio, setIsProfileBio] = useState(false);
 
   // Auth check
   const [checkingAuth, setCheckingAuth] = useState(true);
@@ -62,25 +63,65 @@ const Login = ({ initialTab }: LoginProps) => {
     e.preventDefault();
     setIsLoginLoading(true);
     try {
-      const res = await fetch(`${API}/auth/login`, { method: 'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body: JSON.stringify({ email: loginEmail, password: loginPassword }) });
-      if (!res.ok) { const err = await res.json(); throw new Error(err.message||'Login failed'); }
-      const payload = await res.json();
-      const { teamId, user: profile } = payload;
-      localStorage.setItem("fluxUser", JSON.stringify({ name:profile.name, email:profile.email, isAuthenticated:true, lastLogin: new Date().toISOString() }));
-      if (teamId) localStorage.setItem("teamId", teamId);
-      if (!localStorage.getItem("fluxUserLevel")) localStorage.setItem("fluxUserLevel", JSON.stringify({ userId: profile.id, username: profile.name, xp:0, level:1, nextLevelXp:100 }));
+      const res = await fetch(`${API}/auth/login`, {
+        method:      'POST',
+        headers:     { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email: loginEmail, password: loginPassword }),
+      });
+  
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || 'Login failed');
+      }
+  
+      // Parse response once
+      const data = await res.json();
+      const { user } = data;
+  
+      // Store complete user data in localStorage
+      const userData = {
+        userId: user.id,
+        email: user.email,
+        name: user.name,
+        position: user.position || '',
+        bio: user.bio || '',
+        avatar: user.avatarUrl || '',
+        isAuthenticated: true,
+        lastLogin: new Date().toISOString(),
+        role: user.roleIds?.[0]?.name || 'User',
+        teamId: user.teamId
+      };
+      
+      localStorage.setItem('fluxUser', JSON.stringify(userData));
+  
+      // 3) Ensure fluxUserLevel exists
+      const defaultUserLevel = {
+        userId: user.id,
+        username: user.name,
+        xp: user.xp || 0,
+        level: user.level || 1,
+        nextLevelXp: user.nextLevelXp || 100,
+        profilePicture: user.profilePicture
+      };
+      
+      localStorage.setItem('fluxUserLevel', JSON.stringify(defaultUserLevel));
+  
+      // 4) Update last activity timestamp
       updateLastActivity();
-      toast.success(`Welcome back, ${profile.name}!`);
-      navigate("/admin/dashboard");
-    } catch (err:any) {
+      toast.success(`Welcome back, ${user.name}!`);
+      navigate('/admin/dashboard');
+  
+    } catch (err: any) {
       toast.error(err.message);
     } finally { setIsLoginLoading(false); }
   };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inviteToken) {
-      return toast.error("Invalid or expired invite link");
+    if (!inviteToken && !isProfileBio) {
+      setIsProfileBio(true);
+      return (toast.error("You are siging up as a new user"));
     }
     setIsSignupLoading(true);
   
@@ -108,6 +149,7 @@ const Login = ({ initialTab }: LoginProps) => {
           password:   signupPassword,
           position:   signupPosition,
           bio:        signupBio,
+          newUser:    signupPosition? true : false,
           avatarUrl:  signupAvatarUrl,
         }),
       });
@@ -116,45 +158,42 @@ const Login = ({ initialTab }: LoginProps) => {
         throw new Error(err.message || "Signup failed");
       }
   
-      // 2) Extract the full payload
-      //    { token, teamId, user: { id, name, email, … } }
-      const payload = await res.json();
-      const { teamId, user: profile } = payload;
+      // 1) Get newly created user
+      const data = await res.json(); // { name, email }
+      const { user } = data;
+
+
   
-      // 3) Persist fluxUser just like login
       localStorage.setItem(
         "fluxUser",
         JSON.stringify({
-          name:            profile.name,
-          email:           profile.email,
+          userId:          data.userId,
+          teamId:          user.teamIds,
+          email:           user.email,
           isAuthenticated: true,
           lastLogin:       new Date().toISOString(),
         })
       );
   
-      // 4) Persist teamId for your Team component
-      if (teamId) {
-        localStorage.setItem("teamId", teamId);
-      }
   
       // 5) Initialize a default user‐level if it's not already there
       if (!localStorage.getItem("fluxUserLevel")) {
         localStorage.setItem(
           "fluxUserLevel",
           JSON.stringify({
-            userId:      profile.id,
-            username:    profile.name,
+            userId:      user.userId,
+            username:    user.name,
             xp:          0,
             level:       1,
             nextLevelXp: 100,
           })
         );
       }
+
+        // 4) Bump activity
+        updateLastActivity();
   
-      // 6) Bump your last‐activity timestamp
-      updateLastActivity();
-  
-      toast.success(`Account created: ${profile.name}`);
+      toast.success(`Account created: ${user.name}`);
       navigate("/admin/dashboard");
   
     } catch (err: any) {
@@ -163,6 +202,8 @@ const Login = ({ initialTab }: LoginProps) => {
       setIsSignupLoading(false);
     }
   };
+
+  
 
   const handleGoogleAuth = () => {
     localStorage.setItem("fluxUser", JSON.stringify({ email:"google@example.com", name:"Google User", isAuthenticated:true, lastLogin:new Date().toISOString() }));
@@ -323,6 +364,34 @@ const Login = ({ initialTab }: LoginProps) => {
                       disabled={isSignupLoading}
                     />
                   </div>
+                  
+                  {isProfileBio && (
+                    <>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-role" className="text-gray-200">Your Role</Label>
+                    <Input
+                      id="signup-role"
+                      type="text"
+                      placeholder="Your Role"
+                      className="bg-gray-800 border-gray-700 text-white"
+                      value={signupPosition}
+                      onChange={(e) => setSignupPosition(e.target.value)}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-company" className="text-gray-200">Company</Label>
+                    <Input
+                      id="signup-company"
+                      type="text"
+                      placeholder="Company Name"
+                      className="bg-gray-800 border-gray-700 text-white"
+                      value={signupCompany}
+                      onChange={(e) => setSignupCompany(e.target.value)}
+                    />
+                  </div>
+                  </>
+                  )}
                   
                   <div className="space-y-2">
                     <Label htmlFor="signup-password" className="text-gray-200">Password</Label>

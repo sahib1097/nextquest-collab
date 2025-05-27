@@ -29,10 +29,11 @@ export type SidebarPosition = "left" | "right" | "bottom";
 interface MovableSidebarProps {
   position: SidebarPosition;
   onPositionChange: (position: SidebarPosition) => void;
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
 }
 
-const MovableSidebar = ({ position, onPositionChange }: MovableSidebarProps) => {
-  const [collapsed, setCollapsed] = useState(false);
+const MovableSidebar = ({ position, onPositionChange, collapsed, setCollapsed }: MovableSidebarProps) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -54,7 +55,55 @@ const MovableSidebar = ({ position, onPositionChange }: MovableSidebarProps) => 
     { name: "Budgets", icon: DollarSign, path: "/admin/budgets" },
     { name: "Team", icon: Users, path: "/admin/team" },
     { name: "Settings", icon: Settings, path: "/admin/settings" },
+  //  {name: "Move Sidebar", icon: ClipboardList}
   ];
+
+
+
+
+/* <Popover>
+            <PopoverTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="icon"
+              >
+                <RotateCcw size={14} />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-52" align="end">
+              <div className="grid grid-cols-3 gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => onPositionChange("left")}
+                  className={position === "left" ? "bg-primary/10" : ""}
+                >
+                  <ArrowLeft size={14} />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => onPositionChange("bottom")}
+                  className={position === "bottom" ? "bg-primary/10" : ""}
+                >
+                  <ArrowDown size={14} />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => onPositionChange("right")}
+                  className={position === "right" ? "bg-primary/10" : ""}
+                >
+                  <ArrowRight size={14} />
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover> */
+
+
+
+
+
 
   const isHorizontal = position === "bottom";
 
@@ -67,20 +116,20 @@ const MovableSidebar = ({ position, onPositionChange }: MovableSidebarProps) => 
 
   // Layout-specific styles
   const containerStyles = {
-    left: `bg-white border-gray-200 transition-width ease-in-out duration-300 flex flex-col h-screen ${
+    left: `bg-background border-border transition-width ease-in-out duration-300 flex flex-col h-screen ${
       collapsed ? "w-[80px]" : "w-[250px]"
     } ${sidebarPositionStyles[position]}`,
-    right: `bg-white border-gray-200 transition-width ease-in-out duration-300 flex flex-col h-screen ${
+    right: `bg-background border-border transition-width ease-in-out duration-300 flex flex-col h-screen ${
       collapsed ? "w-[80px]" : "w-[250px]"
     } ${sidebarPositionStyles[position]}`,
-    bottom: `bg-white border-gray-200 transition-height ease-in-out duration-300 flex flex-row h-[${
+    bottom: `bg-background border-border transition-height ease-in-out duration-300 flex flex-row h-[${
       collapsed ? "60px" : "120px"
     }] w-full ${sidebarPositionStyles[position]}`
   };
 
   return (
     <div className={containerStyles[position]}>
-      <div className={`p-4 ${isHorizontal ? "border-r" : "border-b"} border-gray-200 flex items-center justify-between`}>
+      <div className={`p-4 ${isHorizontal ? "border-r" : "border-b"} border-border flex items-center justify-between`}>
         <NavLink to="/admin/dashboard" className="flex items-center">
           {!collapsed && (
             <img 
@@ -89,60 +138,13 @@ const MovableSidebar = ({ position, onPositionChange }: MovableSidebarProps) => 
               className="h-8 w-auto"
             />
           )}
-          {collapsed && (
-            <img 
-              src="/lovable-uploads/f44da06d-430c-4883-a4c2-fc7c23f90541.png" 
-              alt="Next Quest Logo" 
-              className="h-6 w-auto"
-            />
-          )}
         </NavLink>
         
         <div className="flex items-center gap-2">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="icon" 
-                className="text-gray-500 hover:bg-gray-100"
-              >
-                <RotateCcw size={14} />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-52" align="end">
-              <div className="grid grid-cols-3 gap-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => onPositionChange("left")}
-                  className={position === "left" ? "bg-primary/10 text-primary-foreground" : ""}
-                >
-                  <ArrowLeft size={14} />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => onPositionChange("bottom")}
-                  className={position === "bottom" ? "bg-primary/10 text-primary-foreground" : ""}
-                >
-                  <ArrowDown size={14} />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => onPositionChange("right")}
-                  className={position === "right" ? "bg-primary/10 text-primary-foreground" : ""}
-                >
-                  <ArrowRight size={14} />
-                </Button>
-              </div>
-            </PopoverContent>
-          </Popover>
           
           <Button 
             variant="ghost" 
-            size="icon" 
-            className="text-gray-500 hover:bg-gray-100"
+            size="icon"
             onClick={() => setCollapsed(!collapsed)}
           >
             {collapsed ? <Menu size={20} /> : <X size={20} />}
@@ -160,7 +162,7 @@ const MovableSidebar = ({ position, onPositionChange }: MovableSidebarProps) => 
                 `flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                   isActive
                     ? "bg-primary/10 text-primary"
-                    : "text-gray-600 hover:bg-gray-100"
+                    : "text-muted-foreground hover:bg-accent"
                 } ${collapsed ? "justify-center" : ""}`
               }
             >
@@ -171,10 +173,10 @@ const MovableSidebar = ({ position, onPositionChange }: MovableSidebarProps) => 
         </nav>
       </div>
       
-      <div className={`p-4 ${isHorizontal ? "border-l" : "border-t"} border-gray-200`}>
+      <div className={`p-4 ${isHorizontal ? "border-l" : "border-t"} border-border`}>
         <Button
           variant="ghost"
-          className={`w-full flex items-center text-red-500 hover:bg-red-50 ${
+          className={`w-full flex items-center text-destructive hover:bg-destructive/10 ${
             collapsed ? "justify-center px-2" : ""
           }`}
           onClick={handleLogout}

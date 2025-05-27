@@ -1,6 +1,14 @@
 import React, { useRef, useEffect } from 'react';
 import Phaser from 'phaser';
 
+const DESIGN_WIDTH  = 1920
+const DESIGN_HEIGHT = 1080
+
+interface TownMapProps {
+  width?: string | number
+  height?: string | number
+}
+
 class TownScene extends Phaser.Scene {
   private isDragging = false;
   private dragStartX = 0;
@@ -10,15 +18,10 @@ class TownScene extends Phaser.Scene {
     super({ key: 'TownScene' });
   }
 
-  preload(): void {
-    // Layers
-    this.load.image('bg', '/assets/phaser/town-map/background.png');
-    this.load.image('fg', '/assets/phaser/town-map/background-mid.png');
-    // Frame + Characters
-    this.load.image(
-      'frame1',
-      '/assets/phaser/c6807ce6f6d314f58b70d530034dd87b/location-marker.png'
-    );
+  preload(){
+    this.load.image('background', '/assets/phaser/town-map/background.png');
+    this.load.image('city', '/assets/phaser/town-map/background-mid.png');
+    this.load.image('frame1', '/assets/phaser/c6807ce6f6d314f58b70d530034dd87b/location-marker.png');
     this.load.image(
       'character1',
       '/assets/phaser/f6313571193a34c69bf86bd5f7534400/preview.png'
@@ -45,43 +48,47 @@ class TownScene extends Phaser.Scene {
     );
   }
 
-  create(): void {
+  create(){
+    const bg = this.add.image(0, 0, 'background').setOrigin(0, 0);
+    const scale = DESIGN_HEIGHT / bg.height;
     const cam = this.cameras.main;
-    const H = cam.height;
+    bg.setScale(scale);
 
-    // Source sizes
-    const imgBg = this.textures.get('bg').getSourceImage() as HTMLImageElement;
-    const imgFg = this.textures.get('fg').getSourceImage() as HTMLImageElement;
+    // World bounds
+    const worldWidth  = bg.width * scale;
+    const worldHeight = DESIGN_HEIGHT;
+    this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
+    this.physics.world.setBounds(0, 0, worldWidth, worldHeight);
 
-    // Scale so height fills viewport
-    const scaleBg = H / imgBg.height;
-    const scaleFg = H / imgFg.height;
+    // Parallax underlay
+    this.add.image(0, 0, 'background')
+      .setOrigin(0, 0)
+      .setDepth(-1)
+      .setScrollFactor(0.5);
 
-    // Scaled widths
-    const Wbg = imgBg.width * scaleBg;
-    const Wfg = imgFg.width * scaleFg;
-    const worldWidth = Math.max(Wbg, Wfg);
-
-    // Add layers
-    this.add
-      .image(0, 0, 'bg')
-      .setOrigin(0)
+    this.add.image(0, 0, 'city')
+      .setOrigin(0, 0)
       .setDepth(0)
-      .setScrollFactor(0.7)
-      .setScale(scaleBg);
+      .setScale(0.5 * scale)
+      .setScrollFactor(1)
 
-    this.add
-      .image(0, 0, 'fg')
-      .setOrigin(0)
-      .setDepth(1)
-      .setScale(scaleFg);
+    // // Add layers
+    // this.add
+    //   .image(0, 0, 'bg')
+    //   .setOrigin(0)
+    //   .setDepth(0)
+    //   .setScrollFactor(0.7)
+    //   .setScale(scale);
 
-    // World bounds (lock vertical, allow horizontal)
-    cam.setBounds(0, 0, worldWidth, H);
-    this.physics.world.setBounds(0, 0, worldWidth, H);
+    // this.add
+    //   .image(0, 0, 'city')
+    //   .setOrigin(0)
+    //   .setDepth(1)
+    //   .setScale(scale);
+
 
     // ── Characters & Floating Frames ──
-    const characterKeys: string[] = [
+    const characters = [
       'character1',
       'character2',
       'character3',
@@ -90,55 +97,64 @@ class TownScene extends Phaser.Scene {
       'character6'
     ];
 
-    const framePositions: { x: number; y: number }[] = [
-      { x: 300, y: 450 },
-      { x: 400, y: 400 },
-      { x: 700, y: 450 },
-      { x: 1000, y: 400 },
-      { x: 1100, y: 450 },
-      { x: 1600, y: 400 },
-      { x: 1900, y: 450 },
-      { x: 2200, y: 400 },
-      { x: 2500, y: 450 },
-      { x: 2780, y: 400 },
+    const framePositions: { x: number; y: number; enable : boolean }[] = [
+      { x: 250,   y: 250, enable: true}, //1
+      { x: 300,   y: 900, enable: true},
+      { x: 550,   y: 450, enable: true},
+      { x: 700,   y: 800, enable: true},
+      { x: 1100,  y: 650, enable: true}, //5
+      { x: 1450,  y: 800, enable: true},
+      { x: 1900,  y: 850, enable: true},
+      { x: 2200,  y: 600, enable: true},
+      { x: 2500,  y: 575, enable: true},
+      { x: 2780,  y: 550, enable: true}, //10
+      { x: 3000,  y: 400, enable: true},
+      { x: 3300,  y: 800, enable: true},
+      { x: 275,   y: 525, enable: true},
+      { x: 1500,  y: 500, enable: true},
+      { x: 1800,  y: 500, enable: true}, //15
+      { x: 2225,  y: 850, enable: true},
+      { x: 2450,  y: 875, enable: true},
+      { x: 950,   y: 200, enable: true},
+      { x: 1000,  y: 900, enable: true},
+      { x: 3160,  y: 550, enable: true}, //20
     ];
 
-    framePositions.forEach(({ x, y }, idx) => {
-      const charKey = Phaser.Utils.Array.GetRandom(characterKeys);
-      const container = this.add.container(x, y).setDepth(2);
+    framePositions.forEach(({ x, y, enable }, idx) => {
+      if (enable) {
+        const charKey = Phaser.Utils.Array.GetRandom(characters);
+        const container = this.add.container(x, y).setDepth(2);
 
-      const character = this.add.image(0, 0, charKey).setScale(0.6);
-      const frame = this.add
-        .image(0, 8, 'frame1')
-        .setScale(0.45)
-        .setInteractive({ cursor: 'pointer' })
-        .on('pointerdown', () =>
-          console.log(`Clicked on frame ${idx + 1} at (${x}, ${y})`)
-        );
-      const label = this.add
-        .text(
-          0,
-          frame.displayHeight / 2 + 8,
-          `Quest – ${idx + 1}`,
-          {
-            fontSize: '16px',
-            color: '#fff',
-            backgroundColor: 'rgba(0,0,0,0.6)',
-            padding: { x: 6, y: 2 },
-          }
-        )
-        .setOrigin(0.5, 0);
+        const character = this.add.image(0, -15, charKey).setScale(0.8*scale);
+        const frame = this.add.image(0, 0, 'frame1').setScale(0.6*scale)
+          .setInteractive({ cursor: 'pointer' })
+          .on('pointerdown', () =>
+            console.log(`Clicked on frame ${idx + 1} at (${x}, ${y})`)
+          );
+        const label = this.add.text(
+            0,
+            frame.displayHeight / 2 + 10,
+            `Quest – ${idx + 1}`,
+            {
+              fontSize: `${18 * scale}px`,
+              color: '#fff',
+              backgroundColor: 'rgba(0,0,0,0.6)',
+              padding: { x: 6, y:4},
+            }
+          )
+          .setOrigin(0.5, 0);
 
-      container.add([character, frame, label]);
+        container.add([character, frame, label]);
 
-      this.tweens.add({
-        targets: container,
-        y: y - 10,
-        ease: 'Sine.easeInOut',
-        duration: 1000,
-        yoyo: true,
-        repeat: -1,
-      });
+        this.tweens.add({
+          targets: container,
+          y: y - 10,
+          ease: 'Sine.easeInOut',
+          duration: 1000,
+          yoyo: true,
+          repeat: -1,
+        });
+      }
     });
 
     // ── Drag & Wheel-to-Pan ──
@@ -147,60 +163,77 @@ class TownScene extends Phaser.Scene {
       this.dragStartX = p.x;
       this.startCamX = cam.scrollX;
     });
-    this.input.on('pointerup', () => (this.isDragging = false));
-    this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
-      if (!this.isDragging) return;
-      const dx = p.x - this.dragStartX;
-      cam.scrollX = Phaser.Math.Clamp(
-        this.startCamX - dx,
-        0,
-        worldWidth - cam.width
-      );
-    });
+    this.input.on('pointerup',   () => this.isDragging = false)
+        this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
+          if (!this.isDragging) return
+          this.cameras.main.scrollX = Phaser.Math.Clamp(
+            this.startCamX - (p.x - this.dragStartX),
+            0,
+            worldWidth - this.cameras.main.width
+          )
+        })
+
     this.input.on(
       'wheel',
       (_ptr: Phaser.Input.Pointer, _objs: any, _dx: number, dy: number) => {
-        cam.scrollX = Phaser.Math.Clamp(
-          cam.scrollX + dy,
+        this.cameras.main.scrollX = Phaser.Math.Clamp(
+          this.cameras.main.scrollX + dy,
           0,
-          worldWidth - cam.width
-        );
+          worldWidth - this.cameras.main.width
+        )
       }
     );
   }
 }
 
-const TownMap: React.FC = () => {
-  const phaserRef = useRef<HTMLDivElement>(null);
+export const TownMap: React.FC<TownMapProps> = () => {
+  const phaserRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const config: Phaser.Types.Core.GameConfig = {
+    if (!phaserRef.current) return
+
+    const game = new Phaser.Game({
       type: Phaser.AUTO,
-      parent: phaserRef.current!,
+      parent: phaserRef.current,
       scale: {
-        mode: Phaser.Scale.RESIZE,
+        mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: DESIGN_WIDTH,
+        height: DESIGN_HEIGHT,
       },
       physics: {
         default: 'arcade',
-        arcade: { gravity: {
-            y: 0,
-            x: 0
-        } },
+        arcade: { gravity: { x: 0, y: 0 } }
       },
-      scene: TownScene,
-    };
+      scene: TownScene
+    })
 
-    const game = new Phaser.Game(config);
-    return () => game.destroy(true);
-  }, []);
+    return () => game.destroy(true)
+  }, [])
 
+  // Maintain 16:9 aspect ratio using padding hack
   return (
     <div
-      ref={phaserRef}
-      style={{ width: '100%', height: '80vh', overflow: 'hidden' }}
-    />
-  );
-};
+      style={{
+        position: 'relative',
+        width: '100%',
+        paddingTop: `${(DESIGN_HEIGHT / DESIGN_WIDTH) * 100}%`,
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        ref={phaserRef}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 0
+        }}
+      />
+    </div>
+  )
+}
 
 export default TownMap;

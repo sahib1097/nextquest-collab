@@ -1,8 +1,8 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CircleAlert, CircleHelp, CircleMinus } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface KanbanViewProps {
   projects: any[];
@@ -12,12 +12,27 @@ interface KanbanViewProps {
 }
 
 const KanbanView = ({ projects, navigate, emptyMessage, onClearFilters }: KanbanViewProps) => {
+  const { currentTheme } = useTheme();
+
   if (projects.length === 0) {
     return (
-      <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-[#E5E5EA]">
-        <p className="text-[#86868B] mb-4">{emptyMessage}</p>
+      <div 
+        className="text-center py-12 rounded-lg shadow-sm border"
+        style={{ 
+          backgroundColor: currentTheme.colors.background,
+          borderColor: currentTheme.colors.border
+        }}
+      >
+        <p style={{ color: currentTheme.colors.accent }} className="mb-4">{emptyMessage}</p>
         {emptyMessage.includes("criteria") && (
-          <Button onClick={onClearFilters} className="bg-[#007AFF] hover:opacity-90 text-white">
+          <Button 
+            onClick={onClearFilters} 
+            style={{
+              backgroundColor: currentTheme.colors.primary,
+              color: currentTheme.colors.text
+            }}
+            className="hover:opacity-90"
+          >
             Clear Filters
           </Button>
         )}
@@ -35,16 +50,16 @@ const KanbanView = ({ projects, navigate, emptyMessage, onClearFilters }: Kanban
 
   // Status column colors
   const statusColors = {
-    "Planning": "#007AFF",
-    "In Progress": "#F59E0B",
-    "Review": "#8B5CF6",
+    "Planning": currentTheme.colors.primary,
+    "In Progress": currentTheme.colors.accent,
+    "Review": currentTheme.colors.secondary,
     "Completed": "#10B981",
   };
 
   const statusBgColors = {
-    "Planning": "#EBF5FF",
-    "In Progress": "#FEF3C7",
-    "Review": "#F3F0FF",
+    "Planning": `${currentTheme.colors.primary}20`,
+    "In Progress": `${currentTheme.colors.accent}20`,
+    "Review": `${currentTheme.colors.secondary}20`,
     "Completed": "#ECFDF5",
   };
 
@@ -52,30 +67,35 @@ const KanbanView = ({ projects, navigate, emptyMessage, onClearFilters }: Kanban
   const renderPriorityIndicator = (priority: string | undefined) => {
     switch(priority?.toLowerCase()) {
       case 'high':
-        return <CircleAlert className="text-[#EF4444]" size={18} />;
+        return <CircleAlert className="text-red-500" size={18} />;
       case 'medium':
-        return <CircleHelp className="text-[#F59E0B]" size={18} />;
+        return <CircleHelp className="text-amber-500" size={18} />;
       case 'low':
-        return <CircleMinus className="text-[#86868B]" size={18} />;
+        return <CircleMinus style={{ color: currentTheme.colors.accent }} size={18} />;
       default:
-        return <CircleMinus className="text-[#86868B]" size={18} />;
+        return <CircleMinus style={{ color: currentTheme.colors.accent }} size={18} />;
     }
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-4 gap-4 h-full">
       {Object.entries(statusGroups).map(([status, statusProjects]) => (
         <div key={status} className="flex flex-col">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-medium" style={{ color: statusColors[status as keyof typeof statusColors] }}>
-              {status} ({statusProjects.length})
-            </h3>
+          <div 
+            className="px-4 py-2 rounded-t-lg font-medium text-sm"
+            style={{ 
+              backgroundColor: statusBgColors[status as keyof typeof statusBgColors],
+              color: statusColors[status as keyof typeof statusColors]
+            }}
+          >
+            {status} ({statusProjects.length})
           </div>
-          <div className="bg-[#F5F5F7] rounded-lg p-3 h-full min-h-[70vh] flex flex-col gap-3">
+          
+          <div className="flex-1 space-y-3 p-2 overflow-y-auto">
             {statusProjects.map((project) => (
               <Card 
-                key={project.id} 
-                className="overflow-hidden border border-[#E5E5EA] hover:shadow-md transition-all duration-200 hover:scale-[1.005] cursor-pointer"
+                key={project.id}
+                className="cursor-pointer hover:shadow-md transition-shadow"
                 onClick={() => navigate(`/admin/projects/${project.id}`)}
               >
                 <CardContent className="p-0">
@@ -84,15 +104,18 @@ const KanbanView = ({ projects, navigate, emptyMessage, onClearFilters }: Kanban
                     style={{ backgroundColor: statusColors[status as keyof typeof statusColors] }}
                   ></div>
                   <div className="p-3">
-                    <h4 className="font-medium text-sm">{project.name}</h4>
-                    <p className="text-xs text-[#86868B] line-clamp-2 mt-1">{project.description}</p>
+                    <h4 style={{ color: currentTheme.colors.text }} className="font-medium text-sm">{project.name}</h4>
+                    <p style={{ color: currentTheme.colors.accent }} className="text-xs line-clamp-2 mt-1">{project.description}</p>
                     
                     <div className="mt-3 flex justify-between items-center text-xs">
-                      <span className="text-[#86868B]">Due: {project.dueDate}</span>
-                      <span className="font-medium">{Math.round(project.progress)}%</span>
+                      <span style={{ color: currentTheme.colors.accent }}>Due: {project.dueDate}</span>
+                      <span style={{ color: currentTheme.colors.text }} className="font-medium">{Math.round(project.progress)}%</span>
                     </div>
                     
-                    <div className="w-full bg-[#F5F5F7] rounded-full h-1.5 mt-1">
+                    <div 
+                      className="w-full rounded-full h-1.5 mt-1"
+                      style={{ backgroundColor: currentTheme.colors.secondary }}
+                    >
                       <div 
                         className="h-1.5 rounded-full" 
                         style={{ 
@@ -101,37 +124,10 @@ const KanbanView = ({ projects, navigate, emptyMessage, onClearFilters }: Kanban
                         }}
                       ></div>
                     </div>
-                    
-                    <div className="mt-3 flex justify-between items-center">
-                      <div className="flex items-center">
-                        {renderPriorityIndicator(project.priority)}
-                      </div>
-                      <div className="flex -space-x-2">
-                        {(project.team || []).slice(0, 3).map((member: string, i: number) => (
-                          <div 
-                            key={i}
-                            className="w-6 h-6 rounded-full bg-[#007AFF] flex items-center justify-center text-white text-xs border border-white"
-                            title={member}
-                          >
-                            {member.charAt(0)}
-                          </div>
-                        ))}
-                        {(project.team || []).length > 3 && (
-                          <div className="w-6 h-6 rounded-full bg-[#F5F5F7] flex items-center justify-center text-[#86868B] text-xs border border-white">
-                            +{project.team.length - 3}
-                          </div>
-                        )}
-                      </div>
-                    </div>
                   </div>
                 </CardContent>
               </Card>
             ))}
-            {statusProjects.length === 0 && (
-              <div className="text-center py-4 text-sm text-[#86868B] italic">
-                No projects
-              </div>
-            )}
           </div>
         </div>
       ))}
