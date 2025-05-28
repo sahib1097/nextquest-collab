@@ -169,13 +169,14 @@ const Login = ({ initialTab }: LoginProps) => {
       }
   
       // 1) Get newly created user
-      const data = await res.json(); // { name, email }
+      const data = await res.json();
       const { user } = data;
 
       localStorage.setItem(
         "fluxUser",
         JSON.stringify({
           userId:          data.userId,
+          name:            data.name,
           teamId:          user.teamIds,
           email:           user.email,
           isAuthenticated: true,
