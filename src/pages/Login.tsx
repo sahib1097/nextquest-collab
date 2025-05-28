@@ -50,7 +50,6 @@ const Login = ({ initialTab }: LoginProps) => {
     }
     setCheckingAuth(false);
   }, [navigate]);
-
   // useEffect(() => {
   //   fetch(`${API}/api/auth/me`, { credentials: 'include' })
   //     .then(res => { if (!res.ok) throw new Error(); return res.json(); })
