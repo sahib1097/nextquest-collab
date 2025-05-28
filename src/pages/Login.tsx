@@ -51,16 +51,16 @@ const Login = ({ initialTab }: LoginProps) => {
     setCheckingAuth(false);
   }, [navigate]);
 
-  useEffect(() => {
-    fetch(`${API}/api/auth/me`, { credentials: 'include' })
-      .then(res => { if (!res.ok) throw new Error(); return res.json(); })
-      .then(user => {
-        localStorage.setItem("fluxUser", JSON.stringify({ email: user.email, name: user.name, isAuthenticated:true, lastLogin: new Date().toISOString() }));
-        updateLastActivity();
-        navigate('/admin/dashboard');
-      })
-      .catch(() => setCheckingAuth(false));
-  }, [navigate]);
+  // useEffect(() => {
+  //   fetch(`${API}/api/auth/me`, { credentials: 'include' })
+  //     .then(res => { if (!res.ok) throw new Error(); return res.json(); })
+  //     .then(user => {
+  //       localStorage.setItem("fluxUser", JSON.stringify({ email: user.email, name: user.name, isAuthenticated:true, lastLogin: new Date().toISOString() }));
+  //       updateLastActivity();
+  //       navigate('/admin/dashboard');
+  //     })
+  //     .catch(() => setCheckingAuth(false));
+  // }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
