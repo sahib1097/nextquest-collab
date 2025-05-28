@@ -36,13 +36,21 @@ const LeaderboardSystem = ({
   const isCyberpunkTheme = currentTheme.name === "Cyberpunk";
   
   return (
-    <Card className={`${
-      isMedievalTheme 
-        ? "bg-[#ebdeb8] border-[4px] border-[#bfa171] rounded-xl shadow-[0_0_20px_rgba(255,215,0,0.3)] font-serif text-[#fcefb4]" 
-        : isCyberpunkTheme
-        ? "bg-[#141622]/80 border-2 border-[#2DE2E6] rounded-lg shadow-[0_0_30px_rgba(45,226,230,0.2)] backdrop-blur-sm"
-        : ""
-    } ${compact ? "shadow-none" : ""}`}>
+    <Card 
+      className={`${
+        isMedievalTheme 
+          ? "border-[4px] border-[#d4af37] rounded-xl shadow-[0_0_20px_rgba(212,175,55,0.3)] font-serif text-[#4b3508] relative overflow-hidden" 
+          : isCyberpunkTheme
+          ? "bg-[#141622]/80 border-2 border-[#2DE2E6] rounded-lg shadow-[0_0_30px_rgba(45,226,230,0.2)] backdrop-blur-sm"
+          : ""
+      } ${compact ? "shadow-none" : ""}`}
+      style={isMedievalTheme ? {
+        backgroundImage: "url('/assets/themes/medieval/backgrounds/parchment.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat"
+      } : {}}
+    >
       <CardHeader className={compact ? "px-0 pt-0 pb-2" : ""}>
         <CardTitle className="flex items-center justify-between">
           {isMedievalTheme ? (
@@ -108,24 +116,16 @@ const LeaderboardSystem = ({
             isMedievalTheme ? (
               <button
                 onClick={() => navigate("/leaderboards")}
-                className="relative flex items-center justify-center h-12 px-10 text-sm font-bold text-[#ffe8a3] group mr-4"
+                className="relative group"
+                title="View Full Rankings"
               >
-                <img
-                  src="/assets/themes/medieval/sprites/F_UI_MenuButton_C2.png"
-                  alt="Button Frame"
-                  className="absolute inset-0 w-full h-full object-fill pointer-events-none"
-                />
-                <img
-                  src="/assets/themes/medieval/sprites/F_U_Detail4-Left.png"
-                  alt="Left Detail"
-                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 h-8 pointer-events-none"
-                />
-                <span className="relative z-10">View Full Rankings</span>
-                <img
-                  src="/assets/themes/medieval/sprites/F_U_Detail4.png"
-                  alt="Right Detail"
-                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 h-8 pointer-events-none"
-                />
+                <div
+                  className="w-10 h-10 rounded-full bg-[#8b0000] shadow-inner shadow-[#5c0000] 
+                            border-2 border-[#a52a2a] flex items-center justify-center 
+                            hover:scale-105 transition-transform mx-5"
+                >
+                  <Trophy className="text-yellow-100 w-5 h-5" />
+                </div>
               </button>
             ) : isCyberpunkTheme ? (
               <Button 

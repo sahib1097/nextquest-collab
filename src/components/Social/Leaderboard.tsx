@@ -245,16 +245,16 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
       }`}>
         <div className={`grid grid-cols-12 gap-2 p-3 ${
           isMedievalTheme 
-            ? "bg-[#5c4b2a]"
+            ? "bg-[#7c1c1c] text-[#fcefb4] font-bold border-b-2 border-[#d4af37] rounded-t-md"
             : isCyberpunkTheme
             ? "bg-[#141622] text-[#E0F2FF]"
             : "bg-muted/50"
         } font-medium text-sm`}>
           <div className="col-span-1 flex justify-center">#</div>
           <div className="col-span-5 md:col-span-3 flex items-center">Hero</div>
-          <div className="col-span-2 md:col-span-2 flex justify-center">XP</div>
-          <div className="hidden md:flex md:col-span-3 justify-start">Guild</div>
-          <div className="col-span-3 flex justify-end">Badges</div>
+          <div className="col-span-1 md:col-span-1 flex justify-center">XP</div>
+          <div className="hidden md:flex md:col-span-3 justify-center">Guild</div>
+          <div className="col-span-4 flex justify-end">Badges</div>
         </div>
         
         <div>
