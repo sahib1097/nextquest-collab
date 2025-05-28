@@ -3,7 +3,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Leaderboard from "./Leaderboard";
 import { LeaderboardScope, LeaderboardTimeframe } from "@/types/social";
-import { Trophy, Users, Building, UserRound, Clock, Globe2 } from "lucide-react";
+import { Trophy, Users, Building, UserRound, Clock, Globe2, Sword } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -54,9 +54,27 @@ const LeaderboardSystem = ({
       <CardHeader className={compact ? "px-0 pt-0 pb-2" : ""}>
         <CardTitle className="flex items-center justify-between">
           {isMedievalTheme ? (
-            <span className="px-6 py-3 bg-[#d6b96e] text-[#4b3508] font-black text-3xl tracking-wide border-[4px] border-[#a87e17] rounded-md shadow-[inset_0_0_6px_rgba(0,0,0,0.6)] uppercase font-serif">
-              Leaderboards
-            </span>
+            <div className="relative mx-7">
+              <span className="text-2xl font-bold text-[#4b3508] tracking-wide uppercase font-serif relative">
+                {/* Main text with medieval styling */}
+                <span className="relative z-10 drop-shadow-[2px_2px_0px_rgba(212,175,55,0.3)]">
+                  Leaderboards
+                </span>
+                {/* Quest board style decorative underline */}
+                <div className="absolute -bottom-2 left-0 right-0 flex items-center justify-center">
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#d4af37] to-[#d4af37]"></div>
+                  <div className="mx-2 w-2 h-2 bg-[#d4af37] rotate-45"></div>
+                  <div className="flex-1 h-px bg-gradient-to-l from-transparent via-[#d4af37] to-[#d4af37]"></div>
+                </div>
+                {/* Medieval scroll flourishes */}
+                <div className="absolute -left-6 top-1/2 transform -translate-y-1/2">
+                  <Sword className="w-4 h-4 text-[#d4af37] rotate-45" />
+                </div>
+                <div className="absolute -right-6 top-1/2 transform -translate-y-1/2">
+                  <Sword className="w-4 h-4 text-[#d4af37] rotate-45" />
+                </div>
+              </span>
+            </div>
           ) : isCyberpunkTheme ? (
             <span className="relative px-6 py-3 font-mono font-bold text-3xl tracking-wider uppercase">
               <div className="relative">
@@ -122,7 +140,7 @@ const LeaderboardSystem = ({
                 <div
                   className="w-10 h-10 rounded-full bg-[#8b0000] shadow-inner shadow-[#5c0000] 
                             border-2 border-[#a52a2a] flex items-center justify-center 
-                            hover:scale-105 transition-transform mx-5"
+                            hover:scale-105 transition-transform mx-5 my-2"
                 >
                   <Trophy className="text-yellow-100 w-5 h-5" />
                 </div>
