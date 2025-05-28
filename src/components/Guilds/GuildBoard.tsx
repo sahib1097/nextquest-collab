@@ -151,10 +151,51 @@ const GuildBoard = () => {
             </div>
             <button
               onClick={() => setIsDialogOpen(true)}
-              className="relative flex items-center justify-center h-12 px-10 text-sm font-bold uppercase bg-gradient-to-r from-[#FF2E97] to-[#2DE2E6] text-white border-2 border-[#2DE2E6] rounded-lg shadow-[0_0_20px_rgba(45,226,230,0.5)] transition-all duration-300 hover:from-[#2DE2E6] hover:to-[#FF2E97] hover:shadow-[0_0_40px_rgba(45,226,230,0.7)] focus:outline-none focus:ring-2 focus:ring-[#2DE2E6]"
+              className="relative group overflow-hidden"
             >
-              <Plus className="h-4 w-4 mr-2 text-white drop-shadow-[0_0_6px_rgba(45,226,230,0.7)]" />
-              Create Guild
+              {/* Parallelogram container with skew transform */}
+              <div className="relative mx-4">
+                {/* Main button shape - parallelogram */}
+                <div 
+                  className="relative h-12 px-12 py-3 transform skew-x-[-12deg] bg-gradient-to-r from-[#141622] via-[#1a1f2e] to-[#141622] border-2 border-[#2DE2E6] shadow-[0_0_20px_rgba(45,226,230,0.4)] transition-all duration-300 group-hover:shadow-[0_0_40px_rgba(45,226,230,0.8)] group-hover:border-[#FF2E97]"
+                >
+                  {/* Inner glow effect */}
+                  <div className="absolute inset-[2px] bg-gradient-to-r from-[#2DE2E6]/10 via-transparent to-[#FF2E97]/10 transform transition-all duration-300 group-hover:from-[#FF2E97]/20 group-hover:to-[#2DE2E6]/20" />
+                  
+                  {/* Circuit trace decorations */}
+                  <div className="absolute top-1 left-2 right-2 h-[1px] bg-gradient-to-r from-transparent via-[#2DE2E6] to-transparent opacity-60" />
+                  <div className="absolute bottom-1 left-2 right-2 h-[1px] bg-gradient-to-r from-transparent via-[#FF2E97] to-transparent opacity-40" />
+                  
+                  {/* Corner accents */}
+                  <div className="absolute top-0 left-0 w-2 h-2 border-l-2 border-t-2 border-[#2DE2E6] opacity-80" />
+                  <div className="absolute bottom-0 right-0 w-2 h-2 border-r-2 border-b-2 border-[#FF2E97] opacity-80" />
+                </div>
+                
+                {/* Button content - counter-skewed to appear normal */}
+                <div className="absolute inset-0 flex items-center justify-center transform skew-x-[12deg] pointer-events-none">
+                  <div className="flex items-center text-sm font-bold uppercase tracking-wide">
+                    {/* Plus icon with glow */}
+                    <div className="relative mr-2 mx-2">
+                      <Plus className="h-4 w-4 text-[#2DE2E6] drop-shadow-[0_0_8px_rgba(45,226,230,0.8)] transition-all duration-300 group-hover:text-[#FF2E97] group-hover:drop-shadow-[0_0_12px_rgba(255,46,151,0.8)]" />
+                      {/* Glitch effect overlay */}
+                      <Plus className="absolute top-0 left-0 h-4 w-4 text-[#FF2E97] opacity-0 group-hover:opacity-30 transition-opacity duration-150" style={{ transform: 'translate(1px, -1px)' }} />
+                    </div>
+                    
+                    {/* Text with gradient */}
+                    <span className="bg-gradient-to-r from-[#2DE2E6] to-[#E0F2FF] bg-clip-text text-transparent font-mono transition-all duration-300 group-hover:from-[#FF2E97] group-hover:to-[#2DE2E6]">
+                      Create Guild
+                    </span>
+                  </div>
+                </div>
+                
+                {/* Animated scanning line */}
+                <div className="absolute inset-0 overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-transparent via-[#2DE2E6] to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-pulse transform skew-x-[-12deg]" />
+                </div>
+                
+                {/* Holographic shine effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
+              </div>
             </button>
           </>
         ) : (

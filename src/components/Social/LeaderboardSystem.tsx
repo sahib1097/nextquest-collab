@@ -150,7 +150,7 @@ const LeaderboardSystem = ({
                 variant="outline" 
                 size="sm" 
                 onClick={() => navigate("/leaderboards")}
-                className="bg-[#141622] text-[#2DE2E6] border border-[#2DE2E6] hover:bg-[#261D54] transition-all duration-300"
+                className="bg-[#141622] text-[#2DE2E6] border border-[#2DE2E6] hover:bg-[#261D54] transition-all duration-300 mx-5"
               >
                 View Full Rankings
               </Button>
