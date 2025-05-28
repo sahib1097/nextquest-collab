@@ -16,60 +16,61 @@ const QuestLog = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     try {
-  //       // Try to fetch user data from API first
-  //       const res = await fetch(`${API}/api/auth/me`, {
-  //         credentials: 'include'
-  //       });
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        // Try to fetch user data from API first
+        const res = await fetch(`${API}/api/auth/me`, {
+          credentials: 'include'
+        });
         
-  //       if (res.ok) {
-  //         const userData = await res.json();
-  //         // Update user level with API data
-  //         const updatedUserLevel = {
-  //           userId: userData.id,
-  //           username: userData.name,
-  //           xp: userData.xp || 0,
-  //           level: userData.level || 1,
-  //           nextLevelXp: userData.nextLevelXp || 100,
-  //           profilePicture: userData.profilePicture
-  //         };
-  //         setUserLevel(updatedUserLevel);
-  //         localStorage.setItem("fluxUserLevel", JSON.stringify(updatedUserLevel));
-  //       } else {
-  //         // Fallback to localStorage if API fails
-  //         const storedUserLevel = localStorage.getItem("fluxUserLevel");
-  //         if (storedUserLevel) {
-  //           setUserLevel(JSON.parse(storedUserLevel));
-  //         }
-  //       }
-  //     } catch (err) {
-  //       console.error("Error fetching user data:", err);
-  //       // Fallback to localStorage on error
-  //       const storedUserLevel = localStorage.getItem("fluxUserLevel");
-  //       if (storedUserLevel) {
-  //         setUserLevel(JSON.parse(storedUserLevel));
-  //       }
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
+        if (res.ok) {
+          const userData = await res.json();
+          // Update user level with API data
+          console.log(userData)
+          const updatedUserLevel = {
+            userId: userData.id,
+            username: userData.name,
+            xp: userData.userLevel.xp || 0,
+            level: userData.userLevel.level || 1,
+            nextLevelXp: userData.userLevel.nextLevelXp || 100,
+            profilePicture: userData.userLevel.profilePicture
+          };
+          setUserLevel(updatedUserLevel);
+          localStorage.setItem("fluxUserLevel", JSON.stringify(updatedUserLevel));
+        } else {
+          // Fallback to localStorage if API fails
+          const storedUserLevel = localStorage.getItem("fluxUserLevel");
+          if (storedUserLevel) {
+            setUserLevel(JSON.parse(storedUserLevel));
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+        // Fallback to localStorage on error
+        const storedUserLevel = localStorage.getItem("fluxUserLevel");
+        if (storedUserLevel) {
+          setUserLevel(JSON.parse(storedUserLevel));
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  //   // Load quests from localStorage
-  //   const storedQuests = localStorage.getItem("fluxQuests");
-  //   if (storedQuests) {
-  //     try {
-  //       const parsedQuests: Quest[] = JSON.parse(storedQuests);
-  //       setQuests(parsedQuests);
-  //     } catch (err) {
-  //       console.error("Error parsing quests:", err);
-  //       setError("Failed to load quests");
-  //     }
-  //   }
+    // Load quests from localStorage
+    const storedQuests = localStorage.getItem("fluxQuests");
+    if (storedQuests) {
+      try {
+        const parsedQuests: Quest[] = JSON.parse(storedQuests);
+        setQuests(parsedQuests);
+      } catch (err) {
+        console.error("Error parsing quests:", err);
+        setError("Failed to load quests");
+      }
+    }
     
-  //   fetchUserData();
-  // }, []);
+    fetchUserData();
+  }, []);
   
   // Get counts of quests by status
   const availableQuests = quests.filter(quest => quest.status === QuestStatus.AVAILABLE);
