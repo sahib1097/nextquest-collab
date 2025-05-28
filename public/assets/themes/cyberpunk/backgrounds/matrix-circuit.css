@@ -1,0 +1,95 @@
+/* Daemon 2.0 Inspired Cyberpunk Background */
+.cyberpunk-matrix-bg {
+  background: 
+    /* Digital rain effect */
+    linear-gradient(
+      0deg,
+      transparent 24%, 
+      rgba(45, 226, 230, 0.05) 25%, 
+      rgba(45, 226, 230, 0.05) 26%, 
+      transparent 27%, 
+      transparent 74%, 
+      rgba(45, 226, 230, 0.05) 75%, 
+      rgba(45, 226, 230, 0.05) 76%, 
+      transparent 77%, 
+      transparent
+    ),
+    /* Horizontal grid lines */
+    linear-gradient(
+      90deg,
+      transparent 24%, 
+      rgba(255, 46, 151, 0.03) 25%, 
+      rgba(255, 46, 151, 0.03) 26%, 
+      transparent 27%, 
+      transparent 74%, 
+      rgba(255, 46, 151, 0.03) 75%, 
+      rgba(255, 46, 151, 0.03) 76%, 
+      transparent 77%, 
+      transparent
+    ),
+    /* Circuit pattern overlay */
+    radial-gradient(
+      circle at 20% 80%, 
+      rgba(45, 226, 230, 0.1) 0%, 
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 20%, 
+      rgba(255, 46, 151, 0.1) 0%, 
+      transparent 50%
+    ),
+    /* Base dark gradient */
+    radial-gradient(
+      ellipse at center,
+      #141622 0%,
+      #0A0C14 100%
+    );
+  
+  background-size: 
+    50px 50px,
+    50px 50px,
+    200px 200px,
+    200px 200px,
+    100% 100%;
+  
+  animation: cyberpunk-pulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes cyberpunk-pulse {
+  0% {
+    filter: brightness(1) contrast(1);
+  }
+  100% {
+    filter: brightness(1.1) contrast(1.1);
+  }
+}
+
+/* Matrix digital rain overlay */
+.cyberpunk-matrix-bg::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(45, 226, 230, 0.02) 2px,
+      rgba(45, 226, 230, 0.02) 4px
+    );
+  animation: matrix-rain 20s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes matrix-rain {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+} 

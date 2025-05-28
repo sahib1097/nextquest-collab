@@ -106,6 +106,6 @@ export const themes: Record<string, Theme> = {
         border: "border-[#2DE2E6] shadow-[0_0_20px_rgba(45,226,230,0.2)]"
       }
     },
-    backgroundImage: "/assets/themes/cyberpunk/grid.svg"
+    backgroundImage: "/assets/themes/cyberpunk/backgrounds/daemon-matrix.svg"
   }
 }; 

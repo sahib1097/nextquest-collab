@@ -1,0 +1,111 @@
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Circuit board pattern -->
+    <pattern id="circuitPattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+      <rect width="100" height="100" fill="#0A0C14"/>
+      <!-- Horizontal traces -->
+      <line x1="0" y1="20" x2="100" y2="20" stroke="#2DE2E6" stroke-width="0.5" opacity="0.6"/>
+      <line x1="0" y1="80" x2="100" y2="80" stroke="#FF2E97" stroke-width="0.5" opacity="0.4"/>
+      <!-- Vertical traces -->
+      <line x1="30" y1="0" x2="30" y2="100" stroke="#2DE2E6" stroke-width="0.5" opacity="0.5"/>
+      <line x1="70" y1="0" x2="70" y2="100" stroke="#FF2E97" stroke-width="0.5" opacity="0.3"/>
+      <!-- Connection nodes -->
+      <circle cx="30" cy="20" r="2" fill="#2DE2E6" opacity="0.8"/>
+      <circle cx="70" cy="80" r="2" fill="#FF2E97" opacity="0.8"/>
+      <circle cx="70" cy="20" r="1.5" fill="#F706CF" opacity="0.6"/>
+      <circle cx="30" cy="80" r="1.5" fill="#2DE2E6" opacity="0.6"/>
+    </pattern>
+    
+    <!-- Digital rain pattern -->
+    <pattern id="digitalRain" x="0" y="0" width="20" height="40" patternUnits="userSpaceOnUse">
+      <rect width="20" height="40" fill="transparent"/>
+      <text x="10" y="10" font-family="monospace" font-size="8" fill="#2DE2E6" opacity="0.6" text-anchor="middle">1</text>
+      <text x="10" y="20" font-family="monospace" font-size="8" fill="#2DE2E6" opacity="0.4" text-anchor="middle">0</text>
+      <text x="10" y="30" font-family="monospace" font-size="8" fill="#2DE2E6" opacity="0.3" text-anchor="middle">1</text>
+      <text x="10" y="40" font-family="monospace" font-size="8" fill="#2DE2E6" opacity="0.2" text-anchor="middle">0</text>
+    </pattern>
+    
+    <!-- Glitch effect -->
+    <filter id="glitch">
+      <feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0"/>
+    </filter>
+    
+    <!-- Glow effect -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Gradient definitions -->
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#141622;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0A0C14;stop-opacity:1" />
+    </radialGradient>
+    
+    <linearGradient id="dataStream" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2DE2E6;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#FF2E97;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#F706CF;stop-opacity:0.6" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background base -->
+  <rect width="1920" height="1080" fill="url(#centerGlow)"/>
+  
+  <!-- Circuit board layer -->
+  <rect width="1920" height="1080" fill="url(#circuitPattern)" opacity="0.7"/>
+  
+  <!-- Digital rain overlay -->
+  <rect width="1920" height="1080" fill="url(#digitalRain)" opacity="0.3">
+    <animateTransform attributeName="transform" type="translate" values="0,-40; 0,0; 0,40" dur="4s" repeatCount="indefinite"/>
+  </rect>
+  
+  <!-- Main data streams -->
+  <g filter="url(#glow)">
+    <!-- Horizontal data streams -->
+    <line x1="0" y1="200" x2="1920" y2="200" stroke="url(#dataStream)" stroke-width="2" opacity="0.8">
+      <animate attributeName="stroke-dasharray" values="0,20; 20,0; 0,20" dur="3s" repeatCount="indefinite"/>
+    </line>
+    <line x1="0" y1="600" x2="1920" y2="600" stroke="#2DE2E6" stroke-width="1.5" opacity="0.6">
+      <animate attributeName="stroke-dasharray" values="10,10; 0,20; 10,10" dur="2s" repeatCount="indefinite"/>
+    </line>
+    <line x1="0" y1="880" x2="1920" y2="880" stroke="#FF2E97" stroke-width="1" opacity="0.5">
+      <animate attributeName="stroke-dasharray" values="5,15; 15,5; 5,15" dur="4s" repeatCount="indefinite"/>
+    </line>
+    
+    <!-- Vertical data streams -->
+    <line x1="400" y1="0" x2="400" y2="1080" stroke="#2DE2E6" stroke-width="1.5" opacity="0.4">
+      <animate attributeName="stroke-dasharray" values="0,30; 30,0; 0,30" dur="5s" repeatCount="indefinite"/>
+    </line>
+    <line x1="1200" y1="0" x2="1200" y2="1080" stroke="#FF2E97" stroke-width="1" opacity="0.3">
+      <animate attributeName="stroke-dasharray" values="20,10; 10,20; 20,10" dur="3.5s" repeatCount="indefinite"/>
+    </line>
+  </g>
+  
+  <!-- Connection nodes with pulse animation -->
+  <g filter="url(#glow)">
+    <circle cx="400" cy="200" r="5" fill="#2DE2E6">
+      <animate attributeName="r" values="3;8;3" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4;1;0.4" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="1200" cy="600" r="4" fill="#FF2E97">
+      <animate attributeName="r" values="2;6;2" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="800" cy="400" r="3" fill="#F706CF">
+      <animate attributeName="r" values="2;5;2" dur="2.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Geometric accents -->
+  <g opacity="0.3" filter="url(#glow)">
+    <polygon points="100,100 150,100 125,50" fill="none" stroke="#2DE2E6" stroke-width="1"/>
+    <polygon points="1700,900 1750,900 1725,950" fill="none" stroke="#FF2E97" stroke-width="1"/>
+    <rect x="50" y="950" width="30" height="30" fill="none" stroke="#F706CF" stroke-width="1"/>
+    <rect x="1800" y="50" width="40" height="40" fill="none" stroke="#2DE2E6" stroke-width="1"/>
+  </g>
+</svg> 
