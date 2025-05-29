@@ -101,7 +101,7 @@ export const getProjectDetails = async (projectId: string) => {
 
 export const addTaskToProject = async (projectId: string, task: any) => {
     try {
-        const response = await fetch(`${API}/projectinfo/add-task`, {
+        const response = await fetch(`${API}/api/projectinfo/add-task`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

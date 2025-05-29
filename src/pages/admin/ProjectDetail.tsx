@@ -137,10 +137,11 @@ const ProjectDetail = () => {
       title: newTask.trim(),
       completed: false,
       description: "",
-      status: "None",
+      status: "To Do",
       tags: [],
       dueDate: null,
       assignedTo: null,
+      isQuest: false
     };
 
     const asyncAddTaskToProject = async () => {

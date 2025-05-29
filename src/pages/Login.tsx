@@ -80,6 +80,7 @@ const Login = ({ initialTab }: LoginProps) => {
       // Parse response once
       const data = await res.json();
       const { user } = data;
+      console.log(user)
   
       // Store complete user data in localStorage
       const userData = {
@@ -92,7 +93,8 @@ const Login = ({ initialTab }: LoginProps) => {
         isAuthenticated: true,
         lastLogin: new Date().toISOString(),
         role: user.roleIds?.[0]?.name || 'User',
-        teamId: user.teamId
+        teamId: user.teamId,
+        adminLevel: user.adminLevel
       };
       
       localStorage.setItem('fluxUser', JSON.stringify(userData));
@@ -104,7 +106,8 @@ const Login = ({ initialTab }: LoginProps) => {
         xp: user.xp || 0,
         level: user.level || 1,
         nextLevelXp: user.nextLevelXp || 100,
-        profilePicture: user.profilePicture
+        profilePicture: user.profilePicture,
+        adminLevel: user.adminLevel
       };
       
       localStorage.setItem('fluxUserLevel', JSON.stringify(defaultUserLevel));
@@ -161,6 +164,7 @@ const Login = ({ initialTab }: LoginProps) => {
           bio:        signupBio,
           newUser:    signupPosition? true : false,
           avatarUrl:  signupAvatarUrl,
+          adminLevel: 'user'
         }),
       });
       if (!res.ok) {

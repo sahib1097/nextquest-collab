@@ -57,6 +57,7 @@ export interface Task {
   tags?: string[];
   dueDate?: Date | string;
   assignedTo?: string;
+  isQuest: boolean;
 }
 
 interface TaskItemProps {
