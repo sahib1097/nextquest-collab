@@ -150,10 +150,14 @@ class TownScene extends Phaser.Scene {
       }, []);
 
       // Enable frames based on number of tasks
-      const taskCount = allTasks?.length || 0;
-      console.log('Total tasks:', taskCount);
-      
-      for (let i = 0; i < taskCount && i < framePositions.length; i++) {
+      const questTasks = allTasks?.filter(task => task.isQuest) || [];
+      console.log(allTasks)
+      const questTaskCount = questTasks.length;
+
+      console.log('Quest tasks:', questTaskCount);
+
+      // Enable frames only for quest tasks
+      for (let i = 0; i < questTaskCount && i < framePositions.length; i++) {
         framePositions[i].enable = true;
       }
       
