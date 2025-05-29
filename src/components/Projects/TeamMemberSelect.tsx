@@ -16,6 +16,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { addActivity } from "@/utils/activityLogger";
+import {API} from "@/config"
+import { useEffect } from "react";
 
 export interface TeamMember {
   id: string;
@@ -43,21 +45,58 @@ const TeamMemberSelect = ({
 }: TeamMemberSelectProps) => {
   const [open, setOpen] = useState(false);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>(() => {
-    const storedMembers = localStorage.getItem("fluxTeamMembers");
-    if (storedMembers) {
-      return JSON.parse(storedMembers);
-    }
-    
+    // const storedMembers = localStorage.getItem("fluxTeamMembers");
+    // if (storedMembers) {
+    //   return JSON.parse(storedMembers);
+    // }
     // Default team members if none exist
-    const defaultMembers = [
-      { id: "1", name: "Jane Doe", email: "jane@example.com" },
-      { id: "2", name: "John Smith", email: "john@example.com" },
-      { id: "3", name: "Alex Johnson", email: "alex@example.com" },
-    ];
-    localStorage.setItem("fluxTeamMembers", JSON.stringify(defaultMembers));
-    return defaultMembers;
+    // const defaultMembers = [
+    //   { id: "1", name: "Jane Doe", email: "jane@example.com" },
+    //   { id: "2", name: "John Smith", email: "john@example.com" },
+    //   { id: "3", name: "Alex Johnson", email: "alex@example.com" },
+    // ];
+    // localStorage.setItem("fluxTeamMembers", JSON.stringify(defaultMembers));
+    // return defaultMembers;
+    return [];
   });
-  
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("fluxUser") || "{}");
+
+    const fetchTeamMembers = async () => {
+      try {
+        const res = await fetch(`${API}/api//save-quest`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            teamId: user.teamId?.[0]
+          }),
+        });
+
+        if (!res.ok) {
+          console.log(res);
+          return [];
+        }
+
+        const data = await res.json();
+        return data.team;
+      } catch (error) {
+        console.log("Something went wrong when getting team members");
+        return [];
+      }
+    };
+
+    const getTeam = async () => {
+      const members = await fetchTeamMembers();
+      if (members) {
+        setTeamMembers(members);
+        return members;
+      }
+    };
+
+    getTeam();
+  }, []);
+
   const selectedMember = teamMembers.find((member) => member.id === value);
 
   const handleSelect = (memberId: string) => {
@@ -156,3 +195,4 @@ const TeamMemberSelect = ({
 };
 
 export default TeamMemberSelect;
+
