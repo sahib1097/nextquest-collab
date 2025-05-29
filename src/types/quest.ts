@@ -21,7 +21,6 @@ export enum UserRole {
 export interface Quest {
   id: string;
   title: string;
-  name: string;  // Add name field as an alias for title
   description: string;
   assignedBy: string;
   assignedTo: string | string[]; // Updated to support multiple assignees

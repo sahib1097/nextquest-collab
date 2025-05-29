@@ -13,6 +13,7 @@ import { generateXpReward } from "@/utils/questUtils";
 import { toast } from "sonner";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import {API} from "@/config"
 
 const NewQuestDialog = () => {
   const [open, setOpen] = useState(false);
@@ -109,13 +110,15 @@ const NewQuestDialog = () => {
     // Get username from UserLevel
     const storedUserLevel = localStorage.getItem("fluxUserLevel");
     const username = storedUserLevel ? JSON.parse(storedUserLevel).username : "Admin";
+
+    const user = JSON.parse(localStorage.getItem("fluxUserLevel"));
     
     // Create new quest
     const newQuest: Quest = {
       id: uuidv4(),
-      title,
+      title, // Add the required 'name' property
       description,
-      assignedBy: username,
+      assignedBy: user.name,
       assignedTo: questType === "group" ? groupMembers : assignedTo,
       isGroupQuest: questType === "group",
       groupMembers: questType === "group" ? groupMembers : undefined,
@@ -267,13 +270,13 @@ const NewQuestDialog = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value={QuestDifficulty.SIMPLE}>
-                      Simple {questType === "group" ? "(75-150 XP)" : "(50-100 XP)"}
+                      Simple {questType === "group" ? "(300 XP)" : "(100 XP)"}
                     </SelectItem>
                     <SelectItem value={QuestDifficulty.MODERATE}>
-                      Moderate {questType === "group" ? "(225-450 XP)" : "(150-300 XP)"}
+                      Moderate {questType === "group" ? "(750 XP)" : "(250 XP)"}
                     </SelectItem>
                     <SelectItem value={QuestDifficulty.DIFFICULT}>
-                      Difficult {questType === "group" ? "(600-1200 XP)" : "(400-800 XP)"}
+                      Difficult {questType === "group" ? "(1800 XP)" : "(600 XP)"}
                     </SelectItem>
                   </SelectContent>
                 </Select>

@@ -125,7 +125,7 @@ export const addTaskToProject = async (projectId: string, task: any) => {
 
 export const deleteTask = async (taskId: string, projectId: string) => {
     try{
-        const response = await fetch(`${API}/projectInfo/delete-task`, {
+        const response = await fetch(`${API}/api/projectInfo/delete-task`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
