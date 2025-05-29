@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Check, User, X } from "lucide-react";
 import {
   Command,
@@ -7,6 +6,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from "@/components/ui/command";
 import {
   Popover,
@@ -17,7 +17,6 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { addActivity } from "@/utils/activityLogger";
 import {API} from "@/config"
-import { useEffect } from "react";
 
 export interface TeamMember {
   id: string;
@@ -44,28 +43,16 @@ const TeamMemberSelect = ({
   projectName
 }: TeamMemberSelectProps) => {
   const [open, setOpen] = useState(false);
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(() => {
-    // const storedMembers = localStorage.getItem("fluxTeamMembers");
-    // if (storedMembers) {
-    //   return JSON.parse(storedMembers);
-    // }
-    // Default team members if none exist
-    // const defaultMembers = [
-    //   { id: "1", name: "Jane Doe", email: "jane@example.com" },
-    //   { id: "2", name: "John Smith", email: "john@example.com" },
-    //   { id: "3", name: "Alex Johnson", email: "alex@example.com" },
-    // ];
-    // localStorage.setItem("fluxTeamMembers", JSON.stringify(defaultMembers));
-    // return defaultMembers;
-    return [];
-  });
+  const [searchQuery, setSearchQuery] = useState("");
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [initialFetchDone, setInitialFetchDone] = useState(false);
 
+  // Fetch team members only once when component mounts
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("fluxUser") || "{}");
-
     const fetchTeamMembers = async () => {
+      const user = JSON.parse(localStorage.getItem("fluxUser") || "{}");
       try {
-        const res = await fetch(`${API}/api//save-quest`, {
+        const res = await fetch(`${API}/api/teaminfo/fetch-team-members`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -74,34 +61,132 @@ const TeamMemberSelect = ({
         });
 
         if (!res.ok) {
-          console.log(res);
-          return [];
+          console.error('Failed to fetch team members:', res.statusText);
+          return;
         }
 
         const data = await res.json();
-        return data.team;
-      } catch (error) {
-        console.log("Something went wrong when getting team members");
-        return [];
-      }
-    };
-
-    const getTeam = async () => {
-      const members = await fetchTeamMembers();
-      if (members) {
+        const members = data.teamMembers.map((member: any) => ({
+          id: member._id,
+          name: member.username || member.email,
+          email: member.email,
+          avatar: member.avatar
+        }));
         setTeamMembers(members);
-        return members;
+      } catch (error) {
+        console.error("Error fetching team members:", error);
       }
     };
 
-    getTeam();
-  }, []);
+    fetchTeamMembers();
+  }, []); // Only run once when component mounts
+
+  // Fetch quest assignment when taskId changes or after initial team members fetch
+  useEffect(() => {
+    const fetchQuestAssignment = async () => {
+      if (!teamMembers.length) return; // Wait for team members to be loaded
+
+      try {
+        const assignmentRes = await fetch(`${API}/api/teaminfo/fetch-quest-assignment`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            questId: taskId
+          }),
+        });
+
+        if (assignmentRes.ok) {
+          const assignmentData = await assignmentRes.json();
+          if (assignmentData.assignedTo && !initialFetchDone) {
+            // Find the team member by email/name and set their ID as the value
+            const assignedMember = teamMembers.find(
+              m => m.email === assignmentData.assignedTo || m.name === assignmentData.assignedTo
+            );
+            if (assignedMember) {
+              onChange(assignedMember.id);
+              setInitialFetchDone(true);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching quest assignment:", error);
+      }
+    };
+
+    fetchQuestAssignment();
+  }, [taskId, teamMembers.length]); // Only run when taskId or teamMembers changes
 
   const selectedMember = teamMembers.find((member) => member.id === value);
 
-  const handleSelect = (memberId: string) => {
-    if (value === memberId) {
-      // Unassign
+  const filteredMembers = teamMembers.filter(member => 
+    member.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleSelect = async (memberId: string) => {
+    try {
+      const user = JSON.parse(localStorage.getItem("fluxUser") || "{}");
+      const selectedMember = teamMembers.find((m) => m.id === memberId);
+      
+      const res = await fetch(`${API}/api/teaminfo/update-quest-assignment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          questId: taskId,
+          assignedTo: value === memberId ? undefined : selectedMember?.name,
+          assignedBy: user.username || user.email
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to update quest assignment');
+      }
+
+      // If the update was successful, update the local state
+      if (value === memberId) {
+        // Unassign
+        onChange(undefined);
+        addActivity({
+          type: "task_unassigned",
+          details: `Unassigned member from task "${taskTitle}"${projectName ? ` in project "${projectName}"` : ""}`,
+          timestamp: new Date().toISOString(),
+          projectId
+        });
+      } else {
+        // Assign
+        onChange(memberId);
+        addActivity({
+          type: "task_assigned",
+          details: `Assigned "${selectedMember?.name}" to task "${taskTitle}"${projectName ? ` in project "${projectName}"` : ""}`,
+          timestamp: new Date().toISOString(),
+          projectId
+        });
+      }
+    } catch (error) {
+      console.error('Error updating quest assignment:', error);
+      // You might want to show a toast or error message to the user here
+    }
+    
+    setOpen(false);
+  };
+
+  const clearAssignment = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("fluxUser") || "{}");
+      
+      const res = await fetch(`${API}/api/teaminfo/update-quest-assignment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          questId: taskId,
+          assignedTo: undefined,
+          assignedBy: user.username || user.email
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to clear quest assignment');
+      }
+
       onChange(undefined);
       addActivity({
         type: "task_unassigned",
@@ -109,28 +194,11 @@ const TeamMemberSelect = ({
         timestamp: new Date().toISOString(),
         projectId
       });
-    } else {
-      // Assign
-      onChange(memberId);
-      const member = teamMembers.find((m) => m.id === memberId);
-      addActivity({
-        type: "task_assigned",
-        details: `Assigned "${member?.name}" to task "${taskTitle}"${projectName ? ` in project "${projectName}"` : ""}`,
-        timestamp: new Date().toISOString(),
-        projectId
-      });
+    } catch (error) {
+      console.error('Error clearing quest assignment:', error);
+      // You might want to show a toast or error message to the user here
     }
-    setOpen(false);
-  };
 
-  const clearAssignment = () => {
-    onChange(undefined);
-    addActivity({
-      type: "task_unassigned",
-      details: `Unassigned member from task "${taskTitle}"${projectName ? ` in project "${projectName}"` : ""}`,
-      timestamp: new Date().toISOString(),
-      projectId
-    });
     setOpen(false);
   };
 
@@ -156,38 +224,44 @@ const TeamMemberSelect = ({
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0" align="start">
         <Command>
-          <CommandInput placeholder="Search team members..." />
-          <CommandEmpty>No team member found</CommandEmpty>
-          <CommandGroup>
-            {selectedMember && (
-              <div className="px-2 py-1.5">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
-                  onClick={clearAssignment}
+          <CommandInput 
+            placeholder="Search team members..." 
+            value={searchQuery}
+            onValueChange={setSearchQuery}
+          />
+          <CommandList>
+            <CommandEmpty>No team member found</CommandEmpty>
+            <CommandGroup>
+              {selectedMember && (
+                <div className="px-2 py-1.5">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
+                    onClick={clearAssignment}
+                  >
+                    <X className="mr-2 h-4 w-4" />
+                    Unassign
+                  </Button>
+                </div>
+              )}
+              {filteredMembers.map(member => (
+                <CommandItem
+                  key={member.id}
+                  value={member.name}
+                  onSelect={() => handleSelect(member.id)}
                 >
-                  <X className="mr-2 h-4 w-4" />
-                  Unassign
-                </Button>
-              </div>
-            )}
-            {teamMembers.map(member => (
-              <CommandItem
-                key={member.id}
-                value={member.name}
-                onSelect={() => handleSelect(member.id)}
-              >
-                <Avatar className="mr-2 h-5 w-5 text-xs">
-                  <AvatarFallback className="bg-[#9b87f5] text-white">
-                    {member.name.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="flex-1 truncate">{member.name}</span>
-                {value === member.id && <Check className="ml-2 h-4 w-4" />}
-              </CommandItem>
-            ))}
-          </CommandGroup>
+                  <Avatar className="mr-2 h-5 w-5 text-xs">
+                    <AvatarFallback className="bg-[#9b87f5] text-white">
+                      {member.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="flex-1 truncate">{member.name}</span>
+                  {value === member.id && <Check className="ml-2 h-4 w-4" />}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
         </Command>
       </PopoverContent>
     </Popover>
